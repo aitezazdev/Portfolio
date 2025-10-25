@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-syne: var(--font-syne), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
+}
