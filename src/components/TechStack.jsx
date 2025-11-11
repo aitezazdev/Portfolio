@@ -65,7 +65,7 @@ const TechStack = () => {
         title,
         {
           opacity: 0,
-          y: 80,
+          y: 50,
         },
         {
           opacity: 1,
@@ -75,7 +75,7 @@ const TechStack = () => {
             trigger: section,
             start: "top 100%",
             end: "top 75%",
-            scrub: 1,
+            scrub: 0.5,
           },
         }
       );
@@ -84,18 +84,18 @@ const TechStack = () => {
         items,
         {
           opacity: 0,
-          y: 100,
+          y: 50,
         },
         {
           opacity: 1,
           y: 0,
-          stagger: 0.15,
+          stagger: 0.30,
           ease: "none",
           scrollTrigger: {
             trigger: section,
             start: "top 100%",
             end: "top 75%",
-            scrub: 1,
+            scrub: 0.5,
           },
         }
       );
@@ -131,11 +131,10 @@ const TechStack = () => {
   return (
     <section
       id="TechStack"
-      className="bg-[#0a0a09] text-[#d1d1c7] pb-56 px-6 md:px-12 lg:px-20 overflow-hidden">
+      className="bg-[#080807] text-[#d1d1c7] pb-32 px-6 md:px-12 lg:px-20 overflow-hidden">
       <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold uppercase mb-20">
         MY STACK /
       </h2>
-
       <div className="space-y-24">
         {STACK_SECTIONS.map((stack, index) => (
           <div

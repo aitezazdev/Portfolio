@@ -7,3 +7,8 @@
   --font-syne: var(--font-syne), sans-serif;
   --font-inter: var(--font-inter), sans-serif;
 }
+
+body.menu-open {
+  overflow: hidden !important;
+  height: 100vh;
+}
