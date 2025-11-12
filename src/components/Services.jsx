@@ -2,34 +2,17 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import TechStack from "./TechStack";
+import AnimatedHeading from "./AnimateHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Services = () => {
   const sectionRef = useRef(null);
-  const headingRef = useRef(null);
   const descriptionRef = useRef(null);
   const servicesRef = useRef([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const headingChars = headingRef.current.querySelectorAll(".char");
-      gsap.fromTo(
-        headingChars,
-        { opacity: 0, y: "100%" },
-        {
-          opacity: 1,
-          y: "0%",
-          duration: 0.8,
-          stagger: 0.03,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 80%",
-          },
-        }
-      );
-
       const descWords = descriptionRef.current.querySelectorAll(".word");
       gsap.fromTo(
         descWords,
@@ -42,7 +25,7 @@ const Services = () => {
           ease: "power2.out",
           scrollTrigger: {
             trigger: descriptionRef.current,
-            start: "top 75%",
+            start: "top 80%",
           },
         }
       );
@@ -52,7 +35,6 @@ const Services = () => {
 
       allSections.forEach((section, index) => {
         const offset = pinOffset + index * 100;
-
         ScrollTrigger.create({
           trigger: section,
           start: `top ${offset}px`,
@@ -67,7 +49,7 @@ const Services = () => {
     return () => ctx.revert();
   }, []);
 
-  const headingText = "What I Do /";
+  const headingText = "What I Do";
   const descriptionText = `I specialize in building full-stack web applications that are fast, reliable, and user-friendly. With a solid foundation in both frontend and backend technologies, I help bring ideas to life whether it's for a business, a startup, or a product team.`;
 
   const services = [
@@ -113,21 +95,11 @@ const Services = () => {
         ref={sectionRef}
         className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-20 px-6 md:px-12 lg:px-20 rounded-t-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-32">
-            <div className="overflow-hidden mb-8">
-              <h2
-                ref={headingRef}
-                className="font-display text-5xl md:text-7xl lg:text-8xl mt-20 font-bold uppercase tracking-tighter">
-                {headingText.split("").map((char, i) => (
-                  <span
-                    key={i}
-                    className="char inline-block"
-                    style={{ opacity: 0 }}>
-                    {char === " " ? "\u00A0" : char}
-                  </span>
-                ))}
-              </h2>
-            </div>
+          <div className="mb-20">
+            <AnimatedHeading
+              text={headingText}
+              className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+            />
 
             <div className="grid md:grid-cols-12 gap-8">
               <div className="md:col-start-6 md:col-span-7 flex gap-10">
@@ -152,7 +124,7 @@ const Services = () => {
             </div>
           </div>
 
-          <div className="relative pb-52">
+          <div className="relative pb-24">
             {services.map((service, index) => (
               <div
                 key={service.id}
