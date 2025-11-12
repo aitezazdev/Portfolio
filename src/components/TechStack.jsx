@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AnimatedHeading from "./AnimateHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -54,6 +55,8 @@ const TechStack = () => {
   const sectionRefs = useRef([]);
   const titleRefs = useRef([]);
 
+  const headingText = "My Stack"
+
   useEffect(() => {
     sectionRefs.current.forEach((section, index) => {
       if (!section) return;
@@ -73,9 +76,9 @@ const TechStack = () => {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 100%",
-            end: "top 75%",
-            scrub: 0.5,
+            start: "top 90%",
+            end: "top 70%",
+            scrub: true,
           },
         }
       );
@@ -93,9 +96,9 @@ const TechStack = () => {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 100%",
-            end: "top 75%",
-            scrub: 0.5,
+            start: "top 90%",
+            end: "top 70%",
+            scrub: true,
           },
         }
       );
@@ -131,10 +134,11 @@ const TechStack = () => {
   return (
     <section
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-32 px-6 md:px-12 lg:px-20 overflow-hidden">
-      <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold uppercase mb-20">
-        MY STACK /
-      </h2>
+      className="bg-[#080807] text-[#d1d1c7] pb-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+      <AnimatedHeading
+              text={headingText}
+              className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+            />
       <div className="space-y-24">
         {STACK_SECTIONS.map((stack, index) => (
           <div

@@ -3,14 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Menu, X } from "lucide-react";
+import { useLenis } from "./SmoothScrollProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const NavLink = ({ children, onClick }) => (
-  <li 
+  <li
     className="relative overflow-hidden h-6 group cursor-pointer"
-    onClick={onClick}
-  >
+    onClick={onClick}>
     <span className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full">
       {children}
     </span>
@@ -21,10 +21,7 @@ const NavLink = ({ children, onClick }) => (
 );
 
 const MobileNavLink = ({ children, onClick }) => (
-  <li 
-    className="cursor-pointer"
-    onClick={onClick}
-  >
+  <li className="cursor-pointer" onClick={onClick}>
     {children}
   </li>
 );
@@ -33,18 +30,8 @@ const Navbar = () => {
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
+  const lenisRef = useLenis();
+  const lenis = lenisRef?.current;
 
   useEffect(() => {
     const nav = navRef.current;
@@ -77,26 +64,40 @@ const Navbar = () => {
     });
 
     const servicesSection = document.querySelector('[class*="bg-black"]');
-    
+
     if (servicesSection) {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: servicesSection,
-          start: "top top",
-          end: "top -200px",
-          toggleActions: "play none none reset",
-        },
-      }).fromTo(
-        hamburger,
-        { opacity: 0, scale: 0, transformOrigin: "center" },
-        { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }
-      );
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: servicesSection,
+            start: "top top",
+            end: "top -200px",
+            toggleActions: "play none none reset",
+          },
+        })
+        .fromTo(
+          hamburger,
+          { opacity: 0, scale: 0, transformOrigin: "center" },
+          { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }
+        );
     }
 
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    if (isMenuOpen) {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+  }, [isMenuOpen, lenis]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -106,8 +107,7 @@ const Navbar = () => {
     <>
       <nav
         ref={navRef}
-        className="flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50"
-      >
+        className="flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50">
         <strong className="text-[#6b645c] text-base font-sans tracking-wide font-medium cursor-pointer">
           Web Developer
         </strong>
@@ -123,8 +123,7 @@ const Navbar = () => {
         ref={hamburgerRef}
         onClick={toggleMenu}
         className="fixed top-6 right-8 z-50 w-12 h-12 rounded-full bg-[#e8e8e3] flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300"
-        aria-label="Toggle menu"
-      >
+        aria-label="Toggle menu">
         {isMenuOpen ? (
           <X className="w-6 h-6 text-[#6b645c]" />
         ) : (
@@ -134,18 +133,18 @@ const Navbar = () => {
 
       <div
         className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${
-          isMenuOpen ? "backdrop-blur-sm bg-black/40" : "pointer-events-none opacity-0"
+          isMenuOpen
+            ? "backdrop-blur-sm bg-black/40"
+            : "pointer-events-none opacity-0"
         }`}
-        onClick={toggleMenu}
-      >
+        onClick={toggleMenu}>
         <div
-          className={`fixed top-0 right-0 h-full w-2/3 bg-[#e8e8e3]/95 backdrop-blur-lg shadow-2xl transition-transform duration-500 ease-in-out ${
+          className={`fixed top-0 right-0 h-full w-2/3 bg-[#e8e8e3]/10 backdrop-blur-xl shadow-2xl transition-transform duration-500 ease-in-out ${
             isMenuOpen ? "translate-x-0" : "translate-x-full"
           }`}
-          onClick={(e) => e.stopPropagation()}
-        >
+          onClick={(e) => e.stopPropagation()}>
           <div className="flex flex-col items-center justify-center h-full gap-8">
-            <ul className="flex flex-col items-center gap-8 text-[#6b645c] text-3xl font-sans font-medium uppercase tracking-wide">
+            <ul className="flex flex-col items-center gap-8 text-[#ffffff] text-4xl font-sans font-medium uppercase tracking-wide">
               <MobileNavLink onClick={toggleMenu}>Services</MobileNavLink>
               <MobileNavLink onClick={toggleMenu}>Work</MobileNavLink>
               <MobileNavLink onClick={toggleMenu}>About</MobileNavLink>

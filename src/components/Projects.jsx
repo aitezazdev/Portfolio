@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AnimatedHeading from "./AnimateHeading";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -15,6 +16,8 @@ export default function ProjectsPage() {
   const containerRef = useRef(null);
   const imageContainerRef = useRef(null);
   const router = useRouter();
+
+  const headingText = "Selected Projects";
 
   useEffect(() => {
     async function fetchProjects() {
@@ -33,7 +36,6 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // Mouse move animation for image following cursor
   useGSAP(
     () => {
       if (window.innerWidth < 768) {
@@ -52,7 +54,6 @@ export default function ProjectsPage() {
         const imageRect = imageContainerRef.current.getBoundingClientRect();
         const offsetTop = e.clientY - containerRect.y;
 
-        // Hide image if cursor is outside container
         if (
           containerRect.y > e.clientY ||
           containerRect.bottom < e.clientY ||
@@ -81,7 +82,6 @@ export default function ProjectsPage() {
     { scope: containerRef, dependencies: [projects] }
   );
 
-  // Scroll trigger animation
   useGSAP(
     () => {
       if (!containerRef.current) return;
@@ -115,36 +115,33 @@ export default function ProjectsPage() {
   const handleProjectClick = (slug) => {
     gsap.set(".page-transition", { yPercent: 100 });
     gsap.set(".page-transition--inner", { yPercent: 100 });
-    
+
     const tl = gsap.timeline();
     tl.to(".page-transition", {
       yPercent: 0,
       duration: 0.3,
     });
-    
+
     tl.then(() => {
       router.push(`/projects/${slug}`);
     });
   };
 
   return (
-    <section className="relative min-h-screen w-full bg-[#080807] text-white overflow-hidden px-4 sm:px-8 py-24">
+    <section className="relative min-h-screen w-full bg-[#080807] text-[#d1d1c7] overflow-hidden px-4 sm:px-8 py-24">
       <div className="max-w-7xl mx-auto">
-        {/* Section Title */}
         <div className="mb-20">
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-300 uppercase tracking-wider mb-4">
-            Selected Projects
-          </h2>
-          <div className="h-1 w-24 bg-gradient-to-r from-green-400 to-transparent"></div>
+          <AnimatedHeading
+            text={headingText}
+            className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+          />
         </div>
 
         <div className="group/projects relative" ref={containerRef}>
-          {/* Floating Image Container */}
           {selectedProject !== null && (
             <div
               className="hidden md:block absolute right-8 top-0 z-[1] pointer-events-none w-[280px] xl:w-[420px] opacity-0"
-              ref={imageContainerRef}
-            >
+              ref={imageContainerRef}>
               <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl shadow-2xl border border-gray-800">
                 {projects.map((project, index) => (
                   <Image
@@ -163,15 +160,13 @@ export default function ProjectsPage() {
             </div>
           )}
 
-          {/* Project List */}
           <div className="flex flex-col">
             {projects.map((project, index) => (
               <div
                 key={project.id}
                 className="project-item group leading-none py-8 md:py-10 border-b border-gray-800 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
-                onClick={() => handleProjectClick(project.slug)}
-              >
+                onClick={() => handleProjectClick(project.slug)}>
                 {selectedProject === null && (
                   <div className="relative w-full mb-8 overflow-hidden rounded-xl shadow-lg">
                     <Image
@@ -203,8 +198,7 @@ export default function ProjectsPage() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="md:w-9 md:h-9"
-                        >
+                          className="md:w-9 md:h-9">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                           <path d="M10 14 21 3"></path>
                           <path d="M15 3h6v6"></path>
@@ -212,16 +206,19 @@ export default function ProjectsPage() {
                       </span>
                     </h4>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-green-400 font-semibold text-sm">{project.year}</span>
+                      <span className="text-green-400 font-semibold text-sm">
+                        {project.year}
+                      </span>
                       <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-                      <span className="text-gray-500 text-sm font-medium">View Project</span>
+                      <span className="text-gray-500 text-sm font-medium">
+                        View Project
+                      </span>
                     </div>
                     <div className="flex flex-wrap gap-2 md:gap-3">
                       {project.tech.slice(0, 4).map((tech) => (
                         <span
                           key={tech}
-                          className="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-gray-300 text-xs md:text-sm font-medium hover:border-green-400 hover:text-green-400 transition-all duration-300"
-                        >
+                          className="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-gray-300 text-xs md:text-sm font-medium hover:border-green-400 hover:text-green-400 transition-all duration-300">
                           {tech}
                         </span>
                       ))}
@@ -239,12 +236,14 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* Page Transition Elements */}
-      <div className="page-transition fixed inset-0 bg-black z-50 pointer-events-none" style={{ transform: "translateY(100%)" }}>
-        <div className="page-transition--inner h-full w-full" style={{ transform: "translateY(100%)" }}></div>
+      <div
+        className="page-transition fixed inset-0 bg-black z-50 pointer-events-none"
+        style={{ transform: "translateY(100%)" }}>
+        <div
+          className="page-transition--inner h-full w-full"
+          style={{ transform: "translateY(100%)" }}></div>
       </div>
 
-      {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle_at_30%_50%,#ffffff10,transparent_70%)]" />
     </section>
   );
