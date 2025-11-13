@@ -111,7 +111,7 @@ const Services = () => {
                   className="max-w-2xl text-xl text-[#a29e9a] leading-relaxed">
                   <div className="overflow-hidden font-sans">
                     {descriptionText.split(" ").map((word, i) => (
-                      <span
+                      <span 
                         key={i}
                         className="word inline-block mr-2 text-lg"
                         style={{ opacity: 0 }}>
