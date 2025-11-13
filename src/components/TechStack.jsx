@@ -54,8 +54,11 @@ const STACK_SECTIONS = [
 const TechStack = () => {
   const sectionRefs = useRef([]);
   const titleRefs = useRef([]);
+  const descriptionRef = useRef(null);
 
-  const headingText = "My Stack"
+  const headingText = "My Tech Stack";
+  const descriptionText =
+    "A selection of technologies I use to design, build, and deploy full-stack web applications.";
 
   useEffect(() => {
     sectionRefs.current.forEach((section, index) => {
@@ -92,7 +95,7 @@ const TechStack = () => {
         {
           opacity: 1,
           y: 0,
-          stagger: 0.30,
+          stagger: 0.3,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -107,6 +110,29 @@ const TechStack = () => {
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const descWords = descriptionRef.current.querySelectorAll(".word");
+      gsap.fromTo(
+        descWords,
+        { opacity: 0, y: "100%" },
+        {
+          opacity: 1,
+          y: "0%",
+          duration: 0.6,
+          stagger: 0.02,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: descriptionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+    }, descriptionRef);
+
+    return () => ctx.revert();
   }, []);
 
   const handleMouseEnter = (e) => {
@@ -134,11 +160,27 @@ const TechStack = () => {
   return (
     <section
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-20 px-6 md:px-12 lg:px-20 overflow-hidden">
-      <AnimatedHeading
-              text={headingText}
-              className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
-            />
+      className="bg-[#080807] text-[#d1d1c7] pb-5 px-6 md:px-12 lg:px-20 overflow-hidden">
+      <div className="mb-14">
+        <AnimatedHeading
+          text={headingText}
+          className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+        />
+        <div
+          ref={descriptionRef}
+          className="text-xl text-[#a29e9a] leading-relaxed">
+          <div className="overflow-hidden font-sans">
+            {descriptionText.split(" ").map((word, i) => (
+              <span
+                key={i}
+                className="word inline-block mr-2 text-lg"
+                style={{ opacity: 0 }}>
+                {word}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="space-y-24">
         {STACK_SECTIONS.map((stack, index) => (
           <div

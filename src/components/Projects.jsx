@@ -140,17 +140,17 @@ export default function ProjectsPage() {
         <div className="group/projects relative" ref={containerRef}>
           {selectedProject !== null && (
             <div
-              className="hidden md:block absolute right-8 top-0 z-[1] pointer-events-none w-[280px] xl:w-[420px] opacity-0"
+              className="hidden md:block absolute right-20 top-0 z-[1] pointer-events-none w-[220px] xl:w-[350px] opacity-0"
               ref={imageContainerRef}>
-              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl shadow-2xl border border-gray-800">
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl">
                 {projects.map((project, index) => (
                   <Image
                     key={project.id}
                     src={project.hoverImage || project.images[0]}
                     alt={project.title}
-                    width={420}
-                    height={315}
-                    className={`absolute inset-0 transition-all duration-500 w-full h-full object-contain bg-gray-900 ${
+                    width={300}
+                    height={400}
+                    className={`absolute inset-0 transition-all duration-500 w-full h-full object-cover object-top ${
                       index !== selectedProject ? "opacity-0" : ""
                     }`}
                     unoptimized
@@ -164,7 +164,7 @@ export default function ProjectsPage() {
             {projects.map((project, index) => (
               <div
                 key={project.id}
-                className="project-item group leading-none py-8 md:py-10 border-b border-gray-800 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
+                className="project-item group leading-none py-6 md:py-8 border-b border-gray-800 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onClick={() => handleProjectClick(project.slug)}>
                 {selectedProject === null && (
@@ -185,7 +185,7 @@ export default function ProjectsPage() {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold flex items-center gap-4 transition-all duration-700 bg-gradient-to-r from-green-400 via-emerald-300 to-white from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-4">
+                    <h4 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold flex items-center gap-4 transition-all duration-700 bg-gradient-to-r from-green-400 via-emerald-300 to-white from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-4">
                       {project.title}
                       <span className="text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
                         <svg
@@ -205,7 +205,7 @@ export default function ProjectsPage() {
                         </svg>
                       </span>
                     </h4>
-                    <div className="flex items-center gap-2 mb-3">
+                    {/* <div className="flex items-center gap-2 mb-3">
                       <span className="text-green-400 font-semibold text-sm">
                         {project.year}
                       </span>
@@ -213,7 +213,7 @@ export default function ProjectsPage() {
                       <span className="text-gray-500 text-sm font-medium">
                         View Project
                       </span>
-                    </div>
+                    </div> */}
                     <div className="flex flex-wrap gap-2 md:gap-3">
                       {project.tech.slice(0, 4).map((tech) => (
                         <span
