@@ -158,9 +158,10 @@ const TechStack = () => {
   };
 
   return (
-    <section
+    <div className="bg-white">
+      <section
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-5 px-6 md:px-12 lg:px-20 overflow-hidden">
+      className="bg-[#080807] text-[#d1d1c7] pb-5 px-6 md:px-12 lg:px-20 rounded-b-[3rem] overflow-hidden">
       <div className="mb-14">
         <AnimatedHeading
           text={headingText}
@@ -221,6 +222,7 @@ const TechStack = () => {
         ))}
       </div>
     </section>
+    </div>
   );
 };
 
