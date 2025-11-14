@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import TechStack from "./TechStack";
 import AnimatedHeading from "./AnimateHeading";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -89,11 +88,10 @@ const Services = () => {
   ];
 
   return (
-    <div className="bg-white">
       <section
         id="Services"
         ref={sectionRef}
-        className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-20 px-6 md:px-12 lg:px-20 rounded-t-3xl overflow-hidden">
+        className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-20 px-6 md:px-12 lg:px-20 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
             <AnimatedHeading
@@ -139,7 +137,7 @@ const Services = () => {
 
                 <div className="grid md:grid-cols-12 gap-8 pt-6">
                   <div className="md:col-span-7 md:col-start-6 space-y-6">
-                    <p className="text-[#a29e9a] font-sans text-lg leading-relaxed max-w-xl">
+                    <p className="text-[#a29e9a] text-base md:text-lg leading-relaxed font-sans">
                       {service.description}
                     </p>
 
@@ -162,9 +160,6 @@ const Services = () => {
           </div>
         </div>
       </section>
-
-      <TechStack />
-    </div>
   );
 };
 

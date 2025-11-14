@@ -128,7 +128,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <section className="relative min-h-screen w-full bg-[#080807] text-[#d1d1c7] overflow-hidden px-4 sm:px-8 py-24">
+    <section className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-4 sm:px-8 py-24">
       <div className="max-w-7xl mx-auto">
         <div className="mb-20">
           <AnimatedHeading
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
             <div
               className="hidden md:block absolute right-20 top-0 z-[1] pointer-events-none w-[220px] xl:w-[350px] opacity-0"
               ref={imageContainerRef}>
-              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl">
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl shadow-xl">
                 {projects.map((project, index) => (
                   <Image
                     key={project.id}
@@ -164,7 +164,7 @@ export default function ProjectsPage() {
             {projects.map((project, index) => (
               <div
                 key={project.id}
-                className="project-item group leading-none py-6 md:py-8 border-b border-gray-800 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
+                className="project-item group leading-none py-6 md:py-8 border-b border-gray-300 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onClick={() => handleProjectClick(project.slug)}>
                 {selectedProject === null && (
@@ -174,20 +174,20 @@ export default function ProjectsPage() {
                       alt={project.title}
                       width={600}
                       height={400}
-                      className="w-full object-contain aspect-[3/2] bg-gray-900"
+                      className="w-full object-contain aspect-[3/2] bg-gray-100"
                       unoptimized
                     />
                   </div>
                 )}
 
                 <div className="flex gap-4 md:gap-8 items-start">
-                  <div className="font-mono text-gray-600 text-base md:text-lg pt-2 min-w-[3rem]">
+                  <div className="font-mono text-gray-400 text-base md:text-lg pt-2 min-w-[3rem]">
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold flex items-center gap-4 transition-all duration-700 bg-gradient-to-r from-green-400 via-emerald-300 to-white from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-4">
+                    <h4 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold flex items-center gap-4 transition-all duration-700 bg-gradient-to-r from-green-600 via-emerald-600 to-[#1a1a1a] from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-4">
                       {project.title}
-                      <span className="text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
+                      <span className="text-[#1a1a1a] opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="28"
@@ -205,25 +205,16 @@ export default function ProjectsPage() {
                         </svg>
                       </span>
                     </h4>
-                    {/* <div className="flex items-center gap-2 mb-3">
-                      <span className="text-green-400 font-semibold text-sm">
-                        {project.year}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-                      <span className="text-gray-500 text-sm font-medium">
-                        View Project
-                      </span>
-                    </div> */}
                     <div className="flex flex-wrap gap-2 md:gap-3">
                       {project.tech.slice(0, 4).map((tech) => (
                         <span
                           key={tech}
-                          className="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-gray-300 text-xs md:text-sm font-medium hover:border-green-400 hover:text-green-400 transition-all duration-300">
+                          className="px-3 py-1.5 bg-white border border-gray-300 rounded-full text-gray-700 text-xs md:text-sm font-medium hover:border-green-500 hover:text-green-600 transition-all duration-300">
                           {tech}
                         </span>
                       ))}
                       {project.tech.length > 4 && (
-                        <span className="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-gray-500 text-xs md:text-sm font-medium">
+                        <span className="px-3 py-1.5 bg-white border border-gray-300 rounded-full text-gray-500 text-xs md:text-sm font-medium">
                           +{project.tech.length - 4} more
                         </span>
                       )}
@@ -237,14 +228,14 @@ export default function ProjectsPage() {
       </div>
 
       <div
-        className="page-transition fixed inset-0 bg-black z-50 pointer-events-none"
+        className="page-transition fixed inset-0 bg-white z-50 pointer-events-none"
         style={{ transform: "translateY(100%)" }}>
         <div
           className="page-transition--inner h-full w-full"
           style={{ transform: "translateY(100%)" }}></div>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle_at_30%_50%,#ffffff10,transparent_70%)]" />
+      <div className="absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(circle_at_30%_50%,#00000015,transparent_70%)]" />
     </section>
   );
 }
