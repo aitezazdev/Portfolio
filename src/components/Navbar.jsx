@@ -4,21 +4,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Menu, X } from "lucide-react";
 import { useLenis } from "./SmoothScrollProvider";
+import AnimatedLink from "./AnimateLink";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const NavLink = ({ children, onClick }) => (
-  <li
-    className="relative overflow-hidden h-6 group cursor-pointer"
-    onClick={onClick}>
-    <span className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full">
-      {children}
-    </span>
-    <span className="block absolute top-full left-0 transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
-      {children}
-    </span>
-  </li>
-);
 
 const MobileNavLink = ({ children, onClick }) => (
   <li className="cursor-pointer" onClick={onClick}>
@@ -112,10 +100,10 @@ const Navbar = () => {
           Web Developer
         </strong>
         <ul className="flex gap-5 text-[#6b645c] text-sm font-sans font-medium uppercase tracking-wide">
-          <NavLink>Services</NavLink>
-          <NavLink>Work</NavLink>
-          <NavLink>About</NavLink>
-          <NavLink>Contact</NavLink>
+          <AnimatedLink>Services</AnimatedLink>
+          <AnimatedLink>Work</AnimatedLink>
+          <AnimatedLink>About</AnimatedLink>
+          <AnimatedLink>Contact</AnimatedLink>
         </ul>
       </nav>
 

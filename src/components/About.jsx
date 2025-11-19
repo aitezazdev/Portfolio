@@ -57,11 +57,10 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-[#e8e8e3]">
       <section
         id="About"
-        className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 px-6 md:px-12 lg:px-20 rounded-t-[3rem] overflow-hidden"
-      >
+        className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 px-6 md:px-12 lg:px-20 rounded-t-4xl overflow-hidden">
         <div className="mb-10 md:mb-20">
           <AnimatedHeading
             text={headingText}
@@ -69,15 +68,13 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
           />
           <div
             ref={descriptionRef}
-            className=" text-xl text-[#a29e9a] leading-relaxed"
-          >
+            className=" text-xl text-[#a29e9a] leading-relaxed">
             <div className="overflow-hidden font-sans">
               {descriptionText.split(" ").map((word, i) => (
                 <span
                   key={i}
                   className="word inline-block mr-2"
-                  style={{ opacity: 0 }}
-                >
+                  style={{ opacity: 0 }}>
                   {word}
                 </span>
               ))}
@@ -87,8 +84,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
 
         <div
           ref={contentRef}
-          className="grid grid-cols-12 gap-6 md:gap-8 pb-20"
-        >
+          className="grid grid-cols-12 gap-6 md:gap-8 pb-20">
           <div className="col-span-12 md:col-span-5 lg:col-span-5">
             <div className="w-full max-w-[350px] md:max-w-[420px] h-[400px] md:h-[500px] bg-[#1a1a18] rounded-2xl flex items-center justify-center border border-[#2a2a28]">
               <span className="text-[#4a4a48] text-lg">Image Space</span>
@@ -106,8 +102,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
               {aboutMeText.split("\n\n").map((paragraph, idx) => (
                 <p
                   key={idx}
-                  className="text-[#a29e9a] text-base md:text-lg leading-relaxed font-sans"
-                >
+                  className="text-[#a29e9a] text-base md:text-lg leading-relaxed font-sans">
                   {paragraph}
                 </p>
               ))}
