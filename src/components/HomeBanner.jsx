@@ -93,7 +93,7 @@ const HomeBanner = () => {
   }, []);
 
   return (
-    <div className="min-h-screen px-12 pt-32">
+    <section className="min-h-screen px-12 pt-32 bg-[#e8e8e3]">
       <div className="max-w-7xl mx-auto">
         <h1
           ref={nameRef}
@@ -101,7 +101,7 @@ const HomeBanner = () => {
           {splitText("Aitezaz Sikandar")}
         </h1>
 
-        <div className="flex justify-center items-center bg-[#e8e8e3] py-3 px-6">
+        <div className="flex justify-center items-center py-3 px-6">
           <div className="max-w-xl text-center">
             {/* <p
               ref={stackRef}
@@ -133,7 +133,7 @@ const HomeBanner = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

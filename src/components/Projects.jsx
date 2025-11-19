@@ -128,7 +128,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <section className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-4 sm:px-8 py-24">
+    <section id="projects" className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-4 sm:px-8 py-24">
       <div className="max-w-7xl mx-auto">
         <div className="mb-20">
           <AnimatedHeading
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
             <div
               className="hidden md:block absolute right-20 top-0 z-[1] pointer-events-none w-[220px] xl:w-[350px] opacity-0"
               ref={imageContainerRef}>
-              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl shadow-xl">
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-sm shadow-xl">
                 {projects.map((project, index) => (
                   <Image
                     key={project.id}
