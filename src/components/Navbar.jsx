@@ -91,6 +91,11 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleScroll = (id) => {
+    const section = document.getElementById(id);
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
       <nav
@@ -100,10 +105,18 @@ const Navbar = () => {
           Web Developer
         </strong>
         <ul className="flex gap-5 text-[#6b645c] text-sm font-sans font-medium uppercase tracking-wide">
-          <AnimatedLink>Services</AnimatedLink>
-          <AnimatedLink>Work</AnimatedLink>
-          <AnimatedLink>About</AnimatedLink>
-          <AnimatedLink>Contact</AnimatedLink>
+          <AnimatedLink onClick={() => handleScroll("about")}>
+            About
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleScroll("services")}>
+            Services
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleScroll("projects")}>
+            Work
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleScroll("contact")}>
+            Contact
+          </AnimatedLink>
         </ul>
       </nav>
 
@@ -133,10 +146,34 @@ const Navbar = () => {
           onClick={(e) => e.stopPropagation()}>
           <div className="flex flex-col items-center justify-center h-full gap-8">
             <ul className="flex flex-col items-center gap-8 text-[#ffffff] text-4xl font-sans font-medium uppercase tracking-wide">
-              <MobileNavLink onClick={toggleMenu}>Services</MobileNavLink>
-              <MobileNavLink onClick={toggleMenu}>Work</MobileNavLink>
-              <MobileNavLink onClick={toggleMenu}>About</MobileNavLink>
-              <MobileNavLink onClick={toggleMenu}>Contact</MobileNavLink>
+              <MobileNavLink
+                onClick={() => {
+                  toggleMenu();
+                  handleScroll("about");
+                }}>
+                About
+              </MobileNavLink>
+              <MobileNavLink
+                onClick={() => {
+                  toggleMenu();
+                  handleScroll("services");
+                }}>
+                Services
+              </MobileNavLink>
+              <MobileNavLink
+                onClick={() => {
+                  toggleMenu();
+                  handleScroll("projects");
+                }}>
+                Work
+              </MobileNavLink>
+              <MobileNavLink
+                onClick={() => {
+                  toggleMenu();
+                  handleScroll("contact");
+                }}>
+                Contact
+              </MobileNavLink>
             </ul>
           </div>
         </div>
