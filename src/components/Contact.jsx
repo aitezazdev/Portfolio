@@ -5,7 +5,7 @@ import AnimatedButton from "./AnimatedButton";
 const Contact = () => {
   const headingText = "Contact";
   return (
-    <section className="bg-[#e8e8e3] my-20">
+    <section id="contact" className="bg-[#e8e8e3] my-20">
       <section className="min-h-screen w-[93%] rounded-xl mx-auto bg-[#131211] text-[#d1d1c7] pt-5 pb-20 md:px-12 lg:px-20">
       <AnimatedHeading
         text={headingText}

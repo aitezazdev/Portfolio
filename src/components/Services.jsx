@@ -89,7 +89,7 @@ const Services = () => {
 
   return (
       <section
-        id="Services"
+        id="services"
         ref={sectionRef}
         className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-20 px-6 md:px-12 lg:px-20 overflow-hidden">
         <div className="max-w-7xl mx-auto">

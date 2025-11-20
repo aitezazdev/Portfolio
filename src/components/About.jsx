@@ -59,7 +59,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
   return (
     <div className="bg-[#e8e8e3]">
       <section
-        id="About"
+        id="about"
         className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 px-6 md:px-12 lg:px-20 rounded-t-4xl overflow-hidden">
         <div className="mb-10 md:mb-20">
           <AnimatedHeading
