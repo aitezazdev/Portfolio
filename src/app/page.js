@@ -32,7 +32,7 @@ gsap.timeline({
   scrollTrigger: {
     trigger: reunite,
     start: "top bottom",
-    end: "top 33%",
+    end: "top 10%",
     scrub: 1.2,
     onLeave: () => { home.style.pointerEvents = "none"; },
     onEnterBack: () => { home.style.pointerEvents = "auto"; },
@@ -42,24 +42,6 @@ gsap.timeline({
   y: 50,
   scale: 0.95,
   ease: "power2.out",
-});
-
-gsap.timeline({
-  scrollTrigger: {
-    trigger: techStack,
-    start: "top 60%",
-    end: () => {
-      const rect = projects.getBoundingClientRect();
-      const scrollTop = window.scrollY || window.pageYOffset;
-      const endPoint = rect.top + scrollTop - window.innerHeight * 0.2;
-      return endPoint + "px";
-    },
-    scrub: true,
-  },
-}).to(techStack, {
-  opacity: 1,
-  y: 0,
-  duration: 1,
 });
 
 return () => ScrollTrigger.getAll().forEach((t) => t.kill());

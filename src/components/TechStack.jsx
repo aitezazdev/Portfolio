@@ -127,15 +127,15 @@ const TechStack = () => {
   return (
     <section
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-20 px-6 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden">
+      className="bg-[#080807] text-[#d1d1c7] pb-20 px-6 sm:px-8 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden">
       <div className="mb-14">
         <AnimatedHeading
           text={headingText}
-          className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+          className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
         />
         <AnimateDescription
           text={descriptionText}
-          className="text-xl text-[#a29e9a] font-sans leading-relaxed"
+          className="text-base sm:text-lg md:text-xl text-[#a29e9a] font-sans leading-relaxed"
         />
       </div>
 
@@ -147,7 +147,7 @@ const TechStack = () => {
             className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <h3
               ref={(el) => (titleRefs.current[index] = el)}
-              className="md:w-1/3 text-3xl md:text-4xl lg:text-5xl font-bold text-[#bfbdb8] tracking-tight">
+              className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#bfbdb8] tracking-tight">
               {stack.title}
             </h3>
 
@@ -167,7 +167,7 @@ const TechStack = () => {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <p className="text-sm md:text-base font-mono font-medium text-[#d1d1c7]">
+                  <p className="text-sm sm:text-base md:text-base lg:text-lg font-mono font-medium text-[#d1d1c7]">
                     {tech.name}
                   </p>
                 </div>

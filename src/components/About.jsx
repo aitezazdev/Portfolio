@@ -20,24 +20,24 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
         <div className="mb-10 md:mb-20">
           <AnimatedHeading
             text={headingText}
-            className="text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
+            className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
           />
 
           <AnimateDescription
             text={descriptionText}
-            className="text-xl text-[#a29e9a] font-sans"
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
           />
         </div>
 
         <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20">
           <div className="col-span-12 md:col-span-5 lg:col-span-5">
             <div className="w-full max-w-[350px] md:max-w-[420px] h-[400px] md:h-[500px] bg-[#1a1a18] rounded-2xl flex items-center justify-center border border-[#2a2a28]">
-              <span className="text-[#4a4a48] text-lg">Image Space</span>
+              <span className="text-[#4a4a48] text-base md:text-lg">Image Space</span>
             </div>
           </div>
 
           <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
-            <span className="text-sm md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left">
+            <span className="text-sm sm:text-base md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left">
               (About Me)
             </span>
 
@@ -45,7 +45,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
               {aboutMeText.split("\n\n").map((p, i) => (
                 <p
                   key={i}
-                  className="text-[#a29e9a] text-base md:text-lg leading-relaxed font-sans"
+                  className="text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"
                 >
                   {p}
                 </p>
