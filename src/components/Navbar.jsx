@@ -9,7 +9,7 @@ import AnimatedLink from "./AnimateLink";
 gsap.registerPlugin(ScrollTrigger);
 
 const MobileNavLink = ({ children, onClick }) => (
-  <li className="cursor-pointer" onClick={onClick}>
+  <li className="cursor-pointer text-xl" onClick={onClick}>
     {children}
   </li>
 );
@@ -17,6 +17,7 @@ const MobileNavLink = ({ children, onClick }) => (
 const Navbar = () => {
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const mobileNavRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
@@ -24,30 +25,30 @@ const Navbar = () => {
   useEffect(() => {
     const nav = navRef.current;
     const hamburger = hamburgerRef.current;
+    const mobileNav = mobileNavRef.current;
     if (!nav || !hamburger) return;
 
-    gsap.set(nav, { y: 0, opacity: 1 });
+    gsap.set(nav, { y: 0 });
     gsap.set(hamburger, { opacity: 0, scale: 0 });
+    if (mobileNav) gsap.set(mobileNav, { y: 0 });
 
     ScrollTrigger.create({
       trigger: "body",
-      start: "50px top",
-      end: "bottom bottom",
-      onEnter: () => {
+      start: "top top",
+      end: "+=80",
+      scrub: 0.5,
+      onUpdate: (self) => {
+        const progress = self.progress;
         gsap.to(nav, {
-          y: "-100%",
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
+          y: -120 * progress,
+          duration: 0,
         });
-      },
-      onLeaveBack: () => {
-        gsap.to(nav, {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-          ease: "power2.inOut",
-        });
+        if (mobileNav) {
+          gsap.to(mobileNav, {
+            y: -180 * progress,
+            duration: 0,
+          });
+        }
       },
     });
 
@@ -100,11 +101,11 @@ const Navbar = () => {
     <>
       <nav
         ref={navRef}
-        className="flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50">
-        <strong className="text-[#6b645c] text-base font-sans tracking-wide font-medium cursor-pointer">
+        className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50">
+        <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium cursor-pointer">
           Web Developer
         </strong>
-        <ul className="flex gap-5 text-[#6b645c] text-sm font-sans font-medium uppercase tracking-wide">
+        <ul className="flex gap-5 text-[#6b645c] text-base font-sans font-medium uppercase tracking-wide">
           <AnimatedLink onClick={() => handleScroll("about")}>
             About
           </AnimatedLink>
@@ -120,15 +121,52 @@ const Navbar = () => {
         </ul>
       </nav>
 
+      <nav
+        ref={mobileNavRef}
+        className="mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3]">
+        <div className="flex justify-between items-start px-6 py-6">
+          <div className="flex flex-col">
+            <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
+              Web Developer
+            </strong>
+          </div>
+
+          <div className="flex flex-col items-end gap-3">
+            <ul className="flex flex-col items-end gap-2 text-[#6b645c] text-base font-sans font-medium">
+              <li
+                onClick={() => handleScroll("about")}
+                className="cursor-pointer">
+                About
+              </li>
+              <li
+                onClick={() => handleScroll("services")}
+                className="cursor-pointer">
+                Services
+              </li>
+              <li
+                onClick={() => handleScroll("projects")}
+                className="cursor-pointer">
+                Work
+              </li>
+              <li
+                onClick={() => handleScroll("contact")}
+                className="cursor-pointer">
+                Contact
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
       <button
         ref={hamburgerRef}
         onClick={toggleMenu}
-        className="fixed top-6 right-8 z-50 w-12 h-12 rounded-full bg-[#e8e8e3] flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300"
+        className="fixed top-6 right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#393632] md:bg-[#e8e8e3] flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300"
         aria-label="Toggle menu">
         {isMenuOpen ? (
-          <X className="w-6 h-6 text-[#6b645c]" />
+          <X className="w-6 h-6 md:w-7 md:h-7 text-white md:text-[#6b645c]" />
         ) : (
-          <Menu className="w-6 h-6 text-[#6b645c]" />
+          <Menu className="w-6 h-6 md:w-7 md:h-7 text-white md:text-[#6b645c]" />
         )}
       </button>
 
@@ -145,7 +183,7 @@ const Navbar = () => {
           }`}
           onClick={(e) => e.stopPropagation()}>
           <div className="flex flex-col items-center justify-center h-full gap-8">
-            <ul className="flex flex-col items-center gap-8 text-[#ffffff] text-4xl font-sans font-medium uppercase tracking-wide">
+            <ul className="flex flex-col items-center gap-8 text-[#ffffff] text-5xl font-sans font-medium uppercase tracking-wide">
               <MobileNavLink
                 onClick={() => {
                   toggleMenu();

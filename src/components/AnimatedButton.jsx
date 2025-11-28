@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { gsap } from "gsap";
 
 const AnimatedButton = ({
+  onClick,
   topText,
   bottomText,
   variant = "dark",
@@ -98,7 +99,7 @@ const AnimatedButton = ({
   };
 
   return (
-    <button
+    <button  onClick={onClick}
       ref={buttonRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
