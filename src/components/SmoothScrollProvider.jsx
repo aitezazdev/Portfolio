@@ -25,24 +25,26 @@ export default function SmoothScrollProvider({ children }) {
     });
 
     lenisRef.current = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
 
-    const rafFunction = (time) => {
+    function raf(time) {
       lenis.raf(time * 1000);
-    };
+      ScrollTrigger.update();
+    }
 
-    gsap.ticker.add(rafFunction);
+    gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
+
     return () => {
-      gsap.ticker.remove(rafFunction);
+      gsap.ticker.remove(raf);
       lenis.destroy();
     };
   }, []);
 
   return (
-    <LenisContext.Provider value={lenisRef}>
-      {children}
-    </LenisContext.Provider>
+    <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>
   );
 }
