@@ -9,66 +9,74 @@ import Projects from "@/components/Projects";
 import ReuniteBlack from "@/components/ReuniteBlack";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-const homeRef = useRef(null);
-const reuniteRef = useRef(null);
-const techStackRef = useRef(null);
+  const homeRef = useRef(null);
+  const reuniteRef = useRef(null);
+  const techStackRef = useRef(null);
 
-useEffect(() => {
-const home = homeRef.current;
-const reunite = reuniteRef.current;
-const techStack = techStackRef.current;
-const projects = document.querySelector("section");
+  useEffect(() => {
+    const home = homeRef.current;
+    const reunite = reuniteRef.current;
+    const techStack = techStackRef.current;
+    const projects = document.querySelector("section");
 
-if (!home || !reunite || !techStack || !projects) return;
+    if (!home || !reunite || !techStack || !projects) return;
 
-gsap.set(reunite, { zIndex: 2 });
-gsap.set(home, { zIndex: 1, y: 0, opacity: 1, pointerEvents: "auto" });
+    gsap.set(reunite, { zIndex: 2 });
+    gsap.set(home, { zIndex: 1, y: 0, opacity: 1, pointerEvents: "auto" });
 
-gsap.timeline({
-  scrollTrigger: {
-    trigger: reunite,
-    start: "top bottom",
-    end: "top 10%",
-    scrub: 1.2,
-    onLeave: () => { home.style.pointerEvents = "none"; },
-    onEnterBack: () => { home.style.pointerEvents = "auto"; },
-  },
-}).to(home, {
-  opacity: 0,
-  y: 50,
-  scale: 0.95,
-  ease: "power2.out",
-});
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: reunite,
+          start: "top bottom",
+          end: "top 10%",
+          scrub: 1.2,
+          onLeave: () => {
+            home.style.pointerEvents = "none";
+          },
+          onEnterBack: () => {
+            home.style.pointerEvents = "auto";
+          },
+        },
+      })
+      .to(home, {
+        opacity: 0,
+        y: 50,
+        scale: 0.95,
+        ease: "power2.out",
+      });
 
-return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, []);
 
-}, []);
-
-return ( <main className="relative"> <section ref={homeRef} className="sticky top-0 left-0 w-full h-screen"> <HomeBanner /> </section>
-
-  <div className="relative bg-black">
-    <div
-      ref={reuniteRef}
-      className="relative z-10 bg-[#080807] min-h-screen overflow-hidden"
-    >
-      <ReuniteBlack techStackRef={techStackRef} />
-    </div>
-  </div>
-
-  <section className="relative z-20 bg-white">
-    <Projects />
-  </section>
-
-  <section className="relative bg-black">
-    <Contact />
-  </section>
-
-  <Footer />
-</main>
-
-);
+  return (
+    <>
+      <Navbar />
+      <main className="relative">
+        <section ref={homeRef} className="sticky top-0 left-0 w-full h-screen">
+          {" "}
+          <HomeBanner />
+        </section>
+        <div className="relative bg-black">
+          <div
+            ref={reuniteRef}
+            className="relative z-10 bg-[#080807] min-h-screen overflow-hidden">
+            <ReuniteBlack techStackRef={techStackRef} />
+          </div>
+        </div>
+        <section className="relative z-20 bg-white">
+          <Projects />
+        </section>
+        <section className="relative bg-black">
+          <Contact />
+        </section>
+        <Footer />
+      </main>
+    </>
+  );
 }

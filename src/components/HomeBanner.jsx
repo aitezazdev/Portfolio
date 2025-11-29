@@ -99,12 +99,12 @@ const HomeBanner = () => {
   };
 
   return (
-    <section className="min-h-screen px-6 sm:px-8 md:px-12 pt-24 md:pt-32 bg-[#e8e8e3] flex items-center">
+    <section className="min-h-screen px-6 sm:px-8 md:px-12 pt-16 md:pt-20 bg-[#e8e8e3] flex items-center">
       <div className="max-w-7xl mx-auto w-full">
         <div className="text-center md:hidden">
           <h1
             ref={nameRef}
-            className="font-display text-6xl sm:text-6xl select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-6">
+            className="font-display text-6xl sm:text-6xl select-none font-semibold leading-none uppercase cursor-pointer overflow-hidden mb-6">
             <div>{splitText("Aitezaz")}</div>
             <div>{splitText("Sikandar")}</div>
           </h1>
@@ -131,12 +131,14 @@ const HomeBanner = () => {
             <div
               ref={buttonsRef}
               className="flex flex-col sm:flex-row justify-center gap-4">
-              <AnimatedButton onClick={() => handleScroll("projects")}
+              <AnimatedButton
+                onClick={() => handleScroll("projects")}
                 topText="PROJECTS"
                 bottomText="VIEW WORK →"
                 variant="dark"
               />
-              <AnimatedButton onClick={() => handleScroll("contact")}
+              <AnimatedButton
+                onClick={() => handleScroll("contact")}
                 topText="CONTACT"
                 bottomText="GET IN TOUCH →"
                 variant="light"

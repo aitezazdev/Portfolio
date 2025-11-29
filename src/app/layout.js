@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Space_Grotesk, Syne } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import Providers from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,10 +35,13 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${syne.variable} antialiased bg-[#e8e8e3]`}>
-        <SmoothScrollProvider>
-          <Navbar />
-          {children}
-        </SmoothScrollProvider>
+        <div className="page-overlay"></div>
+
+        <Providers>
+          <SmoothScrollProvider>
+            <main>{children}</main>
+          </SmoothScrollProvider>
+        </Providers>
       </body>
     </html>
   );

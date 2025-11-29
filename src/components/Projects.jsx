@@ -130,7 +130,7 @@ export default function ProjectsPage() {
       id="projects"
       className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 py-12 md:py-24">
       <div className="max-w-7xl mx-auto">
-        <div className="hidden mb-10 md:mb-20">
+        <div className="hidden md:block mb-10 md:mb-20">
           <AnimatedHeading
             text="Selected Projects"
             className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl mt-8 md:mt-20 mb-3 md:mb-4"
