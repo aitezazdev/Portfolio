@@ -12,3 +12,7 @@ body.menu-open {
   overflow: hidden !important;
   height: 100vh;
 }
+
+.html {
+  scroll-behavior: smooth;
+}

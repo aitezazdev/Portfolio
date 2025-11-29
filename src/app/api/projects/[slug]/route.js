@@ -1,4 +1,5 @@
-export async function GET() {
+
+export async function GET(req, { params }) {
   const projects = [
     {
       id: 1,
@@ -101,8 +102,17 @@ export async function GET() {
       github: "https://github.com/yourusername/epikcart",
     },
   ];
+  const project = projects.find((p) => p.slug === params.slug);
 
-  return new Response(JSON.stringify(projects), {
+  if (!project) {
+    return new Response(JSON.stringify({ error: "Project not found" }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  return new Response(JSON.stringify(project), {
+    status: 200,
     headers: { "Content-Type": "application/json" },
   });
 }
