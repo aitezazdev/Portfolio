@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono, Space_Grotesk, Syne } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
-import Providers from "@/components/Providers";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
