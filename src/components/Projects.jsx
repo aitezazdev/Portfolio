@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-transition-router";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,7 +15,8 @@ export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState(null);
   const containerRef = useRef(null);
   const imageContainerRef = useRef(null);
-  const router = useRouter();
+
+  const router = useTransitionRouter();
 
   useEffect(() => {
     async function fetchProjects() {
@@ -32,6 +33,16 @@ export default function ProjectsPage() {
       }
     }
     fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("projects-scroll");
+    if (saved) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(saved));
+        sessionStorage.removeItem("projects-scroll");
+      }, 50);
+    }
   }, []);
 
   useGSAP(
@@ -111,6 +122,10 @@ export default function ProjectsPage() {
   };
 
   const handleProjectClick = (slug) => {
+    // save scroll position
+    sessionStorage.setItem("projects-scroll", window.scrollY);
+    sessionStorage.setItem("previous-project-url", window.location.pathname);
+
     gsap.set(".page-transition", { yPercent: 100 });
     gsap.set(".page-transition--inner", { yPercent: 100 });
 
@@ -206,12 +221,13 @@ export default function ProjectsPage() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           className="md:w-7 md:h-7 lg:w-9 lg:h-9">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                          <path d="M10 14 21 3"></path>
-                          <path d="M15 3h6v6"></path>
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <path d="M10 14 21 3" />
+                          <path d="M15 3h6v6" />
                         </svg>
                       </span>
                     </h4>
+
                     <div className="flex flex-wrap gap-2">
                       {project.tech.slice(0, 4).map((tech) => (
                         <span
