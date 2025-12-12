@@ -5,6 +5,8 @@ import { use } from "react";
 import { useTransitionRouter } from "next-transition-router";
 import gsap from "gsap";
 import Navbar from "@/components/Navbar";
+import AnimatedHeading from "@/components/AnimateHeading";
+import AnimateDescription from "@/components/AnimateDescription";
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
@@ -40,25 +42,33 @@ export default function ProjectPage({ params }) {
     <>
       <Navbar hamburgerOnly={true} />
 
-      <section className="min-h-screen bg-[#0d0d0d] text-white px-6 md:px-48 py-10">
+      <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
         <button
           onClick={handleBack}
           className="flex items-center gap-2 text-lg mb-12 hover:opacity-80 transition-opacity">
           <span className="text-2xl">←</span> Back
         </button>
 
-        <h2 className="text-6xl md:text-7xl font-extrabold mb-6">
-          {project.title}
-        </h2>
+        <AnimatedHeading
+          text={project.title}
+          className="text-6xl md:text-7xl font-extrabold mb-6"
+        />
 
         <div className="mb-8 mt-10">
           <strong className="opacity-100 text-xl font-bold">Tech Stack</strong>
-          <p className="text-base sm:text-lg text-[#a29e9a] font-sans">{project.tech?.join(", ")}</p>
+          <AnimateDescription
+            text={project.tech?.join(", ")}
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          />
         </div>
 
         <div className="leading-relaxed mb-14">
           <strong className="opacity-100 text-xl font-bold">Description</strong>
-          <p className="text-base sm:text-lg text-[#a29e9a] font-sans">{project.description}</p>
+
+          <AnimateDescription
+            text={project.description}
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          />
         </div>
 
         <div className="flex flex-col gap-8 mb-16">

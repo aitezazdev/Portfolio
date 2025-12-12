@@ -12,24 +12,24 @@ const Services = () => {
   const servicesRef = useRef([]);
 
   useEffect(() => {
+    if (window.innerWidth < 768) return;
+
     const ctx = gsap.context(() => {
       const allSections = servicesRef.current.filter(Boolean);
       const pinOffset = 50;
 
-      if (window.innerWidth >= 768) {
-        allSections.forEach((section, index) => {
-          const offset = pinOffset + index * 100;
+      allSections.forEach((section, index) => {
+        const offset = pinOffset + index * 100;
 
-          ScrollTrigger.create({
-            trigger: section,
-            start: `top ${offset}px`,
-            endTrigger: allSections[allSections.length - 1],
-            end: "bottom bottom",
-            pin: true,
-            pinSpacing: false,
-          });
+        ScrollTrigger.create({
+          trigger: section,
+          start: `top ${offset}px`,
+          endTrigger: allSections[allSections.length - 1],
+          end: "bottom bottom",
+          pin: true,
+          pinSpacing: false,
         });
-      }
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -80,7 +80,7 @@ const Services = () => {
     <section
       id="services"
       ref={sectionRef}
-      className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 md:pt-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+      className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 md:pt-5 px-6 md:px-12 lg:px-20 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 md:mb-20">
           <AnimatedHeading

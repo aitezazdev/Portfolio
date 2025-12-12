@@ -127,16 +127,22 @@ const TechStack = () => {
   return (
     <section
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-20 px-6 sm:px-8 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden">
-      <div className="mb-14">
+      className="bg-[#080807] text-[#d1d1c7] pb-20 md:pb-36 px-6 sm:px-8 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden">
+      <div className="mb-14 hidden md:block">
         <AnimatedHeading
           text={headingText}
-          className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
         />
         <AnimateDescription
           text={descriptionText}
           className="text-base sm:text-lg md:text-xl text-[#a29e9a] font-sans leading-relaxed"
         />
+      </div>
+
+      <div className="md:hidden text-center mb-10">
+        <h2 className="text-3xl font-bold tracking-tight text-[#d1d1c7]">
+          Tech Stack
+        </h2>
       </div>
 
       <div className="space-y-24">
