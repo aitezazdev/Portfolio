@@ -23,27 +23,28 @@ export default function GlobalPreloader() {
     let canComplete = false;
 
     const smoothProgressUpdate = () => {
-      if (currentProgress.current < targetProgress.current) {
-        currentProgress.current += (targetProgress.current - currentProgress.current) * 0.1;
-        setProgress(Math.min(currentProgress.current, 95));
-        animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
-      } else {
-        if (canComplete && targetProgress.current >= 100) {
-          currentProgress.current = 100;
-          setProgress(100);
-          setTimeout(() => {
-            startExitAnimation();
-          }, 300);
-        }
+      const diff = targetProgress.current - currentProgress.current;
+      
+      if (Math.abs(diff) > 0.1) {
+        currentProgress.current += diff * 0.1;
+        setProgress(Math.min(Math.round(currentProgress.current), 95));
       }
+      
+      if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
+        currentProgress.current = 100;
+        setProgress(100);
+        setTimeout(() => {
+          startExitAnimation();
+        }, 300);
+        return;
+      }
+      
+      animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
     };
 
     const updateTargetProgress = () => {
       const percentage = (loadedAssets / totalAssets) * 100;
       targetProgress.current = Math.min(percentage, 95);
-      if (!animationFrameId.current) {
-        smoothProgressUpdate();
-      }
     };
 
     const trackAsset = () => {
@@ -163,7 +164,13 @@ export default function GlobalPreloader() {
       }
     }, 1000);
 
+    const fallbackTimer = setTimeout(() => {
+      canComplete = true;
+      targetProgress.current = 100;
+    }, 5000);
+
     return () => {
+      clearTimeout(fallbackTimer);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
@@ -171,60 +178,49 @@ export default function GlobalPreloader() {
   }, []);
 
   const startExitAnimation = () => {
+    console.log("Starting exit animation");
+    
     const tl = gsap.timeline({
       onComplete: () => {
+        console.log("Preloader complete!");
         setIsLoading(false);
         sessionStorage.setItem("preloader-shown", "true");
+        
+        window.dispatchEvent(new CustomEvent('preloaderComplete'));
+        console.log("Event dispatched: preloaderComplete");
       },
     });
 
-    tl.to(".preloader-content", {
+    tl.to(".preloader-overlay", {
       opacity: 0,
-      duration: 0.3,
-    })
-      .to(".preloader-overlay", {
-        yPercent: -100,
-        duration: 0.8,
-        ease: "power3.inOut",
-      })
-      .to(
-        ".preloader-overlay-inner",
-        {
-          yPercent: -100,
-          duration: 0.8,
-          ease: "power3.inOut",
-        },
-        "-=0.6"
-      );
+      duration: 0.6,
+      ease: "power2.inOut",
+    });
   };
 
   if (!isLoading) return null;
 
   return (
-    <div className="preloader-overlay fixed inset-0 z-[9999] bg-[#1a1a1a]">
-      <div className="preloader-overlay-inner absolute inset-0 bg-[#e8e8e3]">
-        <div className="preloader-content flex flex-col items-center justify-center h-full">
-          <div className="mb-8">
-            <h1 className="text-4xl md:text-6xl font-bold text-[#1a1a1a] font-syne">
-              Portfolio
-            </h1>
-          </div>
+    <div className="preloader-overlay fixed inset-0 z-[9999] bg-[#e8e8e3] flex flex-col items-center justify-center">
+      <div className="mb-8">
+        <h1 className="text-4xl md:text-6xl font-bold text-[#1a1a1a] font-syne">
+          Portfolio
+        </h1>
+      </div>
 
-          <div className="w-64 md:w-96 h-1 bg-gray-300 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-green-600 to-emerald-600 transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+      <div className="w-64 md:w-96 h-1 bg-gray-300 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-green-600 to-emerald-600 transition-all duration-300 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
 
-          <div className="mt-4 text-[#1a1a1a] font-mono text-sm md:text-base">
-            {Math.round(progress)}%
-          </div>
+      <div className="mt-4 text-[#1a1a1a] font-mono text-sm md:text-base">
+        {Math.round(progress)}%
+      </div>
 
-          <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">
-            Loading ...
-          </div>
-        </div>
+      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">
+        Loading ...
       </div>
     </div>
   );
