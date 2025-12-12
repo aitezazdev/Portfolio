@@ -8,6 +8,7 @@ const HomeBanner = () => {
   const nameRef = useRef(null);
   const paragraphRef = useRef(null);
   const buttonsRef = useRef(null);
+  const containerRef = useRef(null);
   const [canAnimate, setCanAnimate] = useState(false);
 
   const splitText = (text) =>
@@ -26,20 +27,33 @@ const HomeBanner = () => {
     ));
 
   useEffect(() => {
-    console.log("HomeBanner mounted");
+    if (containerRef.current) {
+      gsap.set(containerRef.current, { opacity: 0 });
+    }
+    if (nameRef.current) {
+      gsap.set(nameRef.current.querySelectorAll(".letter-wrapper"), { 
+        y: "100%", 
+        opacity: 0 
+      });
+    }
+    if (paragraphRef.current) {
+      gsap.set(paragraphRef.current, { y: 40, opacity: 0 });
+    }
+    if (buttonsRef.current) {
+      gsap.set(buttonsRef.current, { y: 40, opacity: 0 });
+    }
+  }, []);
+
+  useEffect(() => {
     const hasShownPreloader = sessionStorage.getItem("preloader-shown");
-    console.log("Has shown preloader:", hasShownPreloader);
     
     if (hasShownPreloader) {
-      console.log("Preloader already shown, animating immediately");
-      setCanAnimate(true);
+      setTimeout(() => setCanAnimate(true), 50);
     } else {
       const handlePreloaderComplete = () => {
-        console.log("Received preloaderComplete event!");
-        setCanAnimate(true);
+        setTimeout(() => setCanAnimate(true), 100);
       };
       
-      console.log("Listening for preloaderComplete event");
       window.addEventListener('preloaderComplete', handlePreloaderComplete);
       
       return () => {
@@ -49,13 +63,16 @@ const HomeBanner = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Name animation effect, canAnimate:", canAnimate);
     if (!nameRef.current || !canAnimate) return;
 
-    console.log("Starting name animation");
+    gsap.to(containerRef.current, {
+      opacity: 1,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+
     const letters = nameRef.current.querySelectorAll(".letter-wrapper");
 
-    gsap.set(letters, { y: "100%", opacity: 0 });
     gsap.to(letters, {
       y: "0%",
       opacity: 1,
@@ -103,18 +120,16 @@ const HomeBanner = () => {
     const tl = gsap.timeline({ delay: 1.1, ease: "power3.out" });
 
     if (paragraphRef.current) {
-      tl.fromTo(
+      tl.to(
         paragraphRef.current,
-        { y: 40, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8 },
         "-=0.4"
       );
     }
 
     if (buttonsRef.current) {
-      tl.fromTo(
+      tl.to(
         buttonsRef.current,
-        { y: 40, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8 },
         "-=0.4"
       );
@@ -127,7 +142,11 @@ const HomeBanner = () => {
   };
 
   return (
-    <section className="min-h-screen px-6 sm:px-8 md:px-12 pt-16 md:pt-20 bg-[#e8e8e3] flex items-center">
+    <section 
+      ref={containerRef}
+      className="min-h-screen px-6 sm:px-8 md:px-12 pt-16 md:pt-20 bg-[#e8e8e3] flex items-center"
+      style={{ opacity: 0 }}
+    >
       <div className="max-w-7xl mx-auto w-full">
         <div className="text-center md:hidden">
           <h1
