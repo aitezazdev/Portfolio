@@ -1,4 +1,3 @@
-
 export async function GET(req, { params }) {
   const projects = [
     {
@@ -16,12 +15,14 @@ export async function GET(req, { params }) {
         "Designed a minimal yet elegant interface for smooth content reading.",
       ],
       images: [
+        "/Projects/blogsite/blog-site.png",
         "/Projects/blogsite/blog-site-2.png",
         "/Projects/blogsite/blog-site-3.png",
+        "/Projects/blogsite/blog-site-4.png",
       ],
       hoverImage: "/Projects/blogsite/blog-site.png",
-      liveUrl: "https://epikcart.vercel.app",
-      github: "https://github.com/aitezazdev/blog-app-mern",
+      liveUrl: "",
+      github: "",
     },
     {
       id: 2,
@@ -38,12 +39,15 @@ export async function GET(req, { params }) {
         "Implemented subtle page transitions using Framer Motion.",
       ],
       images: [
+        "/Projects/emarketana/emarketana-1.png",
         "/Projects/emarketana/emarketana-2.png",
         "/Projects/emarketana/emarketana-3.png",
+        "/Projects/emarketana/emarketana-4.png",
+        "/Projects/emarketana/emarketana-5.png",
       ],
       hoverImage: "/Projects/emarketana/emarketana-1.png",
-      liveUrl: "https://epikcart.vercel.app",
-      github: "https://github.com/yourusername/epikcart",
+      liveUrl: "",
+      github: "",
     },
     {
       id: 3,
@@ -68,12 +72,15 @@ export async function GET(req, { params }) {
         "Built a dashboard for managing transactions and tracking savings goals.",
       ],
       images: [
+        "/Projects/financeTracker/finance-tracker-1.png",
         "/Projects/financeTracker/finance-tracker-2.png",
         "/Projects/financeTracker/finance-tracker-3.png",
+        "/Projects/financeTracker/finance-tracker-4.png",
+        "/Projects/financeTracker/finance-tracker-5.png",
       ],
       hoverImage: "/Projects/financeTracker/finance-tracker-1.png",
-      liveUrl: "https://epikcart.vercel.app",
-      github: "https://github.com/yourusername/epikcart",
+      liveUrl: "",
+      github: "",
     },
     {
       id: 4,
@@ -96,10 +103,17 @@ export async function GET(req, { params }) {
         "Integrated Redux for global state management and scalability.",
         "Designed responsive admin and doctor dashboards with Tailwind CSS.",
       ],
-      images: ["/Projects/HMS/hospital-1.png", "/Projects/HMS/hospital-2.png"],
+      images: [
+        "/Projects/HMS/hospital-1.png",
+        "/Projects/HMS/hospital-2.png",
+        "/Projects/HMS/hospital-3.png",
+        "/Projects/HMS/hospital-4.png",
+        "/Projects/HMS/hospital-5.png",
+        "/Projects/HMS/hospital-6.png",
+      ],
       hoverImage: "/Projects/HMS/hospital-3.png",
-      liveUrl: "https://epikcart.vercel.app",
-      github: "https://github.com/yourusername/epikcart",
+      liveUrl: "",
+      github: "",
     },
   ];
   const project = projects.find((p) => p.slug === params.slug);

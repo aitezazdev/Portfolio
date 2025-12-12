@@ -122,7 +122,6 @@ export default function ProjectsPage() {
   };
 
   const handleProjectClick = (slug) => {
-    // save scroll position
     sessionStorage.setItem("projects-scroll", window.scrollY);
     sessionStorage.setItem("previous-project-url", window.location.pathname);
 
@@ -143,7 +142,7 @@ export default function ProjectsPage() {
   return (
     <section
       id="projects"
-      className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 py-12 md:py-24">
+      className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 pt-5 pb-12 md:pb-24">
       <div className="max-w-7xl mx-auto">
         <div className="hidden md:block mb-10 md:mb-20">
           <AnimatedHeading

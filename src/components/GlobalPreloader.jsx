@@ -163,7 +163,7 @@ export default function GlobalPreloader() {
       </div>
 
       <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">
-        Loading Experience...
+        Loading ...
       </div>
     </div>
   );

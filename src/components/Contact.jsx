@@ -11,8 +11,8 @@ const Contact = () => {
     "Have a project in mind or just want to say hello? Feel free to reach out.";
 
   return (
-    <section id="contact" className="bg-[#e8e8e3] py-16 md:py-24">
-      <div className="w-[93%] mx-auto rounded-xl bg-[#131211] text-[#d1d1c7] px-6 sm:px-10 md:px-12 lg:px-20 py-16">
+    <section id="contact" className="bg-[#e8e8e3] py-16 md:pt-10 md:pb-24">
+      <div className="w-[93%] mx-auto rounded-xl bg-[#080807] text-[#d1d1c7] px-6 sm:px-10 md:px-12 lg:px-20 p-16">
         <AnimatedHeading
           text={headingText}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6"
