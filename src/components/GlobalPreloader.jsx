@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
+import { PRELOAD_ASSETS } from "@/lib/assetConfig";
 
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -11,163 +12,106 @@ export default function GlobalPreloader() {
   const animationFrameId = useRef(null);
 
   useEffect(() => {
-    const hasShownPreloader = sessionStorage.getItem("preloader-shown");
+    document.body.classList.add('preloader-active');
     
+    const hasShownPreloader = sessionStorage.getItem("preloader-shown");
+
     if (hasShownPreloader) {
       setIsLoading(false);
+      document.body.classList.remove('preloader-active');
+      document.body.classList.add('preloader-complete');
       return;
     }
 
-    let totalAssets = 10;
+    let totalAssets = 0;
     let loadedAssets = 0;
     let canComplete = false;
 
     const smoothProgressUpdate = () => {
       const diff = targetProgress.current - currentProgress.current;
-      
+
       if (Math.abs(diff) > 0.1) {
-        currentProgress.current += diff * 0.1;
-        setProgress(Math.min(Math.round(currentProgress.current), 95));
+        currentProgress.current += diff * 0.08;
+        setProgress(Math.min(Math.round(currentProgress.current), 98));
       }
-      
-      if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
+
+      if (
+        canComplete &&
+        targetProgress.current >= 100 &&
+        currentProgress.current >= 99
+      ) {
         currentProgress.current = 100;
         setProgress(100);
         setTimeout(() => {
           startExitAnimation();
-        }, 300);
+        }, 400);
         return;
       }
-      
+
       animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
     };
 
     const updateTargetProgress = () => {
-      const percentage = (loadedAssets / totalAssets) * 100;
-      targetProgress.current = Math.min(percentage, 95);
+      const percentage =
+        totalAssets > 0 ? (loadedAssets / totalAssets) * 100 : 0;
+      targetProgress.current = Math.min(percentage, 98);
     };
 
     const trackAsset = () => {
       loadedAssets++;
       updateTargetProgress();
-      
+
       if (loadedAssets >= totalAssets) {
         setTimeout(() => {
           canComplete = true;
           targetProgress.current = 100;
-        }, 800);
+        }, 300);
       }
     };
 
-    const loadImages = () => {
-      const images = Array.from(document.getElementsByTagName("img"));
-      const bgImages = Array.from(document.querySelectorAll("*")).filter((el) => {
-        const bg = window.getComputedStyle(el).backgroundImage;
-        return bg && bg !== "none" && bg.includes("url");
-      });
+    const preloadAssets = () => {
+      const criticalAssets = PRELOAD_ASSETS.images;
+      totalAssets = criticalAssets.length + 5;
 
-      const allImages = [...images];
-      bgImages.forEach((el) => {
-        const bg = window.getComputedStyle(el).backgroundImage;
-        const urls = bg.match(/url\(['"]?(.*?)['"]?\)/g);
-        if (urls) {
-          urls.forEach((url) => {
-            const src = url.replace(/url\(['"]?|['"]?\)/g, "");
-            if (!src.startsWith("data:")) {
-              const img = new Image();
-              img.src = src;
-              allImages.push(img);
-            }
-          });
+      criticalAssets.forEach((src) => {
+        if (src.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
+          const img = new Image();
+          img.onload = () => {
+            setTimeout(() => trackAsset(), Math.random() * 100);
+          };
+          img.onerror = () => {
+            console.warn(`Failed to load: ${src}`);
+            setTimeout(() => trackAsset(), Math.random() * 100);
+          };
+          img.src = src;
         }
       });
 
-      if (allImages.length > 0) {
-        totalAssets += allImages.length;
-      }
-
-      allImages.forEach((img) => {
-        if (img.complete) {
-          setTimeout(() => trackAsset(), Math.random() * 100);
-        } else {
-          img.onload = () => setTimeout(() => trackAsset(), Math.random() * 100);
-          img.onerror = () => setTimeout(() => trackAsset(), Math.random() * 100);
-        }
-      });
-    };
-
-    const loadFonts = async () => {
       if (document.fonts && document.fonts.ready) {
-        const fontFaces = Array.from(document.fonts);
-        if (fontFaces.length > 0) {
-          totalAssets += fontFaces.length;
-        }
-        
-        try {
-          await document.fonts.ready;
-          fontFaces.forEach((_, i) => {
+        document.fonts.ready.then(() => {
+          for (let i = 0; i < 5; i++) {
             setTimeout(() => trackAsset(), i * 50);
-          });
-        } catch (err) {
-          fontFaces.forEach(() => trackAsset());
-        }
-      } else {
-        trackAsset();
-      }
-    };
-
-    const checkGSAP = () => {
-      if (typeof gsap !== "undefined") {
-        setTimeout(() => trackAsset(), 100);
-      } else {
-        const checkInterval = setInterval(() => {
-          if (typeof gsap !== "undefined") {
-            clearInterval(checkInterval);
-            trackAsset();
           }
-        }, 50);
-        
-        setTimeout(() => {
-          clearInterval(checkInterval);
-          trackAsset();
-        }, 1000);
+        });
+      } else {
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => trackAsset(), i * 50);
+        }
       }
     };
 
     smoothProgressUpdate();
 
-    setTimeout(() => {
-      trackAsset();
-      trackAsset();
-    }, 50);
-
-    loadFonts();
-    checkGSAP();
-
-    const loadAllImages = () => {
-      setTimeout(() => {
-        loadImages();
-      }, 100);
-    };
-
     if (document.readyState === "complete") {
-      loadAllImages();
+      preloadAssets();
     } else {
-      window.addEventListener("load", loadAllImages);
+      window.addEventListener("load", preloadAssets);
     }
-
-    setTimeout(() => {
-      if (loadedAssets < 5) {
-        for (let i = 0; i < 5; i++) {
-          setTimeout(() => trackAsset(), i * 150);
-        }
-      }
-    }, 1000);
 
     const fallbackTimer = setTimeout(() => {
       canComplete = true;
       targetProgress.current = 100;
-    }, 5000);
+    }, 4000);
 
     return () => {
       clearTimeout(fallbackTimer);
@@ -178,22 +122,21 @@ export default function GlobalPreloader() {
   }, []);
 
   const startExitAnimation = () => {
-    console.log("Starting exit animation");
-    
     const tl = gsap.timeline({
       onComplete: () => {
-        console.log("Preloader complete!");
         setIsLoading(false);
         sessionStorage.setItem("preloader-shown", "true");
         
-        window.dispatchEvent(new CustomEvent('preloaderComplete'));
-        console.log("Event dispatched: preloaderComplete");
+        document.body.classList.remove('preloader-active');
+        document.body.classList.add('preloader-complete');
+        
+        window.dispatchEvent(new CustomEvent("preloaderComplete"));
       },
     });
 
     tl.to(".preloader-overlay", {
       opacity: 0,
-      duration: 0.6,
+      duration: 0.8,
       ease: "power2.inOut",
     });
   };
@@ -220,7 +163,7 @@ export default function GlobalPreloader() {
       </div>
 
       <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">
-        Loading ...
+        Loading Experience...
       </div>
     </div>
   );

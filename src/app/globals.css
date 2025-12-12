@@ -16,3 +16,15 @@ body.menu-open {
 .html {
   scroll-behavior: smooth;
 }
+
+.preloader-active {
+  overflow: hidden;
+}
+
+.preloader-active main {
+  visibility: hidden;
+}
+
+.preloader-complete main {
+  visibility: visible;
+}
