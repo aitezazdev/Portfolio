@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import AnimatedButton from "./AnimatedButton";
 
@@ -8,6 +8,7 @@ const HomeBanner = () => {
   const nameRef = useRef(null);
   const paragraphRef = useRef(null);
   const buttonsRef = useRef(null);
+  const [canAnimate, setCanAnimate] = useState(false);
 
   const splitText = (text) =>
     text.split("").map((char, idx) => (
@@ -25,8 +26,33 @@ const HomeBanner = () => {
     ));
 
   useEffect(() => {
-    if (!nameRef.current) return;
+    console.log("HomeBanner mounted");
+    const hasShownPreloader = sessionStorage.getItem("preloader-shown");
+    console.log("Has shown preloader:", hasShownPreloader);
+    
+    if (hasShownPreloader) {
+      console.log("Preloader already shown, animating immediately");
+      setCanAnimate(true);
+    } else {
+      const handlePreloaderComplete = () => {
+        console.log("Received preloaderComplete event!");
+        setCanAnimate(true);
+      };
+      
+      console.log("Listening for preloaderComplete event");
+      window.addEventListener('preloaderComplete', handlePreloaderComplete);
+      
+      return () => {
+        window.removeEventListener('preloaderComplete', handlePreloaderComplete);
+      };
+    }
+  }, []);
 
+  useEffect(() => {
+    console.log("Name animation effect, canAnimate:", canAnimate);
+    if (!nameRef.current || !canAnimate) return;
+
+    console.log("Starting name animation");
     const letters = nameRef.current.querySelectorAll(".letter-wrapper");
 
     gsap.set(letters, { y: "100%", opacity: 0 });
@@ -69,9 +95,11 @@ const HomeBanner = () => {
       nameRef.current.removeEventListener("mouseenter", handleMouseEnter);
       nameRef.current.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [canAnimate]);
 
   useEffect(() => {
+    if (!canAnimate) return;
+
     const tl = gsap.timeline({ delay: 1.1, ease: "power3.out" });
 
     if (paragraphRef.current) {
@@ -91,7 +119,7 @@ const HomeBanner = () => {
         "-=0.4"
       );
     }
-  }, []);
+  }, [canAnimate]);
 
   const handleScroll = (id) => {
     const section = document.getElementById(id);
