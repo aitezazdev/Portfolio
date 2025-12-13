@@ -1,7 +1,7 @@
-import React from "react";
-import About from "./About";
-import Services from "./Services";
-import TechStack from "./TechStack";
+import React from 'react';
+import About from './About';
+import Services from './Services';
+import TechStack from './TechStack';
 
 const ReuniteBlack = ({ techStackRef }) => {
   return (

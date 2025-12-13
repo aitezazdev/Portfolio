@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import AnimatedLink from "./AnimateLink";
-import { FaArrowUp } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import AnimatedLink from './AnimateLink';
+import { FaArrowUp } from 'react-icons/fa';
 
 const Footer = () => {
-  const [currentTime, setCurrentTime] = useState("");
+  const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const timeString = now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
+      const timeString = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
         hour12: true,
-        timeZone: "Asia/Karachi",
+        timeZone: 'Asia/Karachi',
       });
       setCurrentTime(timeString);
     };
@@ -23,7 +23,7 @@ const Footer = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -52,23 +52,18 @@ const Footer = () => {
                 <a
                   href="https://linkedin.com/aitezaz-sikandar"
                   target="_blank"
-                  rel="noopener noreferrer">
+                  rel="noopener noreferrer"
+                >
                   Linkedin
                 </a>
               </AnimatedLink>
               <AnimatedLink>
-                <a
-                  href="https://instagram.com/ur_zaz"
-                  target="_blank"
-                  rel="noopener noreferrer">
+                <a href="https://instagram.com/ur_zaz" target="_blank" rel="noopener noreferrer">
                   Instagram
                 </a>
               </AnimatedLink>
               <AnimatedLink>
-                <a
-                  href="https://github.com/aitezazdev"
-                  target="_blank"
-                  rel="noopener noreferrer">
+                <a href="https://github.com/aitezazdev" target="_blank" rel="noopener noreferrer">
                   Github
                 </a>
               </AnimatedLink>
@@ -88,7 +83,8 @@ const Footer = () => {
         <div className="flex justify-end">
           <button
             onClick={scrollToTop}
-            className="w-10 h-10 sm:w-12 sm:h-12 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 group focus:outline-none">
+            className="w-10 h-10 sm:w-12 sm:h-12 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 group focus:outline-none"
+          >
             <AnimatedLink className="flex items-center justify-center">
               <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#e8e8e3]" />
             </AnimatedLink>

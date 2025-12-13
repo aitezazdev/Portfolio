@@ -1,30 +1,30 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const AnimatedHeading = ({ text, className = "" }) => {
+const AnimatedHeading = ({ text, className = '' }) => {
   const headingRef = useRef(null);
 
   useEffect(() => {
-    const chars = headingRef.current.querySelectorAll(".char");
+    const chars = headingRef.current.querySelectorAll('.char');
 
     gsap.fromTo(
       chars,
-      { opacity: 0, y: "100%" },
+      { opacity: 0, y: '100%' },
       {
         opacity: 1,
-        y: "0%",
+        y: '0%',
         duration: 0.8,
         stagger: 0.03,
-        ease: "power3.out",
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: headingRef.current,
-          start: "top 85%",
+          start: 'top 85%',
           once: true,
         },
-      }
+      },
     );
     ScrollTrigger.refresh();
   }, []);
@@ -33,13 +33,11 @@ const AnimatedHeading = ({ text, className = "" }) => {
     <div className="overflow-hidden mb-8">
       <h2
         ref={headingRef}
-        className={`font-display font-bold uppercase tracking-tighter ${className}`}>
-        {text.split("").map((char, i) => (
-          <span
-            key={i}
-            className="char inline-block"
-            style={{ opacity: 0 }}>
-            {char === " " ? "\u00A0" : char}
+        className={`font-display font-bold uppercase tracking-tighter ${className}`}
+      >
+        {text.split('').map((char, i) => (
+          <span key={i} className="char inline-block" style={{ opacity: 0 }}>
+            {char === ' ' ? '\u00A0' : char}
           </span>
         ))}
       </h2>

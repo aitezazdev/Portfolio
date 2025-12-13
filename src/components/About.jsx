@@ -1,8 +1,8 @@
-import AnimateDescription from "./AnimateDescription";
-import AnimatedHeading from "./AnimateHeading";
+import AnimateDescription from './AnimateDescription';
+import AnimatedHeading from './AnimateHeading';
 
 const About = () => {
-  const headingText = "Who Am I";
+  const headingText = 'Who Am I';
   const descriptionText =
     "I'm a software engineer driven by a passion for turning ideas into clean, intuitive digital experiences.";
 
@@ -41,7 +41,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
             </span>
 
             <div className="space-y-6">
-              {aboutMeText.split("\n\n").map((p, i) => (
+              {aboutMeText.split('\n\n').map((p, i) => (
                 <p
                   key={i}
                   className="text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"

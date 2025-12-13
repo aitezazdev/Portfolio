@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useRef } from "react";
-import Lenis from "@studio-freight/lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createContext, useContext, useEffect, useRef } from 'react';
+import Lenis from '@studio-freight/lenis';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
@@ -44,7 +44,5 @@ export default function SmoothScrollProvider({ children }) {
     };
   }, []);
 
-  return (
-    <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>
-  );
+  return <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>;
 }
