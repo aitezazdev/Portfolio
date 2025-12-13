@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import gsap from "gsap";
-import { PRELOAD_ASSETS } from "@/lib/assetConfig";
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { PRELOAD_ASSETS } from '@/lib/assetConfig';
 
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,8 +13,8 @@ export default function GlobalPreloader() {
 
   useEffect(() => {
     document.body.classList.add('preloader-active');
-    
-    const hasShownPreloader = sessionStorage.getItem("preloader-shown");
+
+    const hasShownPreloader = sessionStorage.getItem('preloader-shown');
 
     if (hasShownPreloader) {
       setIsLoading(false);
@@ -35,11 +35,7 @@ export default function GlobalPreloader() {
         setProgress(Math.min(Math.round(currentProgress.current), 98));
       }
 
-      if (
-        canComplete &&
-        targetProgress.current >= 100 &&
-        currentProgress.current >= 99
-      ) {
+      if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
         currentProgress.current = 100;
         setProgress(100);
         setTimeout(() => {
@@ -52,8 +48,7 @@ export default function GlobalPreloader() {
     };
 
     const updateTargetProgress = () => {
-      const percentage =
-        totalAssets > 0 ? (loadedAssets / totalAssets) * 100 : 0;
+      const percentage = totalAssets > 0 ? (loadedAssets / totalAssets) * 100 : 0;
       targetProgress.current = Math.min(percentage, 98);
     };
 
@@ -102,10 +97,10 @@ export default function GlobalPreloader() {
 
     smoothProgressUpdate();
 
-    if (document.readyState === "complete") {
+    if (document.readyState === 'complete') {
       preloadAssets();
     } else {
-      window.addEventListener("load", preloadAssets);
+      window.addEventListener('load', preloadAssets);
     }
 
     const fallbackTimer = setTimeout(() => {
@@ -125,19 +120,19 @@ export default function GlobalPreloader() {
     const tl = gsap.timeline({
       onComplete: () => {
         setIsLoading(false);
-        sessionStorage.setItem("preloader-shown", "true");
-        
+        sessionStorage.setItem('preloader-shown', 'true');
+
         document.body.classList.remove('preloader-active');
         document.body.classList.add('preloader-complete');
-        
-        window.dispatchEvent(new CustomEvent("preloaderComplete"));
+
+        window.dispatchEvent(new CustomEvent('preloaderComplete'));
       },
     });
 
-    tl.to(".preloader-overlay", {
+    tl.to('.preloader-overlay', {
       opacity: 0,
       duration: 0.8,
-      ease: "power2.inOut",
+      ease: 'power2.inOut',
     });
   };
 
@@ -146,9 +141,7 @@ export default function GlobalPreloader() {
   return (
     <div className="preloader-overlay fixed inset-0 z-[9999] bg-[#e8e8e3] flex flex-col items-center justify-center">
       <div className="mb-8">
-        <h1 className="text-4xl md:text-6xl font-bold text-[#1a1a1a] font-syne">
-          Portfolio
-        </h1>
+        <h1 className="text-4xl md:text-6xl font-bold text-[#1a1a1a] font-syne">Portfolio</h1>
       </div>
 
       <div className="w-64 md:w-96 h-1 bg-gray-300 rounded-full overflow-hidden">
@@ -162,9 +155,7 @@ export default function GlobalPreloader() {
         {Math.round(progress)}%
       </div>
 
-      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">
-        Loading ...
-      </div>
+      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">Loading ...</div>
     </div>
   );
 }

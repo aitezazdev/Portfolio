@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { useTransitionRouter } from "next-transition-router";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import AnimatedHeading from "./AnimateHeading";
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { useTransitionRouter } from 'next-transition-router';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AnimatedHeading from './AnimateHeading';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -21,26 +21,26 @@ export default function ProjectsPage() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const res = await fetch("/api/projects");
-        if (!res.ok) throw new Error("Failed to fetch projects");
+        const res = await fetch('/api/projects');
+        if (!res.ok) throw new Error('Failed to fetch projects');
         const data = await res.json();
         setProjects(data);
         if (data.length > 0 && window.innerWidth >= 768) {
           setSelectedProject(0);
         }
       } catch (err) {
-        console.error("Error loading projects:", err);
+        console.error('Error loading projects:', err);
       }
     }
     fetchProjects();
   }, []);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("projects-scroll");
+    const saved = sessionStorage.getItem('projects-scroll');
     if (saved) {
       setTimeout(() => {
         window.scrollTo(0, parseInt(saved));
-        sessionStorage.removeItem("projects-scroll");
+        sessionStorage.removeItem('projects-scroll');
       }, 50);
     }
   }, []);
@@ -82,13 +82,13 @@ export default function ProjectsPage() {
         });
       };
 
-      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener('mousemove', handleMouseMove);
 
       return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener('mousemove', handleMouseMove);
       };
     },
-    { scope: containerRef, dependencies: [projects] }
+    { scope: containerRef, dependencies: [projects] },
   );
 
   useGSAP(
@@ -98,9 +98,9 @@ export default function ProjectsPage() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top bottom",
-          end: "top 80%",
-          toggleActions: "restart none none reverse",
+          start: 'top bottom',
+          end: 'top 80%',
+          toggleActions: 'restart none none reverse',
           scrub: 1,
         },
       });
@@ -110,7 +110,7 @@ export default function ProjectsPage() {
         opacity: 0,
       });
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   const handleMouseEnter = (index) => {
@@ -122,14 +122,14 @@ export default function ProjectsPage() {
   };
 
   const handleProjectClick = (slug) => {
-    sessionStorage.setItem("projects-scroll", window.scrollY);
-    sessionStorage.setItem("previous-project-url", window.location.pathname);
+    sessionStorage.setItem('projects-scroll', window.scrollY);
+    sessionStorage.setItem('previous-project-url', window.location.pathname);
 
-    gsap.set(".page-transition", { yPercent: 100 });
-    gsap.set(".page-transition--inner", { yPercent: 100 });
+    gsap.set('.page-transition', { yPercent: 100 });
+    gsap.set('.page-transition--inner', { yPercent: 100 });
 
     const tl = gsap.timeline();
-    tl.to(".page-transition", {
+    tl.to('.page-transition', {
       yPercent: 0,
       duration: 0.3,
     });
@@ -142,7 +142,8 @@ export default function ProjectsPage() {
   return (
     <section
       id="projects"
-      className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 pt-5 pb-12 md:pb-24">
+      className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 pt-5 pb-12 md:pb-24"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="hidden md:block mb-10 md:mb-20">
           <AnimatedHeading
@@ -162,7 +163,8 @@ export default function ProjectsPage() {
           {selectedProject !== null && (
             <div
               className="hidden md:block absolute right-20 top-0 z-[1] pointer-events-none w-[220px] sm:w-[280px] xl:w-[350px] opacity-0"
-              ref={imageContainerRef}>
+              ref={imageContainerRef}
+            >
               <div className="relative w-full aspect-[3/4] overflow-hidden rounded-sm shadow-xl">
                 {projects.map((project, index) => (
                   <Image
@@ -172,7 +174,7 @@ export default function ProjectsPage() {
                     width={300}
                     height={400}
                     className={`absolute inset-0 transition-all duration-500 w-full h-full object-cover object-top ${
-                      index !== selectedProject ? "opacity-0" : ""
+                      index !== selectedProject ? 'opacity-0' : ''
                     }`}
                     unoptimized
                   />
@@ -187,7 +189,8 @@ export default function ProjectsPage() {
                 key={project.id}
                 className="project-item group leading-none py-4 md:py-8 border-b border-gray-300 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
-                onClick={() => handleProjectClick(project.slug)}>
+                onClick={() => handleProjectClick(project.slug)}
+              >
                 {selectedProject === null && (
                   <div className="relative w-full mb-4 md:mb-8 overflow-hidden rounded-xl shadow-lg">
                     <Image
@@ -203,7 +206,7 @@ export default function ProjectsPage() {
 
                 <div className="flex gap-3 md:gap-8 items-start">
                   <div className="font-mono text-gray-400 text-sm sm:text-base md:text-base lg:text-lg pt-1 md:pt-2 min-w-[2rem] md:min-w-[3rem]">
-                    {String(index + 1).padStart(2, "0")}
+                    {String(index + 1).padStart(2, '0')}
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold flex items-center gap-2 md:gap-4 transition-all duration-700 bg-gradient-to-r from-[#10b981] via-[#0f9f6b] to-[#1a1a1a] from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-3 md:mb-4">
@@ -219,7 +222,8 @@ export default function ProjectsPage() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="md:w-7 md:h-7 lg:w-9 lg:h-9">
+                          className="md:w-7 md:h-7 lg:w-9 lg:h-9"
+                        >
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                           <path d="M10 14 21 3" />
                           <path d="M15 3h6v6" />
@@ -231,7 +235,8 @@ export default function ProjectsPage() {
                       {project.tech.slice(0, 4).map((tech) => (
                         <span
                           key={tech}
-                          className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white border border-gray-300 rounded-full text-gray-700 text-xs sm:text-sm font-medium hover:border-green-500 hover:text-green-600 transition-all duration-300">
+                          className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white border border-gray-300 rounded-full text-gray-700 text-xs sm:text-sm font-medium hover:border-green-500 hover:text-green-600 transition-all duration-300"
+                        >
                           {tech}
                         </span>
                       ))}
@@ -251,10 +256,12 @@ export default function ProjectsPage() {
 
       <div
         className="page-transition fixed inset-0 bg-white z-50 pointer-events-none"
-        style={{ transform: "translateY(100%)" }}>
+        style={{ transform: 'translateY(100%)' }}
+      >
         <div
           className="page-transition--inner h-full w-full"
-          style={{ transform: "translateY(100%)" }}></div>
+          style={{ transform: 'translateY(100%)' }}
+        ></div>
       </div>
 
       <div className="absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(circle_at_30%_50%,#00000015,transparent_70%)]" />

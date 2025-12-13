@@ -1,9 +1,9 @@
-"use client";
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import AnimatedHeading from "./AnimateHeading";
-import AnimateDescription from "./AnimateDescription";
+'use client';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AnimatedHeading from './AnimateHeading';
+import AnimateDescription from './AnimateDescription';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +25,7 @@ const Services = () => {
           trigger: section,
           start: `top ${offset}px`,
           endTrigger: allSections[allSections.length - 1],
-          end: "bottom bottom",
+          end: 'bottom bottom',
           pin: true,
           pinSpacing: false,
         });
@@ -35,43 +35,43 @@ const Services = () => {
     return () => ctx.revert();
   }, []);
 
-  const headingText = "What I Do";
+  const headingText = 'What I Do';
 
   const descriptionText =
     "I specialize in building full-stack web applications that are fast, reliable, and user-friendly. With a solid foundation in both frontend and backend technologies, I help bring ideas to life whether it's for a business, a startup, or a product team.";
 
   const services = [
     {
-      id: "01",
-      title: "Full Stack Development",
+      id: '01',
+      title: 'Full Stack Development',
       description:
-        "End-to-end development of modern web applications — from frontend interfaces to backend APIs. I build complete, maintainable, and scalable systems using the MERN stack and modern tooling.",
+        'End-to-end development of modern web applications — from frontend interfaces to backend APIs. I build complete, maintainable, and scalable systems using the MERN stack and modern tooling.',
       items: [
-        "MERN Stack (MongoDB, Express.js, React, Node.js)",
-        "REST APIs & Integration",
-        "Authentication & Authorization",
+        'MERN Stack (MongoDB, Express.js, React, Node.js)',
+        'REST APIs & Integration',
+        'Authentication & Authorization',
       ],
     },
     {
-      id: "02",
-      title: "Frontend Development",
+      id: '02',
+      title: 'Frontend Development',
       description:
-        "Crafting responsive, accessible, and elegant interfaces that deliver exceptional user experiences. I focus on clarity, performance, and seamless interaction across devices.",
+        'Crafting responsive, accessible, and elegant interfaces that deliver exceptional user experiences. I focus on clarity, performance, and seamless interaction across devices.',
       items: [
-        "React, Next.js, TailwindCSS, GSAP",
-        "Optimized Rendering & Animations",
-        "Figma to Code Implementation",
+        'React, Next.js, TailwindCSS, GSAP',
+        'Optimized Rendering & Animations',
+        'Figma to Code Implementation',
       ],
     },
     {
-      id: "03",
-      title: "Optimization & Performance",
+      id: '03',
+      title: 'Optimization & Performance',
       description:
-        "Optimizing codebases, APIs, and assets for speed, scalability, and maintainability. I ensure your applications run efficiently with best practices in caching, SEO, and deployment.",
+        'Optimizing codebases, APIs, and assets for speed, scalability, and maintainability. I ensure your applications run efficiently with best practices in caching, SEO, and deployment.',
       items: [
-        "Performance Tuning & Code Refactoring",
-        "SEO & Accessibility Optimization",
-        "Deployment (Vercel, AWS, Docker)",
+        'Performance Tuning & Code Refactoring',
+        'SEO & Accessibility Optimization',
+        'Deployment (Vercel, AWS, Docker)',
       ],
     },
   ];
@@ -80,7 +80,8 @@ const Services = () => {
     <section
       id="services"
       ref={sectionRef}
-      className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 md:pt-5 px-6 md:px-12 lg:px-20 overflow-hidden">
+      className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 md:pt-5 px-6 md:px-12 lg:px-20 overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 md:mb-20">
           <AnimatedHeading
@@ -108,7 +109,8 @@ const Services = () => {
               key={service.id}
               ref={(el) => (servicesRef.current[index] = el)}
               className="bg-[#080807] pb-20 md:pb-64"
-              style={{ zIndex: index + 1 }}>
+              style={{ zIndex: index + 1 }}
+            >
               <div className="grid md:grid-cols-12 gap-4 items-center pt-4 md:pt-8 border-t border-[#393632]">
                 <h3 className="font-display md:col-span-9 md:col-start-2 text-[#d1d1c7] font-bold text-2xl sm:text-2xl md:text-4xl lg:text-5xl">
                   {service.title}
@@ -123,12 +125,8 @@ const Services = () => {
 
                   <div className="divide-y divide-[#393632]">
                     {service.items.map((item, i) => (
-                      <div
-                        key={i}
-                        className="py-3 flex items-center gap-3 md:gap-4">
-                        <span className="text-gray-500 text-xs md:text-sm font-mono">
-                          0{i + 1}
-                        </span>
+                      <div key={i} className="py-3 flex items-center gap-3 md:gap-4">
+                        <span className="text-gray-500 text-xs md:text-sm font-mono">0{i + 1}</span>
                         <span className="text-base sm:text-base md:text-lg lg:text-xl font-bold font-sans">
                           {item}
                         </span>
