@@ -48,7 +48,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
       onUpdate: (self) => {
         const progress = self.progress;
         gsap.to(nav, { y: -120 * progress, duration: 0 });
-        if (mobileNav) gsap.to(mobileNav, { y: -180 * progress, duration: 0 });
+        if (mobileNav) gsap.to(mobileNav, { y: -190 * progress, duration: 0 });
       },
     });
 

@@ -139,11 +139,10 @@ const TechStack = () => {
         />
       </div>
 
-      <div className="md:hidden text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight text-[#d1d1c7]">
-          Tech Stack
-        </h2>
-      </div>
+      <AnimatedHeading
+        text="My Stack"
+        className="md:hidden text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
+      />
 
       <div className="space-y-24">
         {STACK_SECTIONS.map((stack, index) => (

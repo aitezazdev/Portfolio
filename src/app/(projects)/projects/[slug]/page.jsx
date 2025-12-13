@@ -1,12 +1,13 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { use } from "react";
 import { useTransitionRouter } from "next-transition-router";
 import gsap from "gsap";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 import AnimatedHeading from "@/components/AnimateHeading";
 import AnimateDescription from "@/components/AnimateDescription";
+import AnimatedLink from "@/components/AnimateLink";
+import { FaArrowUp } from "react-icons/fa";
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
@@ -15,7 +16,6 @@ export default function ProjectPage({ params }) {
 
   const handleBack = () => {
     const prev = sessionStorage.getItem("previous-project-url") || "/projects";
-
     gsap.set(".page-transition", { yPercent: 100 });
     gsap.set(".page-transition--inner", { yPercent: 100 });
 
@@ -24,7 +24,6 @@ export default function ProjectPage({ params }) {
       yPercent: 0,
       duration: 0.3,
     });
-
     tl.then(() => {
       router.push(prev);
     });
@@ -36,12 +35,15 @@ export default function ProjectPage({ params }) {
       .then((data) => setProject(data));
   }, [slug]);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (!project) return <div className="p-10 text-white">Loading...</div>;
 
   return (
     <>
-      <Navbar hamburgerOnly={true} />
-
+      {/* <Navbar hamburgerOnly={true} /> */}
       <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
         <button
           onClick={handleBack}
@@ -64,7 +66,6 @@ export default function ProjectPage({ params }) {
 
         <div className="leading-relaxed mb-14">
           <strong className="opacity-100 text-xl font-bold">Description</strong>
-
           <AnimateDescription
             text={project.description}
             className="text-base sm:text-lg text-[#a29e9a] font-sans"
@@ -81,6 +82,27 @@ export default function ProjectPage({ params }) {
               />
             </a>
           ))}
+        </div>
+
+        <div className="relative flex justify-center items-center mt-auto py-8">
+          <div className="text-center">
+            <p className="text-[#a29e9a] text-lg">Have a project in mind?</p>
+            <a
+              href="mailto:aitezazsikandar@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xl font-semibold text-[#bab6b3] hover:text-[#d4d2d0] transition">
+              aitezazsikandar@gmail.com
+            </a>
+          </div>
+
+          <button
+            onClick={scrollToTop}
+            className="absolute right-0 w-10 h-10 sm:w-10 sm:h-10 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 focus:outline-none group">
+            <AnimatedLink className="flex items-center justify-center group-hover:animate">
+              <FaArrowUp className="w-4 h-4 sm:w-4 sm:h-4 text-[#e8e8e3]" />
+            </AnimatedLink>
+          </button>
         </div>
       </section>
 
