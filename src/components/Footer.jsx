@@ -49,13 +49,28 @@ const Footer = () => {
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-[#6b645c] text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               <AnimatedLink>
-                <a href="https://linkedin.com/aitezaz-sikandar" target="_blank" rel="noopener noreferrer">Linkedin</a>
+                <a
+                  href="https://linkedin.com/aitezaz-sikandar"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  Linkedin
+                </a>
               </AnimatedLink>
               <AnimatedLink>
-                <a href="https://instagram.com/ur_zaz" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a
+                  href="https://instagram.com/ur_zaz"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  Instagram
+                </a>
               </AnimatedLink>
               <AnimatedLink>
-                <a href="https://github.com/aitezazdev" target="_blank" rel="noopener noreferrer">Github</a>
+                <a
+                  href="https://github.com/aitezazdev"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  Github
+                </a>
               </AnimatedLink>
             </ul>
           </div>
@@ -73,10 +88,9 @@ const Footer = () => {
         <div className="flex justify-end">
           <button
             onClick={scrollToTop}
-            className="w-14 h-14 sm:w-16 sm:h-16 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 group focus:outline-none"
-          >
-            <AnimatedLink>
-              <FaArrowUp className="w-4 h-5 sm:w-5 sm:h-7 text-[#e8e8e3] transition-transform duration-300" />
+            className="w-10 h-10 sm:w-12 sm:h-12 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 group focus:outline-none">
+            <AnimatedLink className="flex items-center justify-center">
+              <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#e8e8e3]" />
             </AnimatedLink>
           </button>
         </div>

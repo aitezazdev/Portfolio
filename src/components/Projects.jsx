@@ -206,7 +206,7 @@ export default function ProjectsPage() {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold flex items-center gap-2 md:gap-4 transition-all duration-700 bg-gradient-to-r from-green-600 via-emerald-600 to-[#1a1a1a] from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-3 md:mb-4">
+                    <h4 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold flex items-center gap-2 md:gap-4 transition-all duration-700 bg-gradient-to-r from-[#10b981] via-[#0f9f6b] to-[#1a1a1a] from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left mb-3 md:mb-4">
                       {project.title}
                       <span className="text-[#1a1a1a] opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
                         <svg
