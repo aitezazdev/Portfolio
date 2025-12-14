@@ -22,7 +22,7 @@ export default function ParticlesBackground() {
         particles: {
           number: {
             value: 50,
-            density: { enable: true, value_area: 800 }
+            density: { enable: true, area: 800 }
           },
           color: { value: "#615c56" },
           shape: {

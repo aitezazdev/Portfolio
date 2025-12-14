@@ -61,8 +61,8 @@ const Navbar = ({ hamburgerOnly = false }) => {
         {
           y: 0,
           opacity: 1,
-          duration: 0.5,
-          stagger: 0.1,
+          duration: 1,
+          stagger: 0.3,
           ease: 'power2.out',
           delay: 0.5,
         },
