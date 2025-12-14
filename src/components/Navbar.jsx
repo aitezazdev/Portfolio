@@ -19,6 +19,9 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
   const mobileNavRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+  const logoRef = useRef(null);
+  const linksContainerRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
@@ -33,11 +36,38 @@ const Navbar = ({ hamburgerOnly = false }) => {
     const nav = navRef.current;
     const hamburger = hamburgerRef.current;
     const mobileNav = mobileNavRef.current;
+    const logo = logoRef.current;
+    const linksContainer = linksContainerRef.current;
+
     if (!nav || !hamburger) return;
 
     gsap.set(nav, { y: 0 });
     gsap.set(hamburger, { opacity: 0, scale: 0 });
     if (mobileNav) gsap.set(mobileNav, { y: 0 });
+
+    if (logo) {
+      gsap.fromTo(
+        logo,
+        { x: -50, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.3 },
+      );
+    }
+
+    if (linksContainer) {
+      const links = linksContainer.querySelectorAll('li');
+      gsap.fromTo(
+        links,
+        { y: -20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: 'power2.out',
+          delay: 0.5,
+        },
+      );
+    }
 
     ScrollTrigger.create({
       trigger: 'body',
@@ -71,6 +101,27 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
     return () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
   }, [hamburgerOnly]);
+
+  useEffect(() => {
+    const mobileMenu = mobileMenuRef.current;
+    if (!mobileMenu) return;
+
+    if (isMenuOpen) {
+      const menuItems = mobileMenu.querySelectorAll('li');
+      gsap.fromTo(
+        menuItems,
+        { x: 50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.1,
+          ease: 'power2.out',
+          delay: 0.3,
+        },
+      );
+    }
+  }, [isMenuOpen]);
 
   useEffect(() => {
     if (!lenis) return;
@@ -107,10 +158,16 @@ const Navbar = ({ hamburgerOnly = false }) => {
           ref={navRef}
           className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50"
         >
-          <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium cursor-pointer">
+          <strong
+            ref={logoRef}
+            className="text-[#6b645c] text-lg font-sans tracking-wide font-medium cursor-pointer"
+          >
             Web Developer
           </strong>
-          <ul className="flex gap-5 text-[#6b645c] text-base font-sans font-medium uppercase tracking-wide">
+          <ul
+            ref={linksContainerRef}
+            className="flex gap-5 text-[#6b645c] text-base font-sans font-medium uppercase tracking-wide"
+          >
             {links.map((link) => (
               <AnimatedLink key={link.href}>
                 <a
@@ -192,17 +249,23 @@ const Navbar = ({ hamburgerOnly = false }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-col items-center justify-center h-full gap-8">
-            <ul className="flex flex-col items-center gap-8 text-[#ffffff] text-5xl font-sans font-medium uppercase tracking-wide">
+            <ul
+              ref={mobileMenuRef}
+              className="flex flex-col items-center gap-8 text-[#ffffff] text-5xl font-sans font-medium uppercase tracking-wide"
+            >
               {links.map((link) => (
-                <MobileNavLink
-                  key={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(link.href);
-                  }}
-                >
-                  {link.name}
-                </MobileNavLink>
+                <li key={link.href} className="text-xl">
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                    className="cursor-pointer block"
+                  >
+                    {link.name}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>

@@ -3,6 +3,7 @@ import './globals.css';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import { Providers } from './providers';
 import GlobalPreloader from '@/components/GlobalPreloader';
+import CustomCursor from '@/components/CustomCursor';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${syne.variable} antialiased bg-[#e8e8e3]`}
       >
+        <CustomCursor />
         <GlobalPreloader />
         <div className="page-overlay"></div>
         <Providers>

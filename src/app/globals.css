@@ -28,3 +28,13 @@ body.menu-open {
 .preloader-complete main {
   visibility: visible;
 }
+
+::selection {
+  background: #615c56;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: #615c56;
+  color: #ffffff;
+}

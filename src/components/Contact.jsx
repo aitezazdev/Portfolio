@@ -1,10 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AnimatedHeading from './AnimateHeading';
 import AnimateDescription from './AnimateDescription';
 import AnimatedButton from './AnimatedButton';
 
 const Contact = () => {
+  const sectionRef = useRef(null);
   const headingText = 'Contact';
   const descriptionText =
     'Have a project in mind or just want to say hello? Feel free to reach out.';
@@ -24,6 +25,32 @@ const Contact = () => {
       return () => clearTimeout(timer);
     }
   }, [submitStatus]);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            setErrors({});
+            setSubmitStatus(null);
+          }
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px',
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      if (section) observer.unobserve(section);
+    };
+  }, []);
 
   const validateName = (name) => {
     if (name.trim().length < 2) return false;
@@ -103,7 +130,7 @@ const Contact = () => {
   const isDisabled = isSubmitting;
 
   return (
-    <section id="contact" className="bg-[#e8e8e3] py-16 md:pt-10 md:pb-24">
+    <section ref={sectionRef} id="contact" className="bg-[#e8e8e3] py-16 md:pt-10 md:pb-24">
       <div className="w-[93%] mx-auto rounded-xl bg-[#080807] text-[#d1d1c7] px-6 sm:px-10 md:px-12 lg:px-20 p-16">
         <AnimatedHeading
           text={headingText}
