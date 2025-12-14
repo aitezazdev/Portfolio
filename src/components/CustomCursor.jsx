@@ -8,22 +8,29 @@ export default function CustomCursor() {
   const cursorOutlineRef = useRef(null);
   const cursorTextRef = useRef(null);
   const [cursorText, setCursorText] = useState("");
+  const [enabled, setEnabled] = useState(false);
   const requestRef = useRef(null);
 
   const mouse = useRef({ x: 0, y: 0 });
   const delayedMouse = useRef({ x: 0, y: 0 });
-  const dotPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    const isTouch =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    if (isTouch) return;
+
+    setEnabled(true);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+
     const cursorDot = cursorDotRef.current;
     const cursorOutline = cursorOutlineRef.current;
     const cursorTextEl = cursorTextRef.current;
 
     if (!cursorDot || !cursorOutline) return;
-
-    if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
-      return;
-    }
 
     gsap.set([cursorDot, cursorOutline, cursorTextEl], {
       xPercent: -50,
@@ -38,12 +45,9 @@ export default function CustomCursor() {
       delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.1;
       delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.1;
 
-      dotPos.current.x = mouse.current.x;
-      dotPos.current.y = mouse.current.y;
-
       gsap.set(cursorDot, {
-        x: dotPos.current.x,
-        y: dotPos.current.y,
+        x: mouse.current.x,
+        y: mouse.current.y,
       });
 
       gsap.set([cursorOutline, cursorTextEl], {
@@ -58,127 +62,75 @@ export default function CustomCursor() {
     window.addEventListener("mousemove", handleMouseMove);
 
     const handleMouseEnter = (e) => {
-      const target = e.currentTarget;
-      const cursorType = target.getAttribute("data-cursor");
+      const type = e.currentTarget.getAttribute("data-cursor");
 
-      gsap.to(cursorDot, {
-        scale: 0,
-        duration: 0.3,
-        ease: "power2.out",
-      });
+      gsap.to(cursorDot, { scale: 0, duration: 0.3 });
 
-      if (cursorType === "view") {
-        setCursorText("VIEW");
+      if (type === "view" || type === "drag") {
+        setCursorText(type.toUpperCase());
         gsap.to(cursorOutline, {
-          scale: 2,
-          borderWidth: 1,
-          backgroundColor: "rgba(97, 92, 86, 0.1)",
+          scale: type === "drag" ? 4 : 2,
+          backgroundColor: "rgba(97,92,86,0.1)",
           duration: 0.4,
-          ease: "power2.out",
         });
-        gsap.to(cursorTextEl, {
-          opacity: 1,
-          duration: 0.3,
-          delay: 0.1,
-        });
-      } else if (cursorType === "drag") {
-        setCursorText("DRAG");
-        gsap.to(cursorOutline, {
-          scale: 4,
-          borderWidth: 1,
-          backgroundColor: "rgba(97, 92, 86, 0.1)",
-          duration: 0.4,
-          ease: "power2.out",
-        });
-        gsap.to(cursorTextEl, {
-          opacity: 1,
-          duration: 0.3,
-          delay: 0.1,
-        });
+        gsap.to(cursorTextEl, { opacity: 1, duration: 0.2 });
       } else {
         gsap.to(cursorOutline, {
           scale: 2,
-          backgroundColor: "rgba(97, 92, 86, 0.15)",
+          backgroundColor: "rgba(97,92,86,0.15)",
           duration: 0.4,
-          ease: "power2.out",
         });
       }
     };
 
     const handleMouseLeave = () => {
       setCursorText("");
-      
-      gsap.to(cursorDot, {
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out",
-      });
 
+      gsap.to(cursorDot, { scale: 1, duration: 0.3 });
       gsap.to(cursorOutline, {
         scale: 1,
-        borderWidth: 2,
         backgroundColor: "transparent",
         duration: 0.4,
-        ease: "power2.out",
       });
-
-      gsap.to(cursorTextEl, {
-        opacity: 0,
-        duration: 0.2,
-      });
+      gsap.to(cursorTextEl, { opacity: 0, duration: 0.2 });
     };
 
     const addListeners = () => {
-      const interactiveElements = document.querySelectorAll(
-        'a, button, [data-cursor], input[type="submit"], [role="button"]'
+      const els = document.querySelectorAll(
+        'a, button, [data-cursor], [role="button"]'
       );
 
-      interactiveElements.forEach((el) => {
+      els.forEach((el) => {
         el.addEventListener("mouseenter", handleMouseEnter);
         el.addEventListener("mouseleave", handleMouseLeave);
         el.style.cursor = "none";
       });
 
-      return interactiveElements;
+      return els;
     };
 
     const elements = addListeners();
 
-    const observer = new MutationObserver(() => {
-      addListeners();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    const observer = new MutationObserver(addListeners);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     const style = document.createElement("style");
-    style.innerHTML = `
-      * {
-        cursor: none !important;
-      }
-      a, button {
-        cursor: none !important;
-      }
-    `;
+    style.innerHTML = `*{cursor:none!important}`;
     document.head.appendChild(style);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
+      cancelAnimationFrame(requestRef.current);
       elements.forEach((el) => {
         el.removeEventListener("mouseenter", handleMouseEnter);
         el.removeEventListener("mouseleave", handleMouseLeave);
       });
       observer.disconnect();
-      if (style.parentNode) {
-        style.parentNode.removeChild(style);
-      }
+      style.remove();
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <>
@@ -192,14 +144,14 @@ export default function CustomCursor() {
 
       <div
         ref={cursorOutlineRef}
-        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#615c56] rounded-full flex items-center justify-center"
+        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#615c56] rounded-full"
       />
 
       <div
         ref={cursorTextRef}
         className="pointer-events-none fixed top-0 left-0 z-[10001] opacity-0"
       >
-        <span className="text-[#615c56] text-[11px] font-bold tracking-[0.15em] select-none">
+        <span className="text-[#615c56] text-[11px] font-bold tracking-[0.15em]">
           {cursorText}
         </span>
       </div>
