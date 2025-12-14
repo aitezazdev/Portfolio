@@ -26,5 +26,8 @@ export const PRELOAD_ASSETS = {
     '/Projects/HMS/hospital-4.png',
     '/Projects/HMS/hospital-5.png',
     '/Projects/HMS/hospital-6.png',
+
+    // me
+    '/zaz.png'
   ],
 };
