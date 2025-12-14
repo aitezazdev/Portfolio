@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import AnimatedButton from './AnimatedButton';
+import ParticlesBackground from './ParticlesBackground';
 
 const HomeBanner = () => {
   const nameRef = useRef(null);
@@ -138,6 +139,7 @@ const HomeBanner = () => {
       className="min-h-screen px-6 sm:px-8 md:px-12 pt-16 md:pt-20 bg-[#e8e8e3] flex items-center"
       style={{ opacity: 0 }}
     >
+      <ParticlesBackground />
       <div className="max-w-7xl mx-auto w-full">
         <div className="text-center md:hidden">
           <h1

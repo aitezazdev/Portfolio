@@ -187,6 +187,7 @@ export default function ProjectsPage() {
             {projects.map((project, index) => (
               <div
                 key={project.id}
+                data-cursor="view"  // ADD THIS - Shows "VIEW" on hover
                 className="project-item group leading-none py-4 md:py-8 border-b border-gray-300 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onClick={() => handleProjectClick(project.slug)}
