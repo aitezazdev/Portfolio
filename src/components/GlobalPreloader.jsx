@@ -10,6 +10,7 @@ export default function GlobalPreloader() {
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
   const animationFrameId = useRef(null);
+  const imageCache = useRef([]);
 
   useEffect(() => {
     document.body.classList.add('preloader-active');
@@ -30,43 +31,63 @@ export default function GlobalPreloader() {
         currentProgress.current += diff * 0.08;
         setProgress(Math.min(Math.round(currentProgress.current), 98));
       }
+
       if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
         currentProgress.current = 100;
         setProgress(100);
         startExitAnimation();
         return;
       }
+
       animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
     };
 
     const preloadAssets = async () => {
       const assets = PRELOAD_ASSETS.images;
       let loaded = 0;
+      const total = assets.length;
 
-      await Promise.all(
-        assets.map(
-          (src) =>
-            new Promise((resolve) => {
-              const img = new Image();
-              img.src = src;
-              img.onload = img.onerror = () => {
-                loaded++;
-                targetProgress.current = (loaded / assets.length) * 100;
-                resolve(true);
-              };
-            }),
-        ),
+      const imagePromises = assets.map(
+        (src) =>
+          new Promise((resolve) => {
+            const img = new Image();
+
+            img.onload = () => {
+              loaded++;
+              targetProgress.current = Math.min((loaded / total) * 100, 98);
+              imageCache.current.push(img);
+              resolve(img);
+            };
+
+            img.onerror = () => {
+              loaded++;
+              targetProgress.current = Math.min((loaded / total) * 100, 98);
+              resolve(null);
+            };
+
+            img.src = src;
+          }),
       );
 
-      canComplete = true;
-      targetProgress.current = 100;
+      try {
+        await Promise.all(imagePromises);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        canComplete = true;
+        targetProgress.current = 100;
+      } catch (error) {
+        canComplete = true;
+        targetProgress.current = 100;
+      }
     };
 
     smoothProgressUpdate();
     preloadAssets();
 
     return () => {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+      imageCache.current = [];
     };
   }, []);
 
@@ -104,7 +125,7 @@ export default function GlobalPreloader() {
         {Math.round(progress)}%
       </div>
 
-      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">Loading ...</div>
+      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">Loading assets...</div>
     </div>
   );
 }
