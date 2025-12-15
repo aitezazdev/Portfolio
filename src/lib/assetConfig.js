@@ -2,7 +2,7 @@ export const PRELOAD_ASSETS = {
   images: [
     // services
     '/Services/aws.webp',
-    '/Services/bootstrap.svg.webp',
+    '/Services/bootstrap.svg',
     '/Services/docker.svg',
     '/Services/express.png',
     '/Services/figma.png',
