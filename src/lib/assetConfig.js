@@ -1,5 +1,22 @@
 export const PRELOAD_ASSETS = {
   images: [
+    // services
+    '/Services/aws.webp',
+    '/Services/bootstrap.svg.webp',
+    '/Services/docker.svg',
+    '/Services/express.png',
+    '/Services/figma.png',
+    '/Services/firebase.svg',
+    '/Services/git.png',
+    '/Services/mongodb.svg',
+    '/Services/mysql.svg',
+    '/Services/next.webp',
+    '/Services/node.png',
+    '/Services/postman-icon.svg',
+    '/Services/react.png',
+    '/Services/redux.png',
+    '/Services/tailwind.png',
+
     // Blog Site
     '/Projects/blogsite/blog-site.png',
     '/Projects/blogsite/blog-site-2.png',
@@ -29,6 +46,6 @@ export const PRELOAD_ASSETS = {
 
     // me
     '/zaz.png',
-    '/zazkhan.png'
+    '/zazkhan.png',
   ],
 };
