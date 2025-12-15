@@ -22,8 +22,6 @@ export default function GlobalPreloader() {
       return;
     }
 
-    let totalAssets = 0;
-    let loadedAssets = 0;
     let canComplete = false;
 
     const smoothProgressUpdate = () => {
@@ -32,62 +30,40 @@ export default function GlobalPreloader() {
         currentProgress.current += diff * 0.08;
         setProgress(Math.min(Math.round(currentProgress.current), 98));
       }
-
       if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
         currentProgress.current = 100;
         setProgress(100);
         startExitAnimation();
         return;
       }
-
       animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
     };
 
-    const updateTargetProgress = () => {
-      const percentage = totalAssets > 0 ? (loadedAssets / totalAssets) * 100 : 0;
-      targetProgress.current = Math.min(percentage, 98);
-    };
+    const preloadAssets = async () => {
+      const assets = PRELOAD_ASSETS.images;
+      let loaded = 0;
 
-    const trackAsset = () => {
-      loadedAssets++;
-      updateTargetProgress();
-      if (loadedAssets >= totalAssets) {
-        canComplete = true;
-        targetProgress.current = 100;
-      }
-    };
+      await Promise.all(
+        assets.map(
+          (src) =>
+            new Promise((resolve) => {
+              const img = new Image();
+              img.src = src;
+              img.onload = img.onerror = () => {
+                loaded++;
+                targetProgress.current = (loaded / assets.length) * 100;
+                resolve(true);
+              };
+            }),
+        ),
+      );
 
-    const preloadAssets = () => {
-      const criticalAssets = PRELOAD_ASSETS.images;
-      totalAssets = criticalAssets.length;
-
-      criticalAssets.forEach((src) => {
-        const img = new Image();
-        img.onload = trackAsset;
-        img.onerror = trackAsset;
-        img.src = src;
-      });
-
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          for (let i = 0; i < 5; i++) {
-            trackAsset();
-          }
-        });
-      } else {
-        for (let i = 0; i < 5; i++) {
-          trackAsset();
-        }
-      }
+      canComplete = true;
+      targetProgress.current = 100;
     };
 
     smoothProgressUpdate();
-
-    if (document.readyState === 'complete') {
-      preloadAssets();
-    } else {
-      window.addEventListener('load', preloadAssets);
-    }
+    preloadAssets();
 
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
@@ -95,7 +71,10 @@ export default function GlobalPreloader() {
   }, []);
 
   const startExitAnimation = () => {
-    const tl = gsap.timeline({
+    gsap.to('.preloader-overlay', {
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.inOut',
       onComplete: () => {
         setIsLoading(false);
         sessionStorage.setItem('preloader-shown', 'true');
@@ -103,12 +82,6 @@ export default function GlobalPreloader() {
         document.body.classList.add('preloader-complete');
         window.dispatchEvent(new CustomEvent('preloaderComplete'));
       },
-    });
-
-    tl.to('.preloader-overlay', {
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.inOut',
     });
   };
 
