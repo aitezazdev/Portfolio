@@ -70,26 +70,26 @@ export default function GlobalPreloader() {
 
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(() => {
-          for (let i = 0; i < 5; i++) trackAsset();
+          for (let i = 0; i < 5; i++) {
+            trackAsset();
+          }
         });
       } else {
-        for (let i = 0; i < 5; i++) trackAsset();
+        for (let i = 0; i < 5; i++) {
+          trackAsset();
+        }
       }
     };
 
     smoothProgressUpdate();
 
-    if (document.readyState === 'complete') preloadAssets();
-    else window.addEventListener('load', preloadAssets);
-
-    // Maximum wait: 1 minute
-    const maxWaitTimer = setTimeout(() => {
-      canComplete = true;
-      targetProgress.current = 100;
-    }, 60000);
+    if (document.readyState === 'complete') {
+      preloadAssets();
+    } else {
+      window.addEventListener('load', preloadAssets);
+    }
 
     return () => {
-      clearTimeout(maxWaitTimer);
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
   }, []);
