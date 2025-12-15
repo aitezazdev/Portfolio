@@ -15,7 +15,6 @@ export default function GlobalPreloader() {
     document.body.classList.add('preloader-active');
 
     const hasShownPreloader = sessionStorage.getItem('preloader-shown');
-
     if (hasShownPreloader) {
       setIsLoading(false);
       document.body.classList.remove('preloader-active');
@@ -29,7 +28,6 @@ export default function GlobalPreloader() {
 
     const smoothProgressUpdate = () => {
       const diff = targetProgress.current - currentProgress.current;
-
       if (Math.abs(diff) > 0.1) {
         currentProgress.current += diff * 0.08;
         setProgress(Math.min(Math.round(currentProgress.current), 98));
@@ -38,9 +36,7 @@ export default function GlobalPreloader() {
       if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
         currentProgress.current = 100;
         setProgress(100);
-        setTimeout(() => {
-          startExitAnimation();
-        }, 400);
+        startExitAnimation();
         return;
       }
 
@@ -55,64 +51,46 @@ export default function GlobalPreloader() {
     const trackAsset = () => {
       loadedAssets++;
       updateTargetProgress();
-
       if (loadedAssets >= totalAssets) {
-        setTimeout(() => {
-          canComplete = true;
-          targetProgress.current = 100;
-        }, 300);
+        canComplete = true;
+        targetProgress.current = 100;
       }
     };
 
     const preloadAssets = () => {
       const criticalAssets = PRELOAD_ASSETS.images;
-      totalAssets = criticalAssets.length + 5;
+      totalAssets = criticalAssets.length;
 
       criticalAssets.forEach((src) => {
-        if (src.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-          const img = new Image();
-          img.onload = () => {
-            setTimeout(() => trackAsset(), Math.random() * 100);
-          };
-          img.onerror = () => {
-            console.warn(`Failed to load: ${src}`);
-            setTimeout(() => trackAsset(), Math.random() * 100);
-          };
-          img.src = src;
-        }
+        const img = new Image();
+        img.onload = trackAsset;
+        img.onerror = trackAsset;
+        img.src = src;
       });
 
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(() => {
-          for (let i = 0; i < 5; i++) {
-            setTimeout(() => trackAsset(), i * 50);
-          }
+          for (let i = 0; i < 5; i++) trackAsset();
         });
       } else {
-        for (let i = 0; i < 5; i++) {
-          setTimeout(() => trackAsset(), i * 50);
-        }
+        for (let i = 0; i < 5; i++) trackAsset();
       }
     };
 
     smoothProgressUpdate();
 
-    if (document.readyState === 'complete') {
-      preloadAssets();
-    } else {
-      window.addEventListener('load', preloadAssets);
-    }
+    if (document.readyState === 'complete') preloadAssets();
+    else window.addEventListener('load', preloadAssets);
 
-    const fallbackTimer = setTimeout(() => {
+    // Maximum wait: 1 minute
+    const maxWaitTimer = setTimeout(() => {
       canComplete = true;
       targetProgress.current = 100;
-    }, 4000);
+    }, 60000);
 
     return () => {
-      clearTimeout(fallbackTimer);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      clearTimeout(maxWaitTimer);
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
   }, []);
 
@@ -121,10 +99,8 @@ export default function GlobalPreloader() {
       onComplete: () => {
         setIsLoading(false);
         sessionStorage.setItem('preloader-shown', 'true');
-
         document.body.classList.remove('preloader-active');
         document.body.classList.add('preloader-complete');
-
         window.dispatchEvent(new CustomEvent('preloaderComplete'));
       },
     });

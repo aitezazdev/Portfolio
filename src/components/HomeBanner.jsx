@@ -136,7 +136,7 @@ const HomeBanner = () => {
   return (
     <section
       ref={containerRef}
-      className="min-h-screen px-6 sm:px-8 md:px-12 pt-16 md:pt-20 bg-[#e8e8e3] flex items-center"
+      className="min-h-screen px-6 sm:px-8 md:px-12 pt-40 md:pt-20 bg-[#e8e8e3] flex items-center"
       style={{ opacity: 0 }}
     >
       <ParticlesBackground />
@@ -160,7 +160,7 @@ const HomeBanner = () => {
           </h1>
         </div>
 
-        <div className="flex justify-center items-center py-3 px-4 sm:px-6">
+        <div className="flex justify-center items-center py-1 md:py-3 px-4 sm:px-6">
           <div className="max-w-xl text-center">
             <p
               ref={paragraphRef}
