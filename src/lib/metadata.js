@@ -20,7 +20,7 @@ export const siteMetadata = {
   creator: 'Aitezaz Sikandar',
   metadataBase: new URL('https://aitezazdev.vercel.app'),
   icons: {
-    icon: '/logo.png'
+    icon: '/logo.webp'
   },
   openGraph: {
     title: 'Aitezaz Sikandar — Web Developer',
@@ -30,7 +30,7 @@ export const siteMetadata = {
     siteName: 'Aitezaz Sikandar Portfolio',
     images: [
       {
-        url: '/zazkhan.png',
+        url: '/zazkhan.webp',
         width: 1200,
         height: 630,
         alt: 'Aitezaz Sikandar — Web Developer Portfolio',
@@ -42,7 +42,7 @@ export const siteMetadata = {
     card: 'summary_large_image',
     title: 'Aitezaz Sikandar — Web Developer',
     description: 'Web developer focused on React, Next.js, and performance-driven UI.',
-    images: ['/zazkhan.png'],
+    images: ['/zazkhan.webp'],
   },
   robots: {
     index: true,

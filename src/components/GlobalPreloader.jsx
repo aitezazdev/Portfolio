@@ -1,131 +1,66 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import gsap from 'gsap';
-import { PRELOAD_ASSETS } from '@/lib/assetConfig';
 
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const targetProgress = useRef(0);
-  const currentProgress = useRef(0);
-  const animationFrameId = useRef(null);
-  const imageCache = useRef([]);
 
   useEffect(() => {
-    document.body.classList.add('preloader-active');
+    const shown = sessionStorage.getItem('preloader-shown');
 
-    const hasShownPreloader = sessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
+    if (shown) {
       setIsLoading(false);
-      document.body.classList.remove('preloader-active');
       document.body.classList.add('preloader-complete');
       return;
     }
 
-    let canComplete = false;
+    document.body.classList.add('preloader-active');
 
-    const smoothProgressUpdate = () => {
-      const diff = targetProgress.current - currentProgress.current;
-      if (Math.abs(diff) > 0.1) {
-        currentProgress.current += diff * 0.08;
-        setProgress(Math.min(Math.round(currentProgress.current), 98));
+    let current = 0;
+    const interval = setInterval(() => {
+      current += Math.random() * 15;
+
+      if (current >= 100) {
+        current = 100;
+        clearInterval(interval);
+        finish();
       }
 
-      if (canComplete && targetProgress.current >= 100 && currentProgress.current >= 99) {
-        currentProgress.current = 100;
-        setProgress(100);
-        startExitAnimation();
-        return;
-      }
+      setProgress(Math.round(current));
+    }, 100);
 
-      animationFrameId.current = requestAnimationFrame(smoothProgressUpdate);
-    };
+    function finish() {
+      gsap.to('.preloader-overlay', {
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          sessionStorage.setItem('preloader-shown', 'true');
+          setIsLoading(false);
+          document.body.classList.remove('preloader-active');
+          document.body.classList.add('preloader-complete');
+          window.dispatchEvent(new CustomEvent('preloaderComplete'));
+        },
+      });
+    }
 
-    const preloadAssets = async () => {
-      const assets = PRELOAD_ASSETS.images;
-      let loaded = 0;
-      const total = assets.length;
-
-      const imagePromises = assets.map(
-        (src) =>
-          new Promise((resolve) => {
-            const img = new Image();
-
-            img.onload = () => {
-              loaded++;
-              targetProgress.current = Math.min((loaded / total) * 100, 98);
-              imageCache.current.push(img);
-              resolve(img);
-            };
-
-            img.onerror = () => {
-              loaded++;
-              targetProgress.current = Math.min((loaded / total) * 100, 98);
-              resolve(null);
-            };
-
-            img.src = src;
-          }),
-      );
-
-      try {
-        await Promise.all(imagePromises);
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        canComplete = true;
-        targetProgress.current = 100;
-      } catch (error) {
-        canComplete = true;
-        targetProgress.current = 100;
-      }
-    };
-
-    smoothProgressUpdate();
-    preloadAssets();
-
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-      imageCache.current = [];
-    };
+    return () => clearInterval(interval);
   }, []);
-
-  const startExitAnimation = () => {
-    gsap.to('.preloader-overlay', {
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        setIsLoading(false);
-        sessionStorage.setItem('preloader-shown', 'true');
-        document.body.classList.remove('preloader-active');
-        document.body.classList.add('preloader-complete');
-        window.dispatchEvent(new CustomEvent('preloaderComplete'));
-      },
-    });
-  };
 
   if (!isLoading) return null;
 
   return (
     <div className="preloader-overlay fixed inset-0 z-[9999] bg-[#e8e8e3] flex flex-col items-center justify-center">
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-6xl font-bold text-[#1a1a1a] font-syne">Portfolio</h1>
-      </div>
-
+      <h1 className="text-4xl md:text-6xl font-bold mb-8 text-[#1a1a1a]">Portfolio</h1>
       <div className="w-64 md:w-96 h-1 bg-gray-300 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-green-600 to-emerald-600 transition-all duration-300 ease-out"
+          className="h-full bg-green-600 transition-all duration-300 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
-
-      <div className="mt-4 text-[#1a1a1a] font-mono text-sm md:text-base">
-        {Math.round(progress)}%
-      </div>
-
-      <div className="mt-8 text-gray-600 text-sm md:text-base animate-pulse">Loading assets...</div>
+      <div className="mt-4 font-mono text-[#1a1a1a]">{progress}%</div>
     </div>
   );
 }
