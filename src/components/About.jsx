@@ -31,7 +31,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
           <div className="col-span-12 md:col-span-5 lg:col-span-5">
             <div className="w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-[#1a1a18] rounded-2xl overflow-hidden border border-[#2a2a28]">
               <Image
-                src="/zaz.png"
+                src="/zaz.webp"
                 alt="Profile photo"
                 width={380}
                 height={450}

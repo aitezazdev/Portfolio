@@ -13,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const containerRef = useRef(null);
   const imageContainerRef = useRef(null);
 
@@ -28,6 +29,19 @@ export default function ProjectsPage() {
         if (data.length > 0 && window.innerWidth >= 768) {
           setSelectedProject(0);
         }
+
+        const imagePromises = data.slice(0, 3).map((project) => {
+          return new Promise((resolve) => {
+            const img = new window.Image();
+            img.src = project.hoverImage || project.images[0];
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        });
+
+        Promise.all(imagePromises).then(() => {
+          setImagesLoaded(true);
+        });
       } catch (err) {
         console.error('Error loading projects:', err);
       }
@@ -171,12 +185,14 @@ export default function ProjectsPage() {
                     key={project.id}
                     src={project.hoverImage || project.images[0]}
                     alt={project.title}
-                    width={300}
-                    height={400}
+                    width={350}
+                    height={467}
+                    quality={80}
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    priority={index < 3}
                     className={`absolute inset-0 transition-all duration-500 w-full h-full object-cover object-top ${
                       index !== selectedProject ? 'opacity-0' : ''
                     }`}
-                    unoptimized
                   />
                 ))}
               </div>
@@ -187,7 +203,7 @@ export default function ProjectsPage() {
             {projects.map((project, index) => (
               <div
                 key={project.id}
-                data-cursor="view"  // ADD THIS - Shows "VIEW" on hover
+                data-cursor="view"
                 className="project-item group leading-none py-4 md:py-8 border-b border-gray-300 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onClick={() => handleProjectClick(project.slug)}
@@ -199,8 +215,10 @@ export default function ProjectsPage() {
                       alt={project.title}
                       width={600}
                       height={400}
+                      quality={75}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                      priority={index < 2}
                       className="w-full object-cover object-top sm:object-top md:object-cover aspect-[3/2] bg-gray-100"
-                      unoptimized
                     />
                   </div>
                 )}
