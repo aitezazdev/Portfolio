@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import AnimatedLink from './AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
 import { useHandleLinkClick } from '../../navigation';
+import { useLenis } from './SmoothScrollProvider';
 
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
+  const lenisRef = useLenis();
+  const lenis = lenisRef?.current;
 
   useEffect(() => {
     const updateTime = () => {
@@ -33,7 +36,11 @@ const Footer = () => {
   ];
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -68,7 +75,7 @@ const Footer = () => {
             <ul className="flex flex-col gap-3 sm:gap-4 text-[#6b645c] text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               <AnimatedLink>
                 <a
-                  href="https://linkedin.com/aitezaz-sikandar"
+                  href="https://linkedin.com/in/aitezaz-sikandar"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

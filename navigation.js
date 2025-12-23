@@ -1,7 +1,9 @@
+import { useLenis } from '@/components/SmoothScrollProvider';
 import { useRouter } from 'next/navigation';
 
 export const useHandleLinkClick = (setIsMenuOpen) => {
   const router = useRouter();
+  const lenisRef = useLenis();
 
   return (href) => {
     if (setIsMenuOpen) setIsMenuOpen(false);
@@ -14,7 +16,15 @@ export const useHandleLinkClick = (setIsMenuOpen) => {
     }
 
     const el = document.getElementById(hash);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el && lenisRef?.current) {
+      lenisRef.current.scrollTo(el, {
+        offset: 0,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     window.history.pushState(null, '', `#${hash}`);
   };
