@@ -4,8 +4,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Menu, X } from 'lucide-react';
 import { useLenis } from './SmoothScrollProvider';
-import { useRouter } from 'next/navigation';
 import AnimatedLink from './AnimateLink';
+import { useHandleLinkClick } from '../../navigation';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +25,6 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
-  const router = useRouter();
 
   useEffect(() => {
     if (hamburgerOnly) {
@@ -132,17 +131,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const handleLinkClick = (href) => {
-    setIsMenuOpen(false);
-    const [path, hash] = href.split('#');
-    if (path !== window.location.pathname) {
-      router.push(href);
-      return;
-    }
-    const el = document.getElementById(hash);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.history.pushState(null, '', `#${hash}`);
-  };
+  const handleLinkClick = useHandleLinkClick(setIsMenuOpen);
 
   const links = [
     { name: 'About', href: '/#about' },
