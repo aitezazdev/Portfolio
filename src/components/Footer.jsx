@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedLink from './AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
+import { useHandleLinkClick } from '../../navigation';
 
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
@@ -22,6 +23,15 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleLinkClick = useHandleLinkClick();
+
+  const links = [
+    { name: 'About', href: '/#about' },
+    { name: 'Services', href: '/#services' },
+    { name: 'Work', href: '/#projects' },
+    { name: 'Contact', href: '/#contact' },
+  ];
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -35,11 +45,19 @@ const Footer = () => {
               Menu
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-[#6b645c] text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
-              <AnimatedLink>Home</AnimatedLink>
-              <AnimatedLink>Services</AnimatedLink>
-              <AnimatedLink>Works</AnimatedLink>
-              <AnimatedLink>About</AnimatedLink>
-              <AnimatedLink>Contact</AnimatedLink>
+              {links.map((link) => (
+                <AnimatedLink key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </a>
+                </AnimatedLink>
+              ))}
             </ul>
           </div>
 
