@@ -38,3 +38,6 @@ body.menu-open {
   background: #615c56;
   color: #ffffff;
 }
+
+.bg-primary { background-color: #83cf7b; }
+.bg-foreground { background-color: #24231f; }

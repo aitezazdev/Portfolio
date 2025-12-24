@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Menu, X } from 'lucide-react';
+import { useTransitionState } from 'next-transition-router';
 import { useLenis } from './SmoothScrollProvider';
 import AnimatedLink from './AnimateLink';
 import { useHandleLinkClick } from '../../navigation';
@@ -25,6 +26,9 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
+
+  const { stage } = useTransitionState();
+  const isTransitioning = stage === 'entering' || stage === 'leaving';
 
   useEffect(() => {
     if (hamburgerOnly) {
@@ -129,6 +133,12 @@ const Navbar = ({ hamburgerOnly = false }) => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : '';
   }, [isMenuOpen, lenis]);
 
+  useEffect(() => {
+    if (isTransitioning && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  }, [isTransitioning]);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLinkClick = useHandleLinkClick(setIsMenuOpen);
@@ -145,7 +155,9 @@ const Navbar = ({ hamburgerOnly = false }) => {
       {!hamburgerOnly && (
         <nav
           ref={navRef}
-          className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50"
+          className={`hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50 transition-opacity duration-300 ${
+            isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
         >
           <strong
             ref={logoRef}
@@ -175,7 +187,12 @@ const Navbar = ({ hamburgerOnly = false }) => {
       )}
 
       {!hamburgerOnly && (
-        <nav ref={mobileNavRef} className="mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3]">
+        <nav
+          ref={mobileNavRef}
+          className={`mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3] transition-opacity duration-300 ${
+            isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
           <div className="flex justify-between items-start px-6 py-6">
             <div className="flex flex-col">
               <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
@@ -206,7 +223,9 @@ const Navbar = ({ hamburgerOnly = false }) => {
         onClick={toggleMenu}
         className={`fixed top-6 right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full ${
           hamburgerOnly ? 'bg-[#393632]' : 'bg-[#393632] md:bg-[#e8e8e3]'
-        } flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300`}
+        } flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 ${
+          isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
         style={hamburgerOnly ? { opacity: 1, scale: 1 } : {}}
         aria-label="Toggle menu"
       >
@@ -227,13 +246,15 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
       <div
         className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${
-          isMenuOpen ? 'backdrop-blur-sm bg-black/40' : 'pointer-events-none opacity-0'
+          isMenuOpen && !isTransitioning
+            ? 'backdrop-blur-sm bg-black/40'
+            : 'pointer-events-none opacity-0'
         }`}
         onClick={toggleMenu}
       >
         <div
           className={`fixed top-0 right-0 h-full w-2/3 bg-[#e8e8e3]/10 backdrop-blur-xl shadow-2xl transition-transform duration-500 ease-in-out ${
-            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            isMenuOpen && !isTransitioning ? 'translate-x-0' : 'translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
         >

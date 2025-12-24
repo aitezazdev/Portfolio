@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useTransitionRouter } from 'next-transition-router';
+import { Link } from 'next-transition-router';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -16,8 +16,6 @@ export default function ProjectsPage() {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const containerRef = useRef(null);
   const imageContainerRef = useRef(null);
-
-  const router = useTransitionRouter();
 
   useEffect(() => {
     async function fetchProjects() {
@@ -135,24 +133,6 @@ export default function ProjectsPage() {
     setSelectedProject(index);
   };
 
-  const handleProjectClick = (slug) => {
-    sessionStorage.setItem('projects-scroll', window.scrollY);
-    sessionStorage.setItem('previous-project-url', window.location.pathname);
-
-    gsap.set('.page-transition', { yPercent: 100 });
-    gsap.set('.page-transition--inner', { yPercent: 100 });
-
-    const tl = gsap.timeline();
-    tl.to('.page-transition', {
-      yPercent: 0,
-      duration: 0.3,
-    });
-
-    tl.then(() => {
-      router.push(`/projects/${slug}`);
-    });
-  };
-
   return (
     <section
       id="projects"
@@ -201,12 +181,16 @@ export default function ProjectsPage() {
 
           <div className="flex flex-col">
             {projects.map((project, index) => (
-              <div
+              <Link
+                href={`/projects/${project.slug}`}
                 key={project.id}
                 data-cursor="view"
                 className="project-item group leading-none py-4 md:py-8 border-b border-gray-300 first:pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all duration-500 cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(index)}
-                onClick={() => handleProjectClick(project.slug)}
+                onClick={() => {
+                  sessionStorage.setItem('projects-scroll', window.scrollY);
+                  sessionStorage.setItem('previous-project-url', window.location.pathname);
+                }}
               >
                 {selectedProject === null && (
                   <div className="relative w-full mb-4 md:mb-8 overflow-hidden rounded-xl shadow-lg">
@@ -267,20 +251,10 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
-      </div>
-
-      <div
-        className="page-transition fixed inset-0 bg-white z-50 pointer-events-none"
-        style={{ transform: 'translateY(100%)' }}
-      >
-        <div
-          className="page-transition--inner h-full w-full"
-          style={{ transform: 'translateY(100%)' }}
-        ></div>
       </div>
 
       <div className="absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(circle_at_30%_50%,#00000015,transparent_70%)]" />
