@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
-import { Providers } from "./providers";
+import Providers from "./providers";
 import GlobalPreloader from "@/components/GlobalPreloader";
 import CustomCursor from "@/components/CustomCursor";
 

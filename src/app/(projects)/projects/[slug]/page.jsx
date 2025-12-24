@@ -1,46 +1,25 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { use } from 'react';
-import { useTransitionRouter } from 'next-transition-router';
-import gsap from 'gsap';
+import { Link } from 'next-transition-router';
 // import Navbar from "@/components/Navbar";
 import AnimatedHeading from '@/components/AnimateHeading';
 import AnimateDescription from '@/components/AnimateDescription';
 import AnimatedLink from '@/components/AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
 import Loading from './loading';
+import { Scroll } from 'lucide-react';
+import ScrollToTopOnEnter from '@/utils/ScrollToTopOnEnter';
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
   const [project, setProject] = useState(null);
-  const router = useTransitionRouter();
-
-  const handleBack = () => {
-    const prev = sessionStorage.getItem('previous-project-url') || '/projects';
-    gsap.set('.page-transition', { yPercent: 100 });
-    gsap.set('.page-transition--inner', { yPercent: 100 });
-
-    const tl = gsap.timeline();
-    tl.to('.page-transition', {
-      yPercent: 0,
-      duration: 0.3,
-    });
-    tl.then(() => {
-      router.push(prev);
-    });
-  };
 
   useEffect(() => {
     fetch(`/api/projects/${slug}`)
       .then((res) => res.json())
       .then((data) => setProject(data));
   }, [slug]);
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-    });
-  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -51,13 +30,13 @@ export default function ProjectPage({ params }) {
   return (
     <>
       {/* <Navbar hamburgerOnly={true} /> */}
+      <ScrollToTopOnEnter />
       <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
-        <button
-          onClick={handleBack}
+        <Link href={sessionStorage.getItem('previous-project-url') || '/'}
           className="flex items-center gap-2 text-lg mb-12 hover:opacity-80 transition-opacity"
         >
           <span className="text-2xl">←</span> Back
-        </button>
+        </Link>
 
         <AnimatedHeading
           text={project.title}
@@ -115,16 +94,6 @@ export default function ProjectPage({ params }) {
           </button>
         </div>
       </section>
-
-      <div
-        className="page-transition fixed inset-0 bg-white z-50 pointer-events-none"
-        style={{ transform: 'translateY(100%)' }}
-      >
-        <div
-          className="page-transition--inner h-full w-full"
-          style={{ transform: 'translateY(100%)' }}
-        ></div>
-      </div>
     </>
   );
 }
