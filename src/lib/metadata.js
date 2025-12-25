@@ -1,6 +1,6 @@
 export const siteMetadata = {
   title: {
-    default: 'Aitezaz Sikandar — Web Developer',
+    default: 'Aitezaz Sikandar - Full Stack Developer',
     template: '%s | Aitezaz Sikandar',
   },
   description:
@@ -23,7 +23,7 @@ export const siteMetadata = {
     icon: '/logo.webp'
   },
   openGraph: {
-    title: 'Aitezaz Sikandar — Web Developer',
+    title: 'Aitezaz Sikandar - Full Stack Developer',
     description:
       'Portfolio of Aitezaz Sikandar, a web developer building modern, high-performance web applications.',
     url: 'https://aitezazdev.vercel.app',
@@ -33,7 +33,7 @@ export const siteMetadata = {
         url: '/zazkhan.webp',
         width: 1200,
         height: 630,
-        alt: 'Aitezaz Sikandar — Web Developer Portfolio',
+        alt: 'Aitezaz Sikandar — Full Stack Developer',
       },
     ],
     type: 'website',
