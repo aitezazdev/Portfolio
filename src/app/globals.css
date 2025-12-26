@@ -39,5 +39,9 @@ body.menu-open {
   color: #ffffff;
 }
 
-.bg-primary { background-color: #83cf7b; }
-.bg-foreground { background-color: #24231f; }
+.bg-primary {
+  background-color: #83cf7b;
+}
+.bg-foreground {
+  background-color: #24231f;
+}
