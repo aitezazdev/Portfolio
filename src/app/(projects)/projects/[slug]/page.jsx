@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTransitionState } from 'next-transition-router';
 import { use } from 'react';
 import { Link } from 'next-transition-router';
 import AnimatedHeading from '@/components/AnimateHeading';
@@ -12,37 +11,28 @@ import ScrollToTopOnEnter from '@/utils/ScrollToTopOnEnter';
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
-  const { stage, isReady } = useTransitionState();
   const [project, setProject] = useState(null);
 
   useEffect(() => {
-    let active = true;
-
     fetch(`/api/projects/${slug}`)
       .then((res) => res.json())
-      .then((data) => {
-        if (active) setProject(data);
-      });
-
-    return () => {
-      active = false;
-    };
+      .then((data) => setProject(data))
+      .catch((err) => console.error('Error loading project:', err));
   }, [slug]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (stage !== 'none' || !isReady || !project) {
-    return <section className="min-h-screen bg-[#080807]" />;
+  if (!project) {
+    return <div className='min-h-screen bg-[#080807]'></div>;
   }
 
   return (
     <>
       <ScrollToTopOnEnter />
-
       <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
-        <Link
+        <Link 
           href={sessionStorage.getItem('previous-project-url') || '/'}
           className="flex items-center gap-2 text-lg mb-12 hover:opacity-80 transition-opacity"
         >
@@ -55,18 +45,18 @@ export default function ProjectPage({ params }) {
         />
 
         <div className="mb-8 mt-10">
-          <strong className="text-xl font-bold">Tech Stack</strong>
+          <strong className="opacity-100 text-xl font-bold">Tech Stack</strong>
           <AnimateDescription
             text={project.tech?.join(', ')}
-            className="text-base sm:text-lg text-[#a29e9a]"
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
           />
         </div>
 
         <div className="leading-relaxed mb-14">
-          <strong className="text-xl font-bold">Description</strong>
+          <strong className="opacity-100 text-xl font-bold">Description</strong>
           <AnimateDescription
             text={project.description}
-            className="text-base sm:text-lg text-[#a29e9a]"
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
           />
         </div>
 
@@ -82,11 +72,13 @@ export default function ProjectPage({ params }) {
           ))}
         </div>
 
-        <div className="relative flex justify-center items-center py-8">
+        <div className="relative flex justify-center items-center mt-auto py-8">
           <div className="text-center">
             <p className="text-[#a29e9a] text-lg">Have a project in mind?</p>
             <a
               href="mailto:aitezazsikandar@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-xl font-semibold text-[#bab6b3] hover:text-[#d4d2d0] transition"
             >
               aitezazsikandar@gmail.com
@@ -95,10 +87,10 @@ export default function ProjectPage({ params }) {
 
           <button
             onClick={scrollToTop}
-            className="absolute right-0 w-10 h-10 rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition"
+            className="absolute right-0 w-10 h-10 sm:w-10 sm:h-10 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 focus:outline-none group"
           >
-            <AnimatedLink>
-              <FaArrowUp className="w-4 h-4 text-[#e8e8e3]" />
+            <AnimatedLink className="flex items-center justify-center group-hover:animate">
+              <FaArrowUp className="w-4 h-4 sm:w-4 sm:h-4 text-[#e8e8e3]" />
             </AnimatedLink>
           </button>
         </div>
