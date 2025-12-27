@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono, Space_Grotesk, Syne } from 'next/font/google';
 import './globals.css';
 import ClientLayout from './ClientLayout';
-import Providers from './providers';
 import { siteMetadata } from '@/lib/metadata';
 
 const geistSans = Geist({
@@ -41,11 +40,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${syne.variable} antialiased bg-[#e8e8e3]`}
       >
-        <Providers>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
-        </Providers>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

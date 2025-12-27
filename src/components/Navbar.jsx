@@ -24,15 +24,36 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const logoRef = useRef(null);
   const linksContainerRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [preloaderComplete, setPreloaderComplete] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
 
-  const { stage } = useTransitionState();
+  const { stage, isReady } = useTransitionState();
   const isTransitioning = stage === 'entering' || stage === 'leaving';
 
   useEffect(() => {
+    const hasShownPreloader = sessionStorage.getItem('preloader-shown');
+    
+    if (hasShownPreloader) {
+      setPreloaderComplete(true);
+    } else {
+      const handlePreloaderComplete = () => {
+        setPreloaderComplete(true);
+      };
+
+      window.addEventListener('preloaderComplete', handlePreloaderComplete);
+      return () => {
+        window.removeEventListener('preloaderComplete', handlePreloaderComplete);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     if (hamburgerOnly) {
-      if (hamburgerRef.current) gsap.set(hamburgerRef.current, { opacity: 1, scale: 1 });
+      if (hamburgerRef.current) {
+        gsap.set(hamburgerRef.current, { opacity: 1, scale: 1 });
+      }
       return;
     }
 
@@ -47,30 +68,68 @@ const Navbar = ({ hamburgerOnly = false }) => {
     gsap.set(nav, { y: 0 });
     gsap.set(hamburger, { opacity: 0, scale: 0 });
     if (mobileNav) gsap.set(mobileNav, { y: 0 });
-
+    
     if (logo) {
-      gsap.fromTo(
-        logo,
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.3 },
-      );
+      gsap.set(logo, { x: -50, opacity: 0 });
     }
 
     if (linksContainer) {
       const links = linksContainer.querySelectorAll('li');
-      gsap.fromTo(
-        links,
-        { y: -20, opacity: 0 },
-        {
+      gsap.set(links, { y: -20, opacity: 0 });
+    }
+  }, [hamburgerOnly]);
+
+  useEffect(() => {
+    if (hamburgerOnly) return;
+    if (!preloaderComplete || !isReady) return;
+    if (hasAnimated) return;
+
+    const nav = navRef.current;
+    const hamburger = hamburgerRef.current;
+    const mobileNav = mobileNavRef.current;
+    const logo = logoRef.current;
+    const linksContainer = linksContainerRef.current;
+
+    if (!nav || !hamburger) return;
+
+    const animationTimer = setTimeout(() => {
+      if (logo) {
+        gsap.to(logo, {
+          x: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power2.out',
+          delay: 0.3,
+        });
+      }
+
+      if (linksContainer) {
+        const links = linksContainer.querySelectorAll('li');
+        gsap.to(links, {
           y: 0,
           opacity: 1,
           duration: 1,
           stagger: 0.3,
           ease: 'power2.out',
           delay: 0.5,
-        },
-      );
-    }
+        });
+      }
+
+      setHasAnimated(true);
+    }, 100);
+
+    return () => clearTimeout(animationTimer);
+  }, [preloaderComplete, isReady, hasAnimated, hamburgerOnly]);
+
+  useEffect(() => {
+    if (hamburgerOnly) return;
+    if (!hasAnimated) return;
+
+    const nav = navRef.current;
+    const hamburger = hamburgerRef.current;
+    const mobileNav = mobileNavRef.current;
+
+    if (!nav || !hamburger) return;
 
     ScrollTrigger.create({
       trigger: 'body',
@@ -86,24 +145,25 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
     const servicesSection = document.querySelector('[class*="bg-black"]');
     if (servicesSection) {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: servicesSection,
-            start: 'top top',
-            end: 'top -200px',
-            toggleActions: 'play none none reset',
-          },
-        })
-        .fromTo(
-          hamburger,
-          { opacity: 0, scale: 0, transformOrigin: 'center' },
-          { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' },
-        );
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: servicesSection,
+          start: 'top top',
+          end: 'top -200px',
+          toggleActions: 'play none none reset',
+        },
+      })
+      .fromTo(
+        hamburger,
+        { opacity: 0, scale: 0, transformOrigin: 'center' },
+        { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' },
+      );
     }
 
-    return () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-  }, [hamburgerOnly]);
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, [hasAnimated, hamburgerOnly]);
 
   useEffect(() => {
     const mobileMenu = mobileMenuRef.current;
@@ -137,10 +197,9 @@ const Navbar = ({ hamburgerOnly = false }) => {
     if (isTransitioning && isMenuOpen) {
       setIsMenuOpen(false);
     }
-  }, [isTransitioning]);
+  }, [isTransitioning, isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
   const handleLinkClick = useHandleLinkClick(setIsMenuOpen);
 
   const links = [
