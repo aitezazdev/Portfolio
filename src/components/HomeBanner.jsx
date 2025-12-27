@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { useTransitionState } from 'next-transition-router';
 import AnimatedButton from './AnimatedButton';
 import ParticlesBackground from './ParticlesBackground';
 
@@ -10,7 +11,8 @@ const HomeBanner = () => {
   const paragraphRef = useRef(null);
   const buttonsRef = useRef(null);
   const containerRef = useRef(null);
-  const [canAnimate, setCanAnimate] = useState(false);
+  const [preloaderComplete, setPreloaderComplete] = useState(false);
+  const { isReady } = useTransitionState();
 
   const splitText = (text) =>
     text.split('').map((char, idx) => (
@@ -48,10 +50,10 @@ const HomeBanner = () => {
     const hasShownPreloader = sessionStorage.getItem('preloader-shown');
 
     if (hasShownPreloader) {
-      setTimeout(() => setCanAnimate(true), 50);
+      setPreloaderComplete(true);
     } else {
       const handlePreloaderComplete = () => {
-        setTimeout(() => setCanAnimate(true), 100);
+        setPreloaderComplete(true);
       };
 
       window.addEventListener('preloaderComplete', handlePreloaderComplete);
@@ -63,24 +65,44 @@ const HomeBanner = () => {
   }, []);
 
   useEffect(() => {
-    if (!nameRef.current || !canAnimate) return;
+    if (!preloaderComplete || !isReady) return;
+    if (!nameRef.current) return;
 
-    gsap.to(containerRef.current, {
-      opacity: 1,
-      duration: 0.3,
-      ease: 'power2.out',
-    });
+    const timer = setTimeout(() => {
+      gsap.to(containerRef.current, {
+        opacity: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+
+      const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+      gsap.to(letters, {
+        y: '0%',
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.05,
+        ease: 'power3.out',
+        delay: 0.3,
+      });
+
+      const tl = gsap.timeline({ delay: 1.1, ease: 'power3.out' });
+
+      if (paragraphRef.current) {
+        tl.to(paragraphRef.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
+      }
+
+      if (buttonsRef.current) {
+        tl.to(buttonsRef.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [preloaderComplete, isReady]);
+
+  useEffect(() => {
+    if (!nameRef.current || !preloaderComplete || !isReady) return;
 
     const letters = nameRef.current.querySelectorAll('.letter-wrapper');
-
-    gsap.to(letters, {
-      y: '0%',
-      opacity: 1,
-      duration: 0.8,
-      stagger: 0.05,
-      ease: 'power3.out',
-      delay: 0.3,
-    });
 
     const handleMouseEnter = () => {
       letters.forEach((wrapper, idx) => {
@@ -104,29 +126,15 @@ const HomeBanner = () => {
       });
     };
 
-    nameRef.current.addEventListener('mouseenter', handleMouseEnter);
-    nameRef.current.addEventListener('mouseleave', handleMouseLeave);
+    const nameElement = nameRef.current;
+    nameElement.addEventListener('mouseenter', handleMouseEnter);
+    nameElement.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      if (!nameRef.current) return;
-      nameRef.current.removeEventListener('mouseenter', handleMouseEnter);
-      nameRef.current.removeEventListener('mouseleave', handleMouseLeave);
+      nameElement.removeEventListener('mouseenter', handleMouseEnter);
+      nameElement.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [canAnimate]);
-
-  useEffect(() => {
-    if (!canAnimate) return;
-
-    const tl = gsap.timeline({ delay: 1.1, ease: 'power3.out' });
-
-    if (paragraphRef.current) {
-      tl.to(paragraphRef.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
-    }
-
-    if (buttonsRef.current) {
-      tl.to(buttonsRef.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
-    }
-  }, [canAnimate]);
+  }, [preloaderComplete, isReady]);
 
   const handleScroll = (id) => {
     const section = document.getElementById(id);
