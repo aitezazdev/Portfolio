@@ -26,6 +26,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [preloaderComplete, setPreloaderComplete] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [shouldHideNav, setShouldHideNav] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
 
@@ -34,7 +35,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
   useEffect(() => {
     const hasShownPreloader = sessionStorage.getItem('preloader-shown');
-    
+
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
@@ -48,6 +49,25 @@ const Navbar = ({ hamburgerOnly = false }) => {
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (hamburgerOnly) return;
+
+    const checkScrollPosition = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      if (scrollY > 80) {
+        setShouldHideNav(true);
+      } else {
+        setShouldHideNav(false);
+      }
+    };
+
+    checkScrollPosition();
+
+    const timer = setTimeout(checkScrollPosition, 50);
+
+    return () => clearTimeout(timer);
+  }, [hamburgerOnly, isReady]);
 
   useEffect(() => {
     if (hamburgerOnly) {
@@ -65,32 +85,45 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
     if (!nav || !hamburger) return;
 
-    gsap.set(nav, { y: 0 });
-    gsap.set(hamburger, { opacity: 0, scale: 0 });
-    if (mobileNav) gsap.set(mobileNav, { y: 0 });
-    
+    const scrollY = window.scrollY || window.pageYOffset;
+    const scrollProgress = Math.min(scrollY / 80, 1);
+
+    gsap.set(nav, { y: -120 * scrollProgress, opacity: 1 });
+    if (mobileNav) gsap.set(mobileNav, { y: -190 * scrollProgress, opacity: 1 });
+
+    const servicesSection = document.querySelector('[class*="bg-black"]');
+    if (servicesSection) {
+      const servicesTop = servicesSection.getBoundingClientRect().top + scrollY;
+      const shouldShowHamburger = scrollY >= servicesTop - 200;
+      gsap.set(hamburger, {
+        opacity: shouldShowHamburger ? 1 : 0,
+        scale: shouldShowHamburger ? 1 : 0,
+      });
+    } else {
+      gsap.set(hamburger, { opacity: 0, scale: 0 });
+    }
+
     if (logo) {
-      gsap.set(logo, { x: -50, opacity: 0 });
+      gsap.set(logo, { x: shouldHideNav ? 0 : -50, opacity: shouldHideNav ? 1 : 0 });
     }
 
     if (linksContainer) {
       const links = linksContainer.querySelectorAll('li');
-      gsap.set(links, { y: -20, opacity: 0 });
+      gsap.set(links, { y: shouldHideNav ? 0 : -20, opacity: shouldHideNav ? 1 : 0 });
     }
-  }, [hamburgerOnly]);
+  }, [hamburgerOnly, shouldHideNav]);
 
   useEffect(() => {
     if (hamburgerOnly) return;
-    if (!preloaderComplete || !isReady) return;
+    if (!preloaderComplete || !isReady || isTransitioning) return;
     if (hasAnimated) return;
+    if (shouldHideNav) {
+      setHasAnimated(true);
+      return;
+    }
 
-    const nav = navRef.current;
-    const hamburger = hamburgerRef.current;
-    const mobileNav = mobileNavRef.current;
     const logo = logoRef.current;
     const linksContainer = linksContainerRef.current;
-
-    if (!nav || !hamburger) return;
 
     const animationTimer = setTimeout(() => {
       if (logo) {
@@ -119,11 +152,11 @@ const Navbar = ({ hamburgerOnly = false }) => {
     }, 100);
 
     return () => clearTimeout(animationTimer);
-  }, [preloaderComplete, isReady, hasAnimated, hamburgerOnly]);
+  }, [preloaderComplete, isReady, hasAnimated, hamburgerOnly, isTransitioning, shouldHideNav]);
 
   useEffect(() => {
     if (hamburgerOnly) return;
-    if (!hasAnimated) return;
+    if (!hasAnimated || isTransitioning) return;
 
     const nav = navRef.current;
     const hamburger = hamburgerRef.current;
@@ -131,7 +164,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
 
     if (!nav || !hamburger) return;
 
-    ScrollTrigger.create({
+    const scrollTrigger = ScrollTrigger.create({
       trigger: 'body',
       start: 'top top',
       end: '+=80',
@@ -144,26 +177,37 @@ const Navbar = ({ hamburgerOnly = false }) => {
     });
 
     const servicesSection = document.querySelector('[class*="bg-black"]');
+    let servicesTrigger = null;
+
     if (servicesSection) {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: servicesSection,
-          start: 'top top',
-          end: 'top -200px',
-          toggleActions: 'play none none reset',
+      servicesTrigger = ScrollTrigger.create({
+        trigger: servicesSection,
+        start: 'top top',
+        end: 'top -200px',
+        onEnter: () => {
+          gsap.to(hamburger, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            ease: 'back.out(1.7)',
+          });
         },
-      })
-      .fromTo(
-        hamburger,
-        { opacity: 0, scale: 0, transformOrigin: 'center' },
-        { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' },
-      );
+        onLeaveBack: () => {
+          gsap.to(hamburger, {
+            opacity: 0,
+            scale: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+          });
+        },
+      });
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      scrollTrigger.kill();
+      if (servicesTrigger) servicesTrigger.kill();
     };
-  }, [hasAnimated, hamburgerOnly]);
+  }, [hasAnimated, hamburgerOnly, isTransitioning]);
 
   useEffect(() => {
     const mobileMenu = mobileMenuRef.current;
@@ -209,14 +253,19 @@ const Navbar = ({ hamburgerOnly = false }) => {
     { name: 'Contact', href: '/#contact' },
   ];
 
+  const navStyle = {
+    opacity: isTransitioning ? 0 : 1,
+    pointerEvents: isTransitioning ? 'none' : 'auto',
+    transition: 'opacity 0.5s ease-in-out',
+  };
+
   return (
     <>
       {!hamburgerOnly && (
         <nav
           ref={navRef}
-          className={`hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50 transition-opacity duration-300 ${
-            isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
+          className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-[#e8e8e3] z-50"
+          style={navStyle}
         >
           <strong
             ref={logoRef}
@@ -248,18 +297,17 @@ const Navbar = ({ hamburgerOnly = false }) => {
       {!hamburgerOnly && (
         <nav
           ref={mobileNavRef}
-          className={`mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3] transition-opacity duration-300 ${
-            isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
+          className="mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3]"
+          style={navStyle}
         >
-          <div className="flex justify-between items-start px-6 py-6">
+          <div className="flex justify-between items-start px-4 py-4">
             <div className="flex flex-col">
               <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
                 Web Developer
               </strong>
             </div>
             <div className="flex flex-col items-end gap-3">
-              <ul className="flex flex-col items-end gap-2 text-[#6b645c] text-base font-sans font-medium">
+              <ul className="flex flex-col items-end gap-1 text-[#6b645c] text-sm font-sans">
                 {links.map((link) => (
                   <MobileNavLink
                     key={link.href}
@@ -280,26 +328,24 @@ const Navbar = ({ hamburgerOnly = false }) => {
       <button
         ref={hamburgerRef}
         onClick={toggleMenu}
-        className={`fixed top-6 right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full ${
-          hamburgerOnly ? 'bg-[#393632]' : 'bg-[#393632] md:bg-[#e8e8e3]'
-        } flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 ${
-          isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-        style={hamburgerOnly ? { opacity: 1, scale: 1 } : {}}
+        className={`fixed top-6 right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
+  bg-[#393632] ${!hamburgerOnly ? 'md:bg-[#524f4c]' : ''} 
+  flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300`}
+        style={
+          hamburgerOnly
+            ? { opacity: 1, scale: 1 }
+            : {
+                opacity: isTransitioning ? 0 : undefined,
+                pointerEvents: isTransitioning ? 'none' : 'auto',
+                transition: 'opacity 0.5s ease-in-out',
+              }
+        }
         aria-label="Toggle menu"
       >
         {isMenuOpen ? (
-          <X
-            className={`w-6 h-6 md:w-7 md:h-7 ${
-              hamburgerOnly ? 'text-white' : 'text-white md:text-[#6b645c]'
-            }`}
-          />
+          <X className="w-6 h-6 md:w-7 md:h-7 text-white" />
         ) : (
-          <Menu
-            className={`w-6 h-6 md:w-7 md:h-7 ${
-              hamburgerOnly ? 'text-white' : 'text-white md:text-[#6b645c]'
-            }`}
-          />
+          <Menu className="w-6 h-6 md:w-7 md:h-7 text-white" />
         )}
       </button>
 

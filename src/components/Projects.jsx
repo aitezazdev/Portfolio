@@ -7,44 +7,37 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AnimatedHeading from './AnimateHeading';
+import { getAllProjects } from '@/lib/projects';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef(null);
   const imageContainerRef = useRef(null);
 
   useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const res = await fetch('/api/projects');
-        if (!res.ok) throw new Error('Failed to fetch projects');
-        const data = await res.json();
-        setProjects(data);
-        if (data.length > 0 && window.innerWidth >= 768) {
-          setSelectedProject(0);
-        }
+    const data = getAllProjects();
+    setProjects(data);
 
-        const imagePromises = data.slice(0, 3).map((project) => {
-          return new Promise((resolve) => {
-            const img = new window.Image();
-            img.src = project.hoverImage || project.images[0];
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        });
-
-        Promise.all(imagePromises).then(() => {
-          setImagesLoaded(true);
-        });
-      } catch (err) {
-        console.error('Error loading projects:', err);
-      }
+    if (data.length > 0 && window.innerWidth >= 768) {
+      setSelectedProject(0);
     }
-    fetchProjects();
+
+    const criticalImages = data.slice(0, 4).map((project) => {
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.src = project.hoverImage || project.images[0];
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    });
+
+    Promise.all(criticalImages).then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -105,7 +98,7 @@ export default function ProjectsPage() {
 
   useGSAP(
     () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || isLoading) return;
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -122,7 +115,7 @@ export default function ProjectsPage() {
         opacity: 0,
       });
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [isLoading] },
   );
 
   const handleMouseEnter = (index) => {
@@ -132,6 +125,42 @@ export default function ProjectsPage() {
     }
     setSelectedProject(index);
   };
+
+  if (isLoading) {
+    return (
+      <section
+        id="projects"
+        className="relative min-h-screen w-full bg-[#e8e8e3] text-[#1a1a1a] overflow-hidden px-6 sm:px-8 md:px-12 pt-5 pb-12 md:pb-24"
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10 md:mb-20">
+            <div className="h-16 md:h-24 lg:h-32 bg-gray-300 rounded-lg animate-pulse mt-8 md:mt-20 mb-3 md:mb-4 w-3/4" />
+          </div>
+
+          <div className="flex flex-col space-y-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="py-4 md:py-8 border-b border-gray-300">
+                <div className="md:hidden mb-4">
+                  <div className="w-full aspect-[3/2] bg-gray-300 rounded-xl animate-pulse" />
+                </div>
+                <div className="flex gap-3 md:gap-8 items-start">
+                  <div className="w-8 h-8 bg-gray-300 rounded animate-pulse" />
+                  <div className="flex-1 space-y-4">
+                    <div className="h-8 md:h-12 lg:h-16 bg-gray-300 rounded animate-pulse w-3/4" />
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4].map((j) => (
+                        <div key={j} className="h-8 w-20 bg-gray-300 rounded-full animate-pulse" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -168,8 +197,7 @@ export default function ProjectsPage() {
                     width={350}
                     height={467}
                     quality={80}
-                    loading={index < 3 ? 'eager' : 'lazy'}
-                    priority={index < 3}
+                    priority={index < 4}
                     className={`absolute inset-0 transition-all duration-500 w-full h-full object-cover object-top ${
                       index !== selectedProject ? 'opacity-0' : ''
                     }`}
@@ -200,7 +228,6 @@ export default function ProjectsPage() {
                       width={600}
                       height={400}
                       quality={75}
-                      loading={index < 2 ? 'eager' : 'lazy'}
                       priority={index < 2}
                       className="w-full object-cover object-top sm:object-top md:object-cover aspect-[3/2] bg-gray-100"
                     />
