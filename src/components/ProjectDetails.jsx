@@ -1,0 +1,83 @@
+'use client';
+
+import { Link } from 'next-transition-router';
+import AnimatedHeading from '@/components/AnimateHeading';
+import AnimateDescription from '@/components/AnimateDescription';
+import AnimatedLink from '@/components/AnimateLink';
+import { FaArrowUp } from 'react-icons/fa';
+import ScrollToTopOnEnter from '@/utils/ScrollToTopOnEnter';
+
+export default function ProjectDetails({ project }) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <>
+      <ScrollToTopOnEnter />
+
+      <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
+        <Link
+          href={sessionStorage.getItem('previous-project-url') || '/'}
+          className="flex items-center gap-2 text-lg mb-12 hover:opacity-80 transition-opacity"
+        >
+          <span className="text-2xl">←</span> Back
+        </Link>
+
+        <AnimatedHeading
+          text={project.title}
+          className="text-6xl md:text-7xl font-extrabold mb-6"
+        />
+
+        <div className="mb-8 mt-10">
+          <strong className="text-xl font-bold">Tech Stack</strong>
+          <AnimateDescription
+            text={project.tech?.join(', ')}
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          />
+        </div>
+
+        <div className="mb-14">
+          <strong className="text-xl font-bold">Description</strong>
+          <AnimateDescription
+            text={project.description}
+            className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          />
+        </div>
+
+        <div className="flex flex-col gap-8 mb-16">
+          {project.images?.map((img, i) => (
+            <a key={i} href={img} target="_blank" rel="noopener noreferrer">
+              <img
+                src={img}
+                alt={`${project.title} screenshot ${i + 1}`}
+                className="w-full max-h-[500px] rounded-xl shadow-xl object-cover"
+              />
+            </a>
+          ))}
+        </div>
+
+        <div className="relative flex justify-center py-8">
+          <div className="text-center">
+            <p className="text-[#a29e9a] text-lg">Have a project in mind?</p>
+            <a
+              href="mailto:aitezazsikandar@gmail.com"
+              className="text-xl font-semibold text-[#bab6b3] hover:text-[#d4d2d0] transition"
+            >
+              aitezazsikandar@gmail.com
+            </a>
+          </div>
+
+          <button
+            onClick={scrollToTop}
+            className="absolute right-0 w-10 h-10 rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition"
+          >
+            <AnimatedLink>
+              <FaArrowUp className="w-4 h-4 text-[#e8e8e3]" />
+            </AnimatedLink>
+          </button>
+        </div>
+      </section>
+    </>
+  );
+}

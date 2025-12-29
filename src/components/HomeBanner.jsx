@@ -144,7 +144,7 @@ const HomeBanner = () => {
   return (
     <section
       ref={containerRef}
-      className="min-h-screen px-6 sm:px-8 md:px-12 pt-40 md:pt-20 bg-[#e8e8e3] flex items-center"
+      className="min-h-screen px-6 sm:px-8 md:px-12 pt-36 md:pt-20 bg-[#e8e8e3] flex items-center"
       style={{ opacity: 0 }}
     >
       <ParticlesBackground />
@@ -152,7 +152,7 @@ const HomeBanner = () => {
         <div className="text-center md:hidden">
           <h1
             ref={nameRef}
-            className="font-display text-6xl sm:text-6xl select-none font-semibold leading-none uppercase cursor-pointer overflow-hidden mb-6"
+            className="font-display text-6xl sm:text-6xl select-none font-semibold leading-none uppercase cursor-pointer overflow-hidden mb-3"
           >
             <div>{splitText('Aitezaz')}</div>
             <div>{splitText('Sikandar')}</div>
