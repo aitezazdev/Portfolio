@@ -9,7 +9,7 @@ const AnimatedHeading = ({ text, className = '' }) => {
 
   useEffect(() => {
     const chars = headingRef.current.querySelectorAll('.char');
-
+    
     gsap.fromTo(
       chars,
       { opacity: 0, y: '100%' },
@@ -26,23 +26,33 @@ const AnimatedHeading = ({ text, className = '' }) => {
         },
       },
     );
+    
     ScrollTrigger.refresh();
   }, []);
 
   return (
-    <div className="overflow-hidden mb-8">
-      <h2
-        ref={headingRef}
-        className={`font-display font-bold uppercase tracking-tighter ${className}`}
-      >
-        {text.split('').map((char, i) => (
-          <span key={i} className="char inline-block" style={{ opacity: 0 }}>
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        ))}
-      </h2>
-
-      <div className="h-1 w-24 bg-gradient-to-r from-green-400 to-transparent"></div>
+    <div className="mb-8">
+      <div className="overflow-hidden">
+        <h2
+          ref={headingRef}
+          className={`font-display font-bold uppercase tracking-tighter ${className}`}
+        >
+          {text.split(' ').map((word, wordIndex) => (
+            <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.25em]">
+              {word.split('').map((char, charIndex) => (
+                <span 
+                  key={`${wordIndex}-${charIndex}`} 
+                  className="char inline-block" 
+                  style={{ opacity: 0 }}
+                >
+                  {char}
+                </span>
+              ))}
+            </span>
+          ))}
+        </h2>
+      </div>
+      <div className="h-1 w-24 bg-gradient-to-r from-green-400 to-transparent mt-4"></div>
     </div>
   );
 };

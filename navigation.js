@@ -6,24 +6,36 @@ export const useHandleLinkClick = (setIsMenuOpen) => {
   const lenisRef = useLenis();
 
   return (href) => {
-    if (setIsMenuOpen) setIsMenuOpen(false);
-
     const [path, hash] = href.split('#');
 
     if (path !== window.location.pathname) {
+      if (setIsMenuOpen) setIsMenuOpen(false);
       router.push(href);
       return;
     }
 
+    if (lenisRef?.current) {
+      lenisRef.current.start();
+    }
+
+    if (setIsMenuOpen) {
+      setTimeout(() => setIsMenuOpen(false), 50);
+    }
+
     const el = document.getElementById(hash);
+    
     if (el && lenisRef?.current) {
-      lenisRef.current.scrollTo(el, {
-        offset: 0,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
+      setTimeout(() => {
+        lenisRef.current.scrollTo(el, {
+          offset: 0,
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      }, 100);
     } else if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
 
     window.history.pushState(null, '', `#${hash}`);
