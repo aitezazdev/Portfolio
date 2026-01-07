@@ -6,13 +6,14 @@ const projects = [
     year: '2025',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'Tailwind CSS'],
     description:
-      'A modern and fully responsive blog platform built with MERN Stack. It supports Markdown-based posts, SEO optimization, and fast static rendering for better performance. The site is designed for writers who value simplicity, speed, and a clean reading experience.',
+      'A blog platform where users can create posts, upload images, comment, and search content.',
+
     myRole: [
-      'Developed the entire frontend using React and Tailwind CSS.',
-      'Implemented Markdown rendering with syntax highlighting.',
-      'Added SEO-friendly routing with dynamic metadata and server actions.',
-      'Designed a minimal yet elegant interface for smooth content reading.',
+      'Built the frontend and backend using the MERN stack.',
+      'Implemented post creation, commenting, image uploads, and search.',
+      'Designed a clean, readable layout for posts.',
     ],
+
     images: [
       '/Projects/blogsite/blog-site.webp',
       '/Projects/blogsite/blog-site-2.webp',
@@ -20,8 +21,8 @@ const projects = [
       '/Projects/blogsite/blog-site-4.webp',
     ],
     hoverImage: '/Projects/blogsite/blog-site.webp',
-    liveUrl: '',
-    github: '',
+    github: 'https://github.com/aitezazdev/Blog-App-Mern',
+    liveUrl: 'https://blog-app-mern-puce.vercel.app/',
   },
   {
     id: 2,
@@ -30,13 +31,14 @@ const projects = [
     year: '2023',
     tech: ['React', 'Tailwind CSS', 'Redux', 'API Integration'],
     description:
-      'E-Marketana is a sleek frontend prototype for an e-commerce marketplace built entirely with React. It features smooth category-based product listings, responsive layouts, and clean animations for a polished user experience. The project focuses on UI consistency and component reusability.',
+      'A frontend e-commerce platform where users can browse products by category, search items, and view product details with responsive layouts and smooth transitions.',
+
     myRole: [
       'Built the frontend using React and Tailwind CSS.',
-      'Integrated REST APIs for fetching and displaying product data.',
-      'Created a dynamic product grid with debounced search functionality.',
-      'Implemented subtle page transitions using Framer Motion.',
+      'Integrated APIs to fetch and display product data.',
+      'Created a dynamic product grid with search functionality.',
     ],
+
     images: [
       '/Projects/emarketana/emarketana-1.webp',
       '/Projects/emarketana/emarketana-2.webp',
@@ -45,8 +47,8 @@ const projects = [
       '/Projects/emarketana/emarketana-5.webp',
     ],
     hoverImage: '/Projects/emarketana/emarketana-1.webp',
-    liveUrl: '',
-    github: '',
+    github: 'https://github.com/aitezazdev/React-E-Marketana',
+    liveUrl: 'https://react-e-marketana-ecommerce.vercel.app/',
   },
   {
     id: 3,
@@ -55,13 +57,15 @@ const projects = [
     year: '2023',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'JWT Auth', 'Recharts.js', 'Tailwind CSS'],
     description:
-      'A secure and intuitive finance tracking web app that helps users monitor expenses, income, and savings goals. It features visual charts, authentication, and real-time data updates for efficient personal finance management.',
+      'A finance tracking app where users can log income and expenses, set savings goals, and view their financial data in interactive charts.',
+
     myRole: [
-      'Developed both backend and frontend using the MERN stack.',
+      'Built the frontend and backend using the MERN stack.',
       'Implemented user authentication and JWT-based authorization.',
-      'Integrated Chart.js for dynamic expense and income visualization.',
-      'Built a dashboard for managing transactions and tracking savings goals.',
+      'Created interactive charts for visualizing income and expenses using Recharts.js.',
+      'Developed a dashboard for managing transactions and tracking savings goals.',
     ],
+
     images: [
       '/Projects/financeTracker/finance-tracker-1.webp',
       '/Projects/financeTracker/finance-tracker-2.webp',
@@ -70,8 +74,8 @@ const projects = [
       '/Projects/financeTracker/finance-tracker-5.webp',
     ],
     hoverImage: '/Projects/financeTracker/finance-tracker-1.webp',
+    github: 'https://github.com/aitezazdev/Finance-Tracker-Mern',
     liveUrl: '',
-    github: '',
   },
   {
     id: 4,
@@ -80,13 +84,16 @@ const projects = [
     year: '2023',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'Context API', 'Tailwind CSS'],
     description:
-      'A full-featured hospital management platform that simplifies appointment scheduling, patient records, and doctor management. The system is designed to improve hospital workflows with secure data handling and responsive dashboards.',
+      'A hospital management system where patients can register and book appointments, doctors can view and approve them, and admins can manage staff, verify doctors, and access a global searchable list of records.',
+
     myRole: [
-      'Developed the full-stack architecture using MERN technologies.',
-      'Created APIs for patient management, appointments, and staff operations.',
-      'Integrated Redux for global state management and scalability.',
-      'Designed responsive admin and doctor dashboards with Tailwind CSS.',
+      'Built the full-stack application using the MERN stack.',
+      'Developed APIs for patient registration, appointments, and staff management.',
+      'Implemented approval workflows for doctors and appointments.',
+      'Created global search functionality for admins to manage records efficiently.',
+      'Designed responsive dashboards for patients, doctors, and admins using Tailwind CSS.',
     ],
+
     images: [
       '/Projects/HMS/hospital-1.webp',
       '/Projects/HMS/hospital-2.webp',
@@ -96,8 +103,8 @@ const projects = [
       '/Projects/HMS/hospital-6.webp',
     ],
     hoverImage: '/Projects/HMS/hospital-3.webp',
+    github: 'https://github.com/aitezazdev/Hospital-Mangment-System',
     liveUrl: '',
-    github: '',
   },
 ];
 
