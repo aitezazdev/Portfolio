@@ -278,16 +278,14 @@ const Navbar = ({ hamburgerOnly = false }) => {
             className="flex gap-5 text-[#6b645c] text-base font-sans font-medium uppercase tracking-wide"
           >
             {links.map((link) => (
-              <AnimatedLink key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(link.href);
-                  }}
-                >
-                  {link.name}
-                </a>
+              <AnimatedLink
+                key={link.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(link.href);
+                }}
+              >
+                <a href={link.href}>{link.name}</a>
               </AnimatedLink>
             ))}
           </ul>
