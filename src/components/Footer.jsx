@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedLink from './AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
-import { useHandleLinkClick } from '../../navigation';
+import { useHandleLinkClick } from '../lib/navigation';
 import { useLenis } from './SmoothScrollProvider';
 
 const Footer = () => {

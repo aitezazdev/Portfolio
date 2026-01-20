@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react';
 import { useTransitionState } from 'next-transition-router';
 import { useLenis } from './SmoothScrollProvider';
 import AnimatedLink from './AnimateLink';
-import { useHandleLinkClick } from '../../navigation';
+import { useHandleLinkClick } from '../lib/navigation';
 
 gsap.registerPlugin(ScrollTrigger);
 
