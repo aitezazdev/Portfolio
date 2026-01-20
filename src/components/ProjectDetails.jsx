@@ -8,6 +8,15 @@ import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import ScrollToTopOnEnter from '@/utils/ScrollToTopOnEnter';
 
 export default function ProjectDetails({ project }) {
+  const [backUrl, setBackUrl] = useState('/');
+
+  useEffect(() => {
+    const prevUrl = sessionStorage.getItem('previous-project-url');
+    if (prevUrl) {
+      setBackUrl(prevUrl);
+    }
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -18,10 +27,12 @@ export default function ProjectDetails({ project }) {
 
       <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
         <Link
-          href={sessionStorage.getItem('previous-project-url') || '/'}
+          href={backUrl}
           className="inline-flex items-center gap-3 text-[#a29e9a] hover:text-white transition-all duration-300 group mb-12"
         >
-          <span className="text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
+          <span className="text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
+            ←
+          </span>
           <span className="text-lg font-medium">Back</span>
         </Link>
 
