@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Link } from 'next-transition-router';
 import AnimatedHeading from '@/components/AnimateHeading';
 import AnimateDescription from '@/components/AnimateDescription';
@@ -11,9 +12,10 @@ export default function ProjectDetails({ project }) {
   const [backUrl, setBackUrl] = useState('/');
 
   useEffect(() => {
-    const prevUrl = sessionStorage.getItem('previous-project-url');
-    if (prevUrl) {
-      setBackUrl(prevUrl);
+    // Only access sessionStorage on the client side
+    const previousUrl = sessionStorage.getItem('previous-project-url');
+    if (previousUrl) {
+      setBackUrl(previousUrl);
     }
   }, []);
 
@@ -30,9 +32,7 @@ export default function ProjectDetails({ project }) {
           href={backUrl}
           className="inline-flex items-center gap-3 text-[#a29e9a] hover:text-white transition-all duration-300 group mb-12"
         >
-          <span className="text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
-            ←
-          </span>
+          <span className="text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
           <span className="text-lg font-medium">Back</span>
         </Link>
 
