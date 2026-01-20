@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { usePathname } from "next/navigation";
 
 export default function CustomCursor() {
   const cursorDotRef = useRef(null);
@@ -10,6 +11,7 @@ export default function CustomCursor() {
   const [cursorText, setCursorText] = useState("");
   const [enabled, setEnabled] = useState(false);
   const requestRef = useRef(null);
+  const pathname = usePathname();
 
   const mouse = useRef({ x: 0, y: 0 });
   const delayedMouse = useRef({ x: 0, y: 0 });
@@ -22,6 +24,25 @@ export default function CustomCursor() {
 
     setEnabled(true);
   }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const cursorDot = cursorDotRef.current;
+    const cursorOutline = cursorOutlineRef.current;
+    const cursorTextEl = cursorTextRef.current;
+
+    if (!cursorDot || !cursorOutline || !cursorTextEl) return;
+
+    setCursorText("");
+    gsap.to(cursorDot, { scale: 1, duration: 0.3 });
+    gsap.to(cursorOutline, {
+      scale: 1,
+      backgroundColor: "transparent",
+      duration: 0.4,
+    });
+    gsap.to(cursorTextEl, { opacity: 0, duration: 0.2 });
+  }, [pathname, enabled]);
 
   useEffect(() => {
     if (!enabled) return;
