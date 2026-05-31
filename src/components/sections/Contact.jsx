@@ -229,7 +229,7 @@ const Contact = () => {
           </button>
         </div>
 
-        <div className="mt-16 md:mt-24 text-center px-6">
+        <div className="mt-16 md:mt-24 text-center px-4 sm:px-6 overflow-hidden">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#6b645c] mb-6">
             Or reach out directly
           </p>
@@ -248,9 +248,11 @@ const Contact = () => {
                 }, 2000);
               }
             }}
-            className="group relative inline-block cursor-none text-[#d1d1c7] font-display font-black uppercase leading-none hover:text-[#10b981] transition-colors duration-300"
+            className="group relative inline-block cursor-none text-[#d1d1c7] font-display font-black uppercase leading-none hover:text-[#10b981] transition-colors duration-300 max-w-full"
             style={{
-              fontSize: 'clamp(1.8rem, 5vw, 4.5rem)',
+              fontSize: 'clamp(0.65rem, 4.5vw, 4.5rem)',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all',
             }}
           >
             aitezazsikandar@gmail.com
