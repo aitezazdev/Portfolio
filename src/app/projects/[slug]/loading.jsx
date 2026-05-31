@@ -1,40 +1,24 @@
-'use client';
-
-import ScrollToTopOnEnter from '@/utils/ScrollToTopOnEnter';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-
 export default function Loading() {
   return (
-    <>
-    <ScrollToTopOnEnter />
-    <SkeletonTheme baseColor="#1a1917" highlightColor="#2a2825" borderRadius={12}>
-      <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
-        {/* Back */}
-        <Skeleton width={90} height={24} className="mb-12" />
-
-        {/* Title */}
-        <Skeleton height={80} className="mb-10" />
-
-        {/* Tech stack */}
-        <div className="mb-10">
-          <Skeleton width={120} height={22} className="mb-4" />
-          <Skeleton width="60%" height={18} />
+    <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
+      <div className="animate-pulse">
+        <div className="h-6 w-20 bg-[#2a2825] rounded-md mb-12" />
+        <div className="h-16 md:h-24 bg-[#1a1917] rounded-lg mb-10 w-3/4" />
+        <div className="mb-10 space-y-3">
+          <div className="h-4 w-28 bg-[#1a1917] rounded" />
+          <div className="h-4 w-64 bg-[#1a1917] rounded" />
         </div>
-
-        {/* Description */}
         <div className="mb-14 space-y-3">
-          <Skeleton width={140} height={22} className="mb-4" />
-          <Skeleton count={3} height={18} />
+          <div className="h-4 w-32 bg-[#1a1917] rounded" />
+          <div className="h-4 w-full bg-[#1a1917] rounded" />
+          <div className="h-4 w-4/5 bg-[#1a1917] rounded" />
+          <div className="h-4 w-3/5 bg-[#1a1917] rounded" />
         </div>
-
-        {/* Images */}
-        <div className="flex flex-col gap-8">
-          <Skeleton height={400} />
-          <Skeleton height={400} />
+        <div className="space-y-8">
+          <div className="h-64 md:h-[400px] bg-[#1a1917] rounded-xl" />
+          <div className="h-64 md:h-[400px] bg-[#1a1917] rounded-xl" />
         </div>
-      </section>
-    </SkeletonTheme>
-    </>
+      </div>
+    </section>
   );
 }

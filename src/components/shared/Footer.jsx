@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import AnimatedLink from './AnimateLink';
+import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
-import { useHandleLinkClick } from '../lib/navigation';
-import { useLenis } from './SmoothScrollProvider';
-
+import { useHandleLinkClick } from '@/lib/navigation';
+import { useLenis } from '@/components/providers/SmoothScrollProvider';
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
-
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -25,24 +23,37 @@ const Footer = () => {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
-
   const handleLinkClick = useHandleLinkClick();
-
   const links = [
-    { name: 'About', href: '/#about' },
-    { name: 'Services', href: '/#services' },
-    { name: 'Work', href: '/#projects' },
-    { name: 'Contact', href: '/#contact' },
+    {
+      name: 'About',
+      href: '/#about',
+    },
+    {
+      name: 'Services',
+      href: '/#services',
+    },
+    {
+      name: 'Work',
+      href: '/#projects',
+    },
+    {
+      name: 'Contact',
+      href: '/#contact',
+    },
   ];
-
   const scrollToTop = () => {
     if (lenis) {
-      lenis.scrollTo(0, { duration: 1.2 });
+      lenis.scrollTo(0, {
+        duration: 1.2,
+      });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     }
   };
-
   return (
     <footer className="bg-[#e8e8e3] px-6 sm:px-8 md:px-12 py-12 md:py-16">
       <div className="max-w-7xl mx-auto">
@@ -119,5 +130,4 @@ const Footer = () => {
     </footer>
   );
 };
-
 export default Footer;

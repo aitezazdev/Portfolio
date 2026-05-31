@@ -1,16 +1,14 @@
-import ProjectDetails from '@/components/ProjectDetails';
+import ProjectDetails from '@/components/project/ProjectDetails';
 import { getProjectBySlug, getAllProjects } from '@/lib/projects';
 import { notFound } from 'next/navigation';
-
 export async function generateMetadata({ params }) {
-  const project = getProjectBySlug(params.slug);
-  
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
   if (!project) {
     return {
       title: 'Project Not Found',
     };
   }
-
   return {
     title: project.title,
     description: project.description,
@@ -35,18 +33,15 @@ export async function generateMetadata({ params }) {
     },
   };
 }
-
 export async function generateStaticParams() {
   const projects = getAllProjects();
   return projects.map((project) => ({
     slug: project.slug,
   }));
 }
-
-export default function ProjectPage({ params }) {
-  const project = getProjectBySlug(params.slug);
-  
+export default async function ProjectPage({ params }) {
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
   if (!project) notFound();
-  
-  return <ProjectDetails project={project} />;
+  return <ProjectDetails key={project.slug} project={project} />;
 }

@@ -1,8 +1,7 @@
 import React from 'react';
-import About from './About';
+import About from './AboutMe';
 import Services from './Services';
 import TechStack from './TechStack';
-
 const ReuniteBlack = ({ techStackRef }) => {
   return (
     <>
@@ -15,5 +14,4 @@ const ReuniteBlack = ({ techStackRef }) => {
     </>
   );
 };
-
 export default ReuniteBlack;

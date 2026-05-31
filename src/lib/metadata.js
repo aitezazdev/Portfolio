@@ -16,33 +16,38 @@ export const siteMetadata = {
     'MERN Stack',
     'Portfolio',
   ],
-  authors: [{ name: 'Aitezaz Sikandar Khan' }],
+  authors: [
+    {
+      name: 'Aitezaz Sikandar Khan',
+    },
+  ],
   creator: 'Aitezaz Sikandar',
-  metadataBase: new URL('https://aitezazdev.vercel.app'),
+  metadataBase: new URL('https://aitezaz.dev'),
   icons: {
-    icon: '/logo.webp'
+    icon: '/logo.webp',
   },
   openGraph: {
-    title: 'Aitezaz Sikandar - Full Stack Developer',
+    title: 'Aitezaz Sikandar — Full Stack Developer',
     description:
-      'Portfolio of Aitezaz Sikandar, a web developer building modern, high-performance web applications.',
-    url: 'https://aitezazdev.vercel.app',
+      'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
+    url: 'https://aitezaz.dev',
     siteName: 'Aitezaz Sikandar Portfolio',
     images: [
       {
-        url: '/zazkhan.webp',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Aitezaz Sikandar - Full Stack Developer',
+        alt: 'Aitezaz Sikandar — Full Stack Developer',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aitezaz Sikandar - Web Developer',
-    description: 'Web developer focused on React, Next.js, and performance-driven UI.',
-    images: ['/zazkhan.webp'],
+    title: 'Aitezaz Sikandar — Full Stack Developer',
+    description:
+      'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
