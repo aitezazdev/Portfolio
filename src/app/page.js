@@ -3,32 +3,33 @@
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-import HomeBanner from '@/components/HomeBanner';
-import Projects from '@/components/Projects';
-import ReuniteBlack from '@/components/ReuniteBlack';
-import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
-
+import HomeBanner from '@/components/sections/HomeBanner';
+import Projects from '@/components/sections/Projects';
+import About from '@/components/sections/About';
+import MarqueeStrip from '@/components/sections/MarqueeStrip';
+import Contact from '@/components/sections/Contact';
+import Footer from '@/components/shared/Footer';
+import Navbar from '@/components/shared/Navbar';
 gsap.registerPlugin(ScrollTrigger);
-
 export default function Home() {
   const homeRef = useRef(null);
   const reuniteRef = useRef(null);
   const techStackRef = useRef(null);
-
   useEffect(() => {
     const home = homeRef.current;
     const reunite = reuniteRef.current;
     const techStack = techStackRef.current;
     const projects = document.querySelector('section');
-
     if (!home || !reunite || !techStack || !projects) return;
-
-    gsap.set(reunite, { zIndex: 2 });
-    gsap.set(home, { zIndex: 1, y: 0, opacity: 1, pointerEvents: 'auto' });
-
+    gsap.set(reunite, {
+      zIndex: 2,
+    });
+    gsap.set(home, {
+      zIndex: 1,
+      y: 0,
+      opacity: 1,
+      pointerEvents: 'auto',
+    });
     gsap
       .timeline({
         scrollTrigger: {
@@ -50,10 +51,8 @@ export default function Home() {
         scale: 0.95,
         ease: 'power2.out',
       });
-
     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
   }, []);
-
   return (
     <>
       <Navbar />
@@ -61,14 +60,15 @@ export default function Home() {
         <section ref={homeRef} className="sticky top-0 left-0 w-full h-screen">
           <HomeBanner />
         </section>
-        <div className="relative bg-black">
+        <div id="about-section-wrapper" className="relative bg-black">
           <div ref={reuniteRef} className="relative z-10 bg-[#080807] min-h-screen overflow-hidden">
-            <ReuniteBlack techStackRef={techStackRef} />
+            <About techStackRef={techStackRef} />
           </div>
         </div>
         <section className="relative z-20 bg-white">
           <Projects />
         </section>
+        <MarqueeStrip />
         <section className="relative bg-black">
           <Contact />
         </section>

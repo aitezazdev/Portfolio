@@ -1,26 +1,21 @@
 'use client';
+
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import AnimatedHeading from './AnimateHeading';
-import AnimateDescription from './AnimateDescription';
-
+import AnimatedHeading from '@/components/ui/AnimateHeading';
+import AnimateDescription from '@/components/ui/AnimateDescription';
 gsap.registerPlugin(ScrollTrigger);
-
 const Services = () => {
   const sectionRef = useRef(null);
   const servicesRef = useRef([]);
-
   useEffect(() => {
     if (window.innerWidth < 768) return;
-
     const ctx = gsap.context(() => {
       const allSections = servicesRef.current.filter(Boolean);
       const pinOffset = 50;
-
       allSections.forEach((section, index) => {
         const offset = pinOffset + index * 100;
-
         ScrollTrigger.create({
           trigger: section,
           start: `top ${offset}px`,
@@ -31,15 +26,11 @@ const Services = () => {
         });
       });
     }, sectionRef);
-
     return () => ctx.revert();
   }, []);
-
   const headingText = 'What I Do';
-
   const descriptionText =
     "I specialize in building full-stack web applications that are fast, reliable, and user-friendly. With a solid foundation in both frontend and backend technologies, I help bring ideas to life whether it's for a business, a startup, or a product team.";
-
   const services = [
     {
       id: '01',
@@ -75,7 +66,6 @@ const Services = () => {
       ],
     },
   ];
-
   return (
     <section
       id="services"
@@ -109,7 +99,9 @@ const Services = () => {
               key={service.id}
               ref={(el) => (servicesRef.current[index] = el)}
               className="bg-[#080807] pb-20 md:pb-64"
-              style={{ zIndex: index + 1 }}
+              style={{
+                zIndex: index + 1,
+              }}
             >
               <div className="grid md:grid-cols-12 gap-4 items-center pt-4 md:pt-8 border-t border-[#393632]">
                 <h3 className="font-display md:col-span-9 md:col-start-2 text-[#d1d1c7] font-bold text-2xl sm:text-2xl md:text-4xl lg:text-5xl">
@@ -142,5 +134,4 @@ const Services = () => {
     </section>
   );
 };
-
 export default Services;

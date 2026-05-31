@@ -1,7 +1,13 @@
-import Image from 'next/image';
-import AnimateDescription from './AnimateDescription';
-import AnimatedHeading from './AnimateHeading';
+'use client';
 
+import React, { useRef } from 'react';
+import Image from 'next/image';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AnimateDescription from '@/components/ui/AnimateDescription';
+import AnimatedHeading from '@/components/ui/AnimateHeading';
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 const About = () => {
   const headingText = 'Who Am I';
   const descriptionText =
@@ -9,10 +15,73 @@ const About = () => {
   const aboutMeText = `I am a passionate Software Engineer with a knack for building full-stack web applications using modern technologies like MERN Stack and Tailwind CSS. My journey in tech began with a curiosity for solving real-world problems through innovative solutions, which evolved into a love for crafting user-centric digital experiences.
 
 Beyond coding, I thrive in collaborative environments and enjoy tackling challenging problems with creative solutions. I aim to contribute to impactful projects that make a difference in users' lives.`;
-
+  const sectionRef = useRef(null);
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        '.about-image-wrapper',
+        {
+          x: -60,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.about-image-wrapper',
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        },
+      );
+      gsap.fromTo(
+        '.about-bio-para',
+        {
+          y: 40,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.about-bio-para',
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        },
+      );
+      gsap.fromTo(
+        '.about-label',
+        {
+          opacity: 0,
+          letterSpacing: '0.5em',
+        },
+        {
+          opacity: 1,
+          letterSpacing: '0.3em',
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.about-label',
+            start: 'top 88%',
+            toggleActions: 'play none none reverse',
+          },
+        },
+      );
+    },
+    {
+      scope: sectionRef,
+    },
+  );
   return (
     <div className="bg-[#e8e8e3]">
       <section
+        ref={sectionRef}
         id="about"
         className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 pb-5 px-6 md:px-12 lg:px-20 rounded-t-4xl"
       >
@@ -29,7 +98,7 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
 
         <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20">
           <div className="col-span-12 md:col-span-5 lg:col-span-5">
-            <div className="w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-[#1a1a18] rounded-2xl overflow-hidden border border-[#2a2a28]">
+            <div className="about-image-wrapper w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-[#1a1a18] rounded-2xl overflow-hidden border border-[#2a2a28]">
               <Image
                 src="/zaz.webp"
                 alt="Profile photo"
@@ -43,14 +112,14 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
           </div>
 
           <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
-            <span className="text-sm sm:text-base md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left">
+            <span className="about-label text-sm sm:text-base md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left inline-block">
               (About Me)
             </span>
             <div className="space-y-6">
               {aboutMeText.split('\n\n').map((p, i) => (
                 <p
                   key={i}
-                  className="text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"
+                  className="about-bio-para text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"
                 >
                   {p}
                 </p>
@@ -62,5 +131,4 @@ Beyond coding, I thrive in collaborative environments and enjoy tackling challen
     </div>
   );
 };
-
 export default About;

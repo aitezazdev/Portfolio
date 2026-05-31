@@ -1,75 +1,123 @@
 'use client';
+
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import AnimatedHeading from './AnimateHeading';
-import AnimateDescription from './AnimateDescription';
-
+import AnimatedHeading from '@/components/ui/AnimateHeading';
+import AnimateDescription from '@/components/ui/AnimateDescription';
 gsap.registerPlugin(ScrollTrigger);
-
 const STACK_SECTIONS = [
   {
     id: 'frontend',
     title: 'FRONTEND',
     technologies: [
-      { name: 'JavaScript', icon: '/Services/js.png' },
-      { name: 'React', icon: '/Services/react.png' },
-      { name: 'Next.js', icon: '/Services/next.webp' },
-      { name: 'Tailwind CSS', icon: '/Services/tailwind.png' },
-      { name: 'Bootstrap', icon: '/Services/bootstrap.svg' },
-      { name: 'Redux', icon: '/Services/redux.png' },
-      { name: 'GSAP', icon: '/Services/gsap.png' },
+      {
+        name: 'JavaScript',
+        icon: '/Services/js.png',
+      },
+      {
+        name: 'React',
+        icon: '/Services/react.png',
+      },
+      {
+        name: 'Next.js',
+        icon: '/Services/next.webp',
+      },
+      {
+        name: 'Tailwind CSS',
+        icon: '/Services/tailwind.png',
+      },
+      {
+        name: 'Bootstrap',
+        icon: '/Services/bootstrap.svg',
+      },
+      {
+        name: 'Redux',
+        icon: '/Services/redux.png',
+      },
+      {
+        name: 'GSAP',
+        icon: '/Services/gsap.png',
+      },
     ],
   },
   {
     id: 'backend',
     title: 'BACKEND',
     technologies: [
-      { name: 'Node.js', icon: '/Services/node.png' },
-      { name: 'Express.js', icon: '/Services/express.png' },
-      { name: 'Firebase', icon: '/Services/firebase.svg' },
+      {
+        name: 'Node.js',
+        icon: '/Services/node.png',
+      },
+      {
+        name: 'Express.js',
+        icon: '/Services/express.png',
+      },
+      {
+        name: 'Firebase',
+        icon: '/Services/firebase.svg',
+      },
     ],
   },
   {
     id: 'database',
     title: 'DATABASE',
     technologies: [
-      { name: 'MongoDB', icon: '/Services/mongodb.svg' },
-      { name: 'MySQL', icon: '/Services/mysql.svg' },
+      {
+        name: 'MongoDB',
+        icon: '/Services/mongodb.svg',
+      },
+      {
+        name: 'MySQL',
+        icon: '/Services/mysql.svg',
+      },
     ],
   },
   {
     id: 'tools',
     title: 'TOOLS',
     technologies: [
-      { name: 'Git', icon: '/Services/git.png' },
-      { name: 'AWS', icon: '/Services/aws.webp' },
-      { name: 'Docker', icon: '/Services/docker.svg' },
-      { name: 'Postman', icon: '/Services/postman-icon.svg' },
-      { name: 'Figma', icon: '/Services/figma.png' },
+      {
+        name: 'Git',
+        icon: '/Services/git.png',
+      },
+      {
+        name: 'AWS',
+        icon: '/Services/aws.webp',
+      },
+      {
+        name: 'Docker',
+        icon: '/Services/docker.svg',
+      },
+      {
+        name: 'Postman',
+        icon: '/Services/postman-icon.svg',
+      },
+      {
+        name: 'Figma',
+        icon: '/Services/figma.png',
+      },
     ],
   },
 ];
-
 const TechStack = () => {
   const sectionRefs = useRef([]);
   const titleRefs = useRef([]);
-
   const headingText = 'My Tech Stack';
   const descriptionText =
     'A selection of technologies I use to design, build, and deploy full-stack web applications.';
-
   useEffect(() => {
     sectionRefs.current.forEach((section, index) => {
       if (!section) return;
-
       const items = section.querySelectorAll('.tech-item');
       const title = titleRefs.current[index];
-
       gsap.fromTo(
         title,
-        { opacity: 0, y: 50 },
+        {
+          opacity: 0,
+          y: 50,
+        },
         {
           opacity: 1,
           y: 0,
@@ -82,10 +130,12 @@ const TechStack = () => {
           },
         },
       );
-
       gsap.fromTo(
         items,
-        { opacity: 0, y: 50 },
+        {
+          opacity: 0,
+          y: 50,
+        },
         {
           opacity: 1,
           y: 0,
@@ -100,10 +150,8 @@ const TechStack = () => {
         },
       );
     });
-
     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
   }, []);
-
   const handleMouseEnter = (e) => {
     const img = e.currentTarget.querySelector('img');
     gsap.to(img, {
@@ -113,7 +161,6 @@ const TechStack = () => {
       ease: 'power2.out',
     });
   };
-
   const handleMouseLeave = (e) => {
     const img = e.currentTarget.querySelector('img');
     gsap.to(img, {
@@ -123,7 +170,6 @@ const TechStack = () => {
       ease: 'power2.inOut',
     });
   };
-
   return (
     <section
       id="TechStack"
@@ -188,5 +234,4 @@ const TechStack = () => {
     </section>
   );
 };
-
 export default TechStack;
