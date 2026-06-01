@@ -20,38 +20,47 @@ const AnimatedHamburger = ({ isOpen, hamburgerOnly }) => {
       hasInitRef.current = true;
       if (isOpen) {
         gsap.set(l1, {
-          y: 4,
+          y: 0,
           rotation: 45,
         });
         gsap.set(l2, {
-          y: -4,
+          y: 0,
           rotation: -45,
+        });
+      } else {
+        gsap.set(l1, {
+          y: -5,
+          rotation: 0,
+        });
+        gsap.set(l2, {
+          y: 5,
+          rotation: 0,
         });
       }
       return;
     }
     if (isOpen) {
       gsap.to(l1, {
-        y: 4,
+        y: 0,
         rotation: 45,
         duration: 0.35,
         ease: 'power3.inOut',
       });
       gsap.to(l2, {
-        y: -4,
+        y: 0,
         rotation: -45,
         duration: 0.35,
         ease: 'power3.inOut',
       });
     } else {
       gsap.to(l1, {
-        y: 0,
+        y: -5,
         rotation: 0,
         duration: 0.35,
         ease: 'power3.inOut',
       });
       gsap.to(l2, {
-        y: 0,
+        y: 5,
         rotation: 0,
         duration: 0.35,
         ease: 'power3.inOut',
@@ -59,17 +68,17 @@ const AnimatedHamburger = ({ isOpen, hamburgerOnly }) => {
     }
   }, [isOpen]);
   return (
-    <div className="flex flex-col items-center justify-center gap-[8px] w-5 h-5 md:w-6 md:h-6">
+    <div className="relative w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
       <span
         ref={line1Ref}
-        className="block w-full h-[2px] bg-white rounded-full"
+        className="absolute w-full h-[2px] bg-white rounded-full"
         style={{
           transformOrigin: 'center',
         }}
       />
       <span
         ref={line2Ref}
-        className="block w-full h-[2px] bg-white rounded-full"
+        className="absolute w-full h-[2px] bg-white rounded-full"
         style={{
           transformOrigin: 'center',
         }}
@@ -358,12 +367,12 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
 
         <div
           ref={metaRef}
-          className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] px-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
+          className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] pl-20 pr-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
           style={{
             opacity: 0,
           }}
         >
-          <div className="space-y-1">
+          <div className="space-y-1 text-left">
             <p className="text-[#4a4a48] font-mono text-xs uppercase tracking-widest mb-2">
               Get in Touch
             </p>
@@ -375,7 +384,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
             </a>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex gap-6 justify-start">
             {[
               {
                 label: 'GitHub',
@@ -684,30 +693,14 @@ const Navbar = ({ hamburgerOnly = false }) => {
       {!hamburgerOnly && (
         <nav
           ref={mobileNavRef}
-          className="mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3]"
+          className="mobile-navbar md:hidden fixed w-full z-50 bg-[#e8e8e3]/90 backdrop-blur-md border-b border-[#6b645c]/10"
           style={navStyle}
         >
-          <div className="flex justify-between items-start px-4 py-4">
-            <div className="flex flex-col">
-              <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
-                Web Developer
-              </strong>
-            </div>
-            <div className="flex flex-col items-end gap-3">
-              <ul className="flex flex-col items-end gap-1 text-[#6b645c] text-sm font-sans">
-                {links.map((link) => (
-                  <MobileNavLink
-                    key={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(link.href);
-                    }}
-                  >
-                    {link.name}
-                  </MobileNavLink>
-                ))}
-              </ul>
-            </div>
+          <div className="flex justify-between items-center px-6 h-20">
+            <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
+              Web Developer
+            </strong>
+            <div className="w-10 h-10" />
           </div>
         </nav>
       )}
@@ -715,7 +708,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
       <button
         ref={hamburgerRef}
         onClick={toggleMenu}
-        className={`fixed top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full 
+        className={`fixed top-5 md:top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full 
   bg-[#393632] ${!hamburgerOnly ? 'md:bg-[#524f4c]' : ''} 
   flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300`}
         style={
