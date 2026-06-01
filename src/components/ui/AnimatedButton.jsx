@@ -137,7 +137,7 @@ const AnimatedButton = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleButtonMouseLeave}
         disabled={disabled}
-        className={`relative text-sm outline-none overflow-hidden h-12 px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-block ${className}`}
+        className={`relative text-xs md:text-sm outline-none overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-block ${className}`}
         style={{
           transformOrigin: 'center',
         }}

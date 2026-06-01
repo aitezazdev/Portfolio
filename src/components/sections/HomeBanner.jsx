@@ -332,7 +332,7 @@ const HomeBanner = () => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen px-6 sm:px-8 md:px-12 pt-36 md:pt-20 bg-[#e8e8e3] flex items-center relative overflow-hidden"
+      className="min-h-screen px-6 sm:px-8 md:px-12 pt-28 pb-8 md:pt-20 md:pb-0 bg-[#e8e8e3] flex items-center relative overflow-hidden"
       style={{
         opacity: 0,
       }}
@@ -383,7 +383,7 @@ const HomeBanner = () => {
               <RoleTicker />
             </div>
 
-            <div ref={buttonsRef} className="flex flex-col sm:flex-row justify-center gap-4">
+            <div ref={buttonsRef} className="flex flex-row justify-center items-center gap-2 sm:gap-4 flex-wrap max-w-full px-2">
               <AnimatedButton
                 onClick={() => handleScroll('projects')}
                 topText="PROJECTS"
