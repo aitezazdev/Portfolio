@@ -166,10 +166,10 @@ export default function ProjectDetails({ project }) {
           href={backUrl}
           className="inline-flex items-center gap-3 text-[#a29e9a] hover:text-white transition-all duration-300 group mb-12"
         >
-          <span className="text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
+          <span className="text-lg md:text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
             ←
           </span>
-          <span className="text-lg font-medium">Back</span>
+          <span className="text-sm md:text-lg font-medium">Back</span>
         </Link>
       </div>
 
@@ -177,7 +177,7 @@ export default function ProjectDetails({ project }) {
         <div className="flex items-start justify-between gap-6 mb-6 md:mb-0">
           <AnimatedHeading
             text={project.title}
-            className="text-5xl md:text-7xl font-extrabold flex-1"
+            className="text-[clamp(1.8rem,7vw,3rem)] md:text-7xl font-extrabold flex-1"
           />
 
           <div className="hidden md:flex gap-4 pt-2">
@@ -232,28 +232,28 @@ export default function ProjectDetails({ project }) {
         </div>
       </div>
 
-      <div className="mb-8 mt-4 fade-up-item">
-        <strong className="text-xl font-bold block mb-1">Tech Stack</strong>
+      <div className="mb-6 mt-4 fade-up-item">
+        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Tech Stack</strong>
         <AnimateDescription
           text={project.tech?.join(', ')}
-          className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          className="text-sm sm:text-base md:text-lg text-[#a29e9a] font-sans"
         />
       </div>
 
-      <div className="mb-8 fade-up-item">
-        <strong className="text-xl font-bold block mb-1">Description</strong>
+      <div className="mb-6 fade-up-item">
+        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Description</strong>
         <AnimateDescription
           text={project.description}
-          className="text-base sm:text-lg text-[#a29e9a] font-sans"
+          className="text-sm sm:text-base md:text-lg text-[#a29e9a] font-sans"
         />
       </div>
 
       {project.myRole?.length > 0 && (
-        <div className="mb-14 fade-up-item">
-          <strong className="text-xl font-bold block mb-1">My Role</strong>
+        <div className="mb-10 fade-up-item">
+          <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">My Role</strong>
           <ul className="list-disc list-inside text-[#a29e9a] font-sans mt-2 space-y-2">
             {project.myRole.map((role, i) => (
-              <li key={i} className="text-base sm:text-lg">
+              <li key={i} className="text-sm sm:text-base md:text-lg">
                 {role}
               </li>
             ))}
