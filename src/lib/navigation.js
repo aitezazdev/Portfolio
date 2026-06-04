@@ -6,11 +6,23 @@ export const useHandleLinkClick = (setIsMenuOpen) => {
   const router = useRouter();
   const lenisRef = useLenis();
   const scrollToHash = (hash) => {
+    const lenis = lenisRef?.current;
+    // Special case: 'top' scrolls to the very top of the page
+    if (hash === 'top') {
+      if (lenis) {
+        lenis.scrollTo(0, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
     let attempts = 0;
     const maxAttempts = 30;
     const tryScroll = () => {
       const el = document.getElementById(hash);
-      const lenis = lenisRef?.current;
       if (el && lenis) {
         lenis.scrollTo(el, {
           offset: 0,

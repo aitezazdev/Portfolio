@@ -119,11 +119,10 @@ const Footer = () => {
         <div className="flex justify-end">
           <button
             onClick={scrollToTop}
-            className="w-10 h-10 sm:w-12 sm:h-12 cursor-pointer rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition-all duration-300 group focus:outline-none"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#dfdfd9] border border-[#cfcfc8] flex items-center justify-center text-[#6b645c] hover:text-[#10b981] hover:border-[#10b981] hover:bg-[#10b981]/10 transition-all duration-300 group focus:outline-none"
+            aria-label="Scroll to top"
           >
-            <AnimatedLink className="flex items-center justify-center">
-              <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#e8e8e3]" />
-            </AnimatedLink>
+            <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
           </button>
         </div>
       </div>

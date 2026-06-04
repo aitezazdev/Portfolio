@@ -20,7 +20,7 @@ const projects = [
     ],
     hoverImage: '/Projects/blogsite/blog-site.webp',
     github: 'https://github.com/aitezazdev/Blog-App-Mern',
-    liveUrl: 'https://blog-app-mern-puce.vercel.app/',
+    liveUrl: 'https://aitezazdev-blog-app.vercel.app/',
   },
   {
     id: 2,
@@ -69,7 +69,7 @@ const projects = [
     ],
     hoverImage: '/Projects/financeTracker/finance-tracker-1.webp',
     github: 'https://github.com/aitezazdev/Finance-Tracker-Mern',
-    liveUrl: '',
+    liveUrl: 'https://aitezazdev-finance-tracker.vercel.app/',
   },
   {
     id: 4,
@@ -96,7 +96,7 @@ const projects = [
     ],
     hoverImage: '/Projects/HMS/hospital-3.webp',
     github: 'https://github.com/aitezazdev/Hospital-Mangment-System',
-    liveUrl: '',
+    liveUrl: 'https://aitezazdev-medicore.vercel.app/',
   },
 ];
 export function getAllProjects() {

@@ -636,6 +636,11 @@ const Navbar = ({ hamburgerOnly = false }) => {
   const handleLinkClick = useHandleLinkClick(setIsMenuOpen);
   const links = [
     {
+      name: 'Home',
+      href: '/#top',
+      menuOnly: true,
+    },
+    {
       name: 'About',
       href: '/#about',
     },
@@ -669,13 +674,13 @@ const Navbar = ({ hamburgerOnly = false }) => {
             ref={logoRef}
             className="text-[#6b645c] text-lg font-sans tracking-wide font-medium cursor-pointer"
           >
-            Web Developer
+            Aitezaz.
           </strong>
           <ul
             ref={linksContainerRef}
             className="flex gap-5 text-[#6b645c] text-base font-sans font-medium uppercase tracking-wide"
           >
-            {links.map((link) => (
+            {links.filter((link) => !link.menuOnly).map((link) => (
               <AnimatedLink
                 key={link.href}
                 onClick={(e) => {
@@ -698,7 +703,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
         >
           <div className="flex justify-between items-center px-6 h-20">
             <strong className="text-[#6b645c] text-lg font-sans tracking-wide font-medium">
-              Web Developer
+              Aitezaz.
             </strong>
             <div className="w-10 h-10" />
           </div>

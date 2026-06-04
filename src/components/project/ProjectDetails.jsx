@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Link } from 'next-transition-router';
 import { useGSAP } from '@gsap/react';
@@ -12,15 +12,8 @@ import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 export default function ProjectDetails({ project }) {
-  const [backUrl, setBackUrl] = useState('/');
   const detailsRef = useRef(null);
   const revealedRef = useRef(new Set());
-  useEffect(() => {
-    const previousUrl = sessionStorage.getItem('previous-project-url');
-    if (previousUrl) {
-      setBackUrl(previousUrl);
-    }
-  }, []);
   useEffect(() => {
     if (!detailsRef.current) return;
     const allContainers = detailsRef.current.querySelectorAll('.image-reveal-container');
@@ -63,21 +56,31 @@ export default function ProjectDetails({ project }) {
         const rect = container.getBoundingClientRect();
         const alreadyVisible = rect.top < window.innerHeight * 0.9;
         if (alreadyVisible) {
-          gsap.to(container, {
+          const tl = gsap.timeline();
+          tl.to(container, {
             clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
             duration: 1.2,
             ease: 'power4.inOut',
           });
           if (img) {
-            gsap.to(img, {
+            tl.to(img, {
               scale: 1,
               duration: 1.6,
               ease: 'power3.out',
-            });
+            }, '<');
           }
           revealedRef.current.add(idx);
         } else {
-          gsap.fromTo(
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              id: `img-reveal-${idx}`,
+              trigger: container,
+              start: 'top 85%',
+              once: true,
+              onEnter: () => revealedRef.current.add(idx),
+            },
+          });
+          tl.fromTo(
             container,
             {
               clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)',
@@ -86,17 +89,10 @@ export default function ProjectDetails({ project }) {
               clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
               duration: 1.2,
               ease: 'power4.inOut',
-              scrollTrigger: {
-                id: `img-reveal-${idx}`,
-                trigger: container,
-                start: 'top 85%',
-                once: true,
-                onEnter: () => revealedRef.current.add(idx),
-              },
-            },
+            }
           );
           if (img) {
-            gsap.fromTo(
+            tl.fromTo(
               img,
               {
                 scale: 1.15,
@@ -105,12 +101,8 @@ export default function ProjectDetails({ project }) {
                 scale: 1,
                 duration: 1.6,
                 ease: 'power3.out',
-                scrollTrigger: {
-                  trigger: container,
-                  start: 'top 85%',
-                  once: true,
-                },
               },
+              '<'
             );
           }
         }
@@ -159,11 +151,33 @@ export default function ProjectDetails({ project }) {
       });
     }
   };
+  const handleImageEnter = (e) => {
+    const img = e.currentTarget.querySelector('img');
+    if (img) {
+      gsap.to(img, {
+        scale: 1.03,
+        duration: 0.4,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
+  };
+  const handleImageLeave = (e) => {
+    const img = e.currentTarget.querySelector('img');
+    if (img) {
+      gsap.to(img, {
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
+  };
   return (
     <section ref={detailsRef} className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10">
       <div className="fade-up-item">
         <Link
-          href={backUrl}
+          href="/"
           className="inline-flex items-center gap-3 text-[#a29e9a] hover:text-white transition-all duration-300 group mb-12"
         >
           <span className="text-lg md:text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
@@ -275,6 +289,8 @@ export default function ProjectDetails({ project }) {
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full h-full relative"
+              onMouseEnter={handleImageEnter}
+              onMouseLeave={handleImageLeave}
             >
               <Image
                 src={img}
@@ -282,7 +298,10 @@ export default function ProjectDetails({ project }) {
                 fill
                 sizes="(max-width: 768px) 100vw, 1200px"
                 priority={i === 0}
-                className="object-cover object-top w-full h-full transition-transform duration-500 hover:scale-[1.03]"
+                className="object-cover object-top w-full h-full"
+                style={{
+                  willChange: 'transform, clip-path',
+                }}
                 placeholder="blur"
                 blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFhMTkxNyIvPjwvc3ZnPg=="
                 onError={(e) => {
@@ -324,11 +343,10 @@ export default function ProjectDetails({ project }) {
 
         <button
           onClick={scrollToTop}
-          className="absolute right-0 w-10 h-10 rounded-full bg-[#6b645c] shadow flex items-center justify-center hover:bg-[#534e47] transition"
+          className="absolute right-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1a1a18] border border-[#2a2a28] flex items-center justify-center text-[#a29e9a] hover:text-[#10b981] hover:border-[#10b981] hover:bg-[#10b981]/10 transition-all duration-300 group focus:outline-none"
+          aria-label="Scroll to top"
         >
-          <AnimatedLink>
-            <FaArrowUp className="w-4 h-4 text-[#e8e8e3]" />
-          </AnimatedLink>
+          <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
         </button>
       </div>
     </section>

@@ -186,10 +186,12 @@ const TechStack = () => {
         />
       </div>
 
-      <AnimatedHeading
-        text="My Stack"
-        className="md:hidden text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
-      />
+      <div className="md:hidden">
+        <AnimatedHeading
+          text="My Stack"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
+        />
+      </div>
 
       <div className="space-y-24">
         {STACK_SECTIONS.map((stack, index) => (

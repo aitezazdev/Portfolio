@@ -399,7 +399,7 @@ const HomeBanner = () => {
               <AnimatedButton
                 onClick={() => window.open('/resume.pdf', '_blank')}
                 topText="RESUME"
-                bottomText="DOWNLOAD PDF →"
+                bottomText="DOWNLOAD →"
                 variant="outline"
               />
             </div>
