@@ -103,8 +103,11 @@ const Services = () => {
                 zIndex: index + 1,
               }}
             >
-              <div className="grid md:grid-cols-12 gap-4 items-center pt-4 md:pt-8 border-t border-[#393632]">
-                <h3 className="font-display md:col-span-9 md:col-start-2 text-[#d1d1c7] font-bold text-2xl sm:text-2xl md:text-4xl lg:text-5xl">
+              <div className="grid md:grid-cols-12 gap-4 items-center py-4 md:py-8 border-t border-[#393632]">
+                <h3
+                  className="font-display md:col-span-9 md:col-start-2 text-[#d1d1c7] font-bold text-2xl sm:text-2xl md:text-4xl lg:text-5xl leading-none"
+                  style={{ transform: 'translateY(-0.1em)' }}
+                >
                   {service.title}
                 </h3>
               </div>

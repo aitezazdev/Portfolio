@@ -66,7 +66,7 @@ const AnimatedHeading = ({ text, className = '' }) => {
           {text}
         </h2>
       </div>
-      <div className="h-1 w-24 bg-gradient-to-r from-green-400 to-transparent mt-4"></div>
+      <div className="h-1 w-24 bg-gradient-to-r from-green-400 to-transparent mt-1"></div>
     </div>
   );
 };
