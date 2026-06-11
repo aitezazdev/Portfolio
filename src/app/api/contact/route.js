@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns';
-import { promisify } from 'util';
 import nodemailer from 'nodemailer';
-const resolveMx = promisify(dns.resolveMx);
 export async function POST(request) {
   try {
     const { name, email, message } = await request.json();
@@ -59,31 +57,8 @@ export async function POST(request) {
           status: 400,
         },
       );
-    try {
-      const addresses = await resolveMx(domain);
-      if (!addresses || addresses.length === 0)
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Email domain does not exist',
-          },
-          {
-            status: 400,
-          },
-        );
-    } catch {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Email domain does not exist',
-        },
-        {
-          status: 400,
-        },
-      );
-    }
     const username = email.split('@')[0];
-    if (/^\d+$/.test(username) || username.length < 2 || username.length > 64)
+    if (username.length < 1 || username.length > 64)
       return NextResponse.json(
         {
           success: false,
@@ -94,10 +69,16 @@ export async function POST(request) {
         },
       );
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: 'aitezazsikandar@gmail.com',
         pass: process.env.GMAIL_APP_PASSWORD,
+      },
+      // Force IPv4 lookup to prevent timeouts in serverless/hosting environments
+      lookup: (hostname, options, callback) => {
+        dns.lookup(hostname, { family: 4 }, callback);
       },
     });
     await transporter.sendMail({
