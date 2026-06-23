@@ -80,7 +80,7 @@ const projects = [
     id: 4,
     slug: 'finance',
     title: 'Finance Tracker',
-    year: '2024',
+    year: '2025',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'JWT Auth', 'Recharts.js', 'Tailwind CSS'],
     description:
       'A finance tracking app where users can log income and expenses, set savings goals, and view their financial data in interactive charts.',
