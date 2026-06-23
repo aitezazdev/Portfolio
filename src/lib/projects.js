@@ -3,10 +3,10 @@ const projects = [
     id: 1,
     slug: 'c-study',
     title: 'Collaborative Study Platform',
-    year: '2025',
+    year: '2026',
     tech: ['React', 'Node.js', 'Express', 'Socket.io', 'MongoDB', 'Gemini AI', 'Tailwind CSS'],
     description:
-      'A real-time collaborative study platform featuring interactive classrooms, PDF/slide rendering, AI-powered study assistance, and text-to-speech learning aids. Students can join virtual study rooms to collaborate on documents and query the AI study companion for instant summaries, while teachers can upload lecture resources and comment in peer-to-peer discussion threads.',
+      'My final year project. A real-time collaborative study platform featuring interactive classrooms, PDF/slide rendering, AI-powered study assistance, and text-to-speech learning aids. Students can join virtual study rooms to collaborate on documents and query the AI study companion for instant summaries, while teachers can upload lecture resources and comment in peer-to-peer discussion threads.',
     myRole: [
       'Designed and implemented real-time classroom state synchronization and live chat using Express and Socket.io.',
       'Integrated Google Gemini and Groq AI SDKs to build an automated AI Study Assistant capable of generating lecture summaries, flashcards, and quizzes.',
@@ -80,7 +80,7 @@ const projects = [
     id: 4,
     slug: 'finance',
     title: 'Finance Tracker',
-    year: '2023',
+    year: '2024',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'JWT Auth', 'Recharts.js', 'Tailwind CSS'],
     description:
       'A finance tracking app where users can log income and expenses, set savings goals, and view their financial data in interactive charts.',
@@ -105,7 +105,7 @@ const projects = [
     id: 5,
     slug: 'hms',
     title: 'Hospital Management System',
-    year: '2023',
+    year: '2025',
     tech: ['React', 'Express', 'Node.js', 'Mongodb', 'Context API', 'Tailwind CSS'],
     description:
       'A hospital management system where patients can register and book appointments, doctors can view and approve them, and admins can manage staff, verify doctors, and access a global searchable list of records.',
