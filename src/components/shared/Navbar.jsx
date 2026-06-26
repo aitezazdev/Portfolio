@@ -388,7 +388,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
             {[
               {
                 label: 'GitHub',
-                href: 'https://github.com/aitezazsk',
+                href: 'https://github.com/aitezazdev',
               },
               {
                 label: 'LinkedIn',
