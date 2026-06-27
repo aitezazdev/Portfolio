@@ -36,7 +36,7 @@ const Services = () => {
       id: '01',
       title: 'Full Stack Development',
       description:
-        'End-to-end development of modern web applications — from frontend interfaces to backend APIs. I build complete, maintainable, and scalable systems using the MERN stack and modern tooling.',
+        'End-to-end development of modern web applications, covering everything from frontend interfaces to backend APIs. I build complete, maintainable, and scalable systems using the MERN stack and modern tooling.',
       items: [
         'MERN Stack (MongoDB, Express.js, React, Node.js)',
         'REST APIs & Integration',

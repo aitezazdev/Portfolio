@@ -27,7 +27,7 @@ export const siteMetadata = {
     icon: '/logo.webp',
   },
   openGraph: {
-    title: 'Aitezaz Sikandar — Full Stack Developer',
+    title: 'Aitezaz Sikandar - Full Stack Developer',
     description:
       'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
     url: 'https://aitezaz.dev',
@@ -37,14 +37,14 @@ export const siteMetadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Aitezaz Sikandar — Full Stack Developer',
+        alt: 'Aitezaz Sikandar - Full Stack Developer',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aitezaz Sikandar — Full Stack Developer',
+    title: 'Aitezaz Sikandar - Full Stack Developer',
     description:
       'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
     images: ['/og-image.png'],
