@@ -134,7 +134,7 @@ const projects = [
       '/Projects/HMS/hospital-7.webp',
       '/Projects/HMS/hospital-8.webp',
     ],
-    hoverImage: '/Projects/HMS/hospital-3.webp',
+    hoverImage: '/Projects/HMS/hospital-1.webp',
     github: 'https://github.com/aitezazdev/Hospital-Mangment-System',
     liveUrl: 'https://aitezazdev-medicore.vercel.app/',
   },
