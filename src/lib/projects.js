@@ -59,7 +59,7 @@ const projects = [
     id: 3,
     slug: 'ecommerce',
     title: 'Ecommerce-Next.js',
-    year: '2025',
+    year: '2026',
     tech: ['Next.js 16', 'React 19', 'TypeScript', 'Redux Toolkit', 'Stripe', 'MongoDB', 'Tailwind CSS'],
     description:
       'A high performance e-commerce platform built using the Next.js App Router and React 19 to provide a smooth, dark themed shopping experience. The storefront integrates server side rendering for catalog queries, category filters, and sorting parameters, allowing for fast initial loads and search optimization. A key feature is the database persisted shopping cart which uses React 19 transition states and optimistic updates to reflect quantity changes instantly, automatically rolling back to the cached Redux store if backend updates fail. Transactions are completed through a secure Stripe checkout session that collects delivery details, logs orders, and flushes cart states upon redirect confirmation. The backend includes database safeguards such as connection caching, a failure cooldown guard, and an offline mock dataset fallback to maintain stability.',
