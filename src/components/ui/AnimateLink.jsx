@@ -13,7 +13,7 @@ const AnimatedLink = ({ children, onClick, className = '' }) => {
           onClick={childOnClick || onClick}
           target={target}
           rel={rel}
-          className={`${childClassName || ''} relative overflow-hidden h-6 group cursor-pointer inline-flex items-center`.trim()}
+          className={`${childClassName || ''} relative z-10 overflow-hidden h-6 group cursor-pointer inline-flex items-center`.trim()}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -51,7 +51,7 @@ const AnimatedLink = ({ children, onClick, className = '' }) => {
   return (
     <li className={`${className} list-none`}>
       <span
-        className="relative overflow-hidden h-6 group cursor-pointer inline-flex items-center"
+        className="relative z-10 overflow-hidden h-6 group cursor-pointer inline-flex items-center"
         onClick={onClick}
         style={{
           display: 'inline-flex',
