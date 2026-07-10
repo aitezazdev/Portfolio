@@ -431,8 +431,8 @@ function MobileSnapProjects({ projects, router }) {
 ───────────────────────────────────────────── */
 export default function ProjectsPage() {
   const router = useRouter();
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState(() => getAllProjects());
+  const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef(null);
   const [hoveredImage, setHoveredImage] = useState('');
   const lastHoveredImgRef = useRef('');
@@ -455,7 +455,6 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     const data = getAllProjects();
-    setProjects(data);
     const criticalImages = data.slice(0, 4).map(
       (project) =>
         new Promise((resolve) => {
@@ -465,7 +464,6 @@ export default function ProjectsPage() {
           img.onerror = resolve;
         }),
     );
-    Promise.all(criticalImages).then(() => setIsLoading(false));
   }, []);
 
   useGSAP(

@@ -5,9 +5,11 @@ import { useHandleLinkClick } from '@/lib/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
   const lenisRef = useLenis();
   const lenis = lenisRef?.current;
   useEffect(() => {
+    setIsMounted(true);
     const updateTime = () => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', {
@@ -111,7 +113,7 @@ const Footer = () => {
               Local Time
             </h3>
             <p className="text-[#6b645c] text-sm sm:text-base font-sans font-medium tracking-wide">
-              {currentTime}, PST
+              {isMounted && currentTime ? `${currentTime} PKT` : 'Loading local time...'}
             </p>
           </div>
         </div>

@@ -392,7 +392,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
               },
               {
                 label: 'LinkedIn',
-                href: 'https://linkedin.com/in/aitezazsikandar',
+                href: 'https://linkedin.com/in/aitezaz-sikandar',
               },
             ].map((s) => (
               <a

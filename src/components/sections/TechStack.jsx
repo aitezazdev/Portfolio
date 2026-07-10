@@ -4,9 +4,10 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 const STACK_SECTIONS = [
   {
     id: 'frontend',
@@ -102,56 +103,59 @@ const STACK_SECTIONS = [
   },
 ];
 const TechStack = () => {
+  const containerRef = useRef(null);
   const sectionRefs = useRef([]);
   const titleRefs = useRef([]);
   const headingText = 'My Tech Stack';
   const descriptionText =
     'A selection of technologies I use to design, build, and deploy full-stack web applications.';
-  useEffect(() => {
-    sectionRefs.current.forEach((section, index) => {
-      if (!section) return;
-      const items = section.querySelectorAll('.tech-item');
-      const title = titleRefs.current[index];
-      gsap.fromTo(
-        title,
-        {
-          opacity: 0,
-          y: 50,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 90%',
-            end: 'top 70%',
-            scrub: true,
+  useGSAP(
+    () => {
+      sectionRefs.current.forEach((section, index) => {
+        if (!section) return;
+        const items = section.querySelectorAll('.tech-item');
+        const title = titleRefs.current[index];
+        gsap.fromTo(
+          title,
+          {
+            opacity: 0,
+            y: 50,
           },
-        },
-      );
-      gsap.fromTo(
-        items,
-        {
-          opacity: 0,
-          y: 50,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.2,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 90%',
-            end: 'top 70%',
-            scrub: true,
+          {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 90%',
+              end: 'top 70%',
+              scrub: true,
+            },
           },
-        },
-      );
-    });
-    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-  }, []);
+        );
+        gsap.fromTo(
+          items,
+          {
+            opacity: 0,
+            y: 50,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 90%',
+              end: 'top 70%',
+              scrub: true,
+            },
+          },
+        );
+      });
+    },
+    { scope: containerRef }
+  );
   const handleMouseEnter = (e) => {
     const img = e.currentTarget.querySelector('img');
     gsap.to(img, {
@@ -172,6 +176,7 @@ const TechStack = () => {
   };
   return (
     <section
+      ref={containerRef}
       id="TechStack"
       className="bg-[#080807] text-[#d1d1c7] pb-20 md:pb-36 px-6 sm:px-8 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden"
     >
