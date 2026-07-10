@@ -22,7 +22,7 @@ export const siteMetadata = {
     },
   ],
   creator: 'Aitezaz Sikandar',
-  metadataBase: new URL('https://aitezaz.dev'),
+  metadataBase: new URL('https://aitezaz.xyz'),
   icons: {
     icon: '/logo.webp',
   },
@@ -30,7 +30,7 @@ export const siteMetadata = {
     title: 'Aitezaz Sikandar - Full Stack Developer',
     description:
       'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
-    url: 'https://aitezaz.dev',
+    url: 'https://aitezaz.xyz',
     siteName: 'Aitezaz Sikandar Portfolio',
     images: [
       {

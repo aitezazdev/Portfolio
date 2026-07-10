@@ -12,7 +12,7 @@ const RoleTicker = () => {
   const roles = [
     'Full Stack Developer',
     'React & Next.js Engineer',
-    'MERN Stack Specialist',
+    'MERN Stack Developer',
     'Open to Work Worldwide',
   ];
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -84,7 +84,7 @@ const HomeBanner = () => {
         }}
       >
         <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
-        <span className="letter-duplicate block absolute top-full left-0 w-full">
+        <span aria-hidden="true" className="letter-duplicate block absolute top-full left-0 w-full select-none">
           {char === ' ' ? '\u00A0' : char}
         </span>
       </span>
@@ -353,19 +353,25 @@ const HomeBanner = () => {
         <div className="text-center md:hidden">
           <h1
             ref={nameRef}
+            aria-label="Aitezaz Sikandar"
             className="font-display text-6xl sm:text-6xl select-none font-semibold leading-none uppercase cursor-pointer overflow-hidden mb-3"
           >
-            <div>{splitText('Aitezaz')}</div>
-            <div>{splitText('Sikandar')}</div>
+            <span aria-hidden="true" className="block">
+              <span className="block">{splitText('Aitezaz')}</span>
+              <span className="block">{splitText('Sikandar')}</span>
+            </span>
           </h1>
         </div>
 
         <div className="hidden md:block text-center">
           <h1
             ref={nameRef}
+            aria-label="Aitezaz Sikandar"
             className="font-display text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
-            {splitText('Aitezaz Sikandar')}
+            <span aria-hidden="true" className="block">
+              {splitText('Aitezaz Sikandar')}
+            </span>
           </h1>
         </div>
 

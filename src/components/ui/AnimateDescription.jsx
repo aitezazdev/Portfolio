@@ -41,7 +41,7 @@ const AnimateDescription = ({ text, className = '' }) => {
             opacity: 0,
           }}
         >
-          {word}
+          {word}{' '}
         </span>
       ))}
     </div>

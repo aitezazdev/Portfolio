@@ -21,37 +21,41 @@ export default function Home() {
     const techStack = techStackRef.current;
     const projects = document.querySelector('section');
     if (!home || !reunite || !techStack || !projects) return;
-    gsap.set(reunite, {
-      zIndex: 2,
-    });
-    gsap.set(home, {
-      zIndex: 1,
-      y: 0,
-      opacity: 1,
-      pointerEvents: 'auto',
-    });
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: reunite,
-          start: 'top bottom',
-          end: 'top 10%',
-          scrub: 1.2,
-          onLeave: () => {
-            home.style.pointerEvents = 'none';
-          },
-          onEnterBack: () => {
-            home.style.pointerEvents = 'auto';
-          },
-        },
-      })
-      .to(home, {
-        opacity: 0,
-        y: 50,
-        scale: 0.95,
-        ease: 'power2.out',
+
+    const ctx = gsap.context(() => {
+      gsap.set(reunite, {
+        zIndex: 2,
       });
-    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+      gsap.set(home, {
+        zIndex: 1,
+        y: 0,
+        opacity: 1,
+        pointerEvents: 'auto',
+      });
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: reunite,
+            start: 'top bottom',
+            end: 'top 10%',
+            scrub: 1.2,
+            onLeave: () => {
+              home.style.pointerEvents = 'none';
+            },
+            onEnterBack: () => {
+              home.style.pointerEvents = 'auto';
+            },
+          },
+        })
+        .to(home, {
+          opacity: 0,
+          y: 50,
+          scale: 0.95,
+          ease: 'power2.out',
+        });
+    });
+
+    return () => ctx.revert();
   }, []);
   return (
     <>

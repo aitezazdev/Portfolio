@@ -55,9 +55,9 @@ const Contact = () => {
     return true;
   };
   const validateMessage = (message) => {
-    if (message.trim().length < 10) return false;
+    if (message.trim().length < 30) return false;
     const words = message.trim().split(/\s+/);
-    if (words.length < 3) return false;
+    if (words.length < 5) return false;
     const spamPhrases = ['test message', 'testing', 'asdf', 'qwerty'];
     if (spamPhrases.some((p) => message.toLowerCase().includes(p))) return false;
     if (/(.)\1{10,}/.test(message)) return false;
@@ -88,7 +88,7 @@ const Contact = () => {
     }
     if (!formData.message.trim()) newErrors.message = 'Message is required';
     else if (!validateMessage(formData.message))
-      newErrors.message = 'Please enter a meaningful message (at least 10 characters, 3 words)';
+      newErrors.message = 'Please enter a meaningful message (at least 30 characters, 5 words)';
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -195,7 +195,7 @@ const Contact = () => {
             />
             {errors.message && <p className="text-red-400 text-xs sm:text-sm">{errors.message}</p>}
             <p className="text-xs text-[#a29e9a]">
-              {formData.message.length} / 10 minimum characters
+              {formData.message.length} / 30 minimum characters
             </p>
           </div>
 
