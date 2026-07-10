@@ -695,16 +695,28 @@ export default function ProjectsPage() {
                     'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.15) 100%)',
                 }}
               />
-              {hoveredImage && (
-                <Image
-                  src={hoveredImage}
-                  alt="Project Preview"
-                  fill
-                  sizes="420px"
-                  priority={false}
-                  className="object-cover object-top"
-                />
-              )}
+              {projects.map((project) => {
+                const imgUrl = project.hoverImage || project.images[0];
+                const isActive = hoveredImage === imgUrl;
+                return (
+                  <div
+                    key={project.id}
+                    className="absolute inset-0 transition-opacity duration-300 ease-out"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                    }}
+                  >
+                    <Image
+                      src={imgUrl}
+                      alt={project.title}
+                      fill
+                      sizes="420px"
+                      priority
+                      className="object-cover object-top"
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
