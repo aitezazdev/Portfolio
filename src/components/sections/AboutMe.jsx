@@ -12,9 +12,11 @@ const About = () => {
   const headingText = 'Who Am I';
   const descriptionText =
     "I'm a software engineer driven by a passion for turning ideas into clean, intuitive digital experiences.";
-  const aboutMeText = `I am a passionate Software Engineer with a knack for building full-stack web applications using modern technologies like MERN Stack and Tailwind CSS. My journey in tech began with a curiosity for solving real-world problems through innovative solutions, which evolved into a love for crafting user-centric digital experiences.
+  const aboutMeText = `I am a Software Engineer who specializes in building end-to-end web applications. I love bridges—bridging the gap between front-end aesthetics (using GSAP and Tailwind CSS to create fluid, premium interfaces) and robust back-end systems (orchestrating REST APIs, database schemas, and real-time Socket.io channels).
 
-Beyond coding, I thrive in collaborative environments and enjoy tackling challenging problems with creative solutions. I aim to contribute to impactful projects that make a difference in users' lives.`;
+My tech journey started out of a pure curiosity to understand how software ticks under the hood. Today, that curiosity has translated into a love for clean code, optimistic UI updates, and building user journeys that feel alive and intuitive.
+
+Outside of the editor, I enjoy collaborating on team-focused development, discussing code architecture, and learning new tools. My goal is to build impactful, scalable applications that make a meaningful difference.`;
   const sectionRef = useRef(null);
   useGSAP(
     () => {
