@@ -298,7 +298,7 @@ export default function ProjectDetails({ project }) {
                 fill
                 sizes="(max-width: 768px) 100vw, 1200px"
                 priority={i === 0}
-                className="object-cover object-top w-full h-full"
+                className="object-contain w-full h-full"
                 style={{
                   willChange: 'transform, clip-path',
                 }}

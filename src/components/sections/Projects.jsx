@@ -590,11 +590,11 @@ export default function ProjectsPage() {
       {/* ═══════════════════════════════════════
           DESKTOP — unchanged
       ══════════════════════════════════════ */}
-      <div className="hidden md:block px-12 py-20 max-w-7xl mx-auto">
+      <div className="hidden md:block py-24 md:py-32 px-6 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
         <div className="mb-12">
           <AnimatedHeading
             text="PROJECTS"
-            className="text-[clamp(4rem,8vw,8rem)] font-black leading-none uppercase text-[#1a1a1a]"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black leading-none uppercase text-[#1a1a1a]"
           />
         </div>
         <hr className="border-t border-[#d0d0c8] w-full mb-4" />

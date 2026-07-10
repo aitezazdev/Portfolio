@@ -178,65 +178,67 @@ const TechStack = () => {
     <section
       ref={containerRef}
       id="TechStack"
-      className="bg-[#080807] text-[#d1d1c7] pb-20 md:pb-36 px-6 sm:px-8 md:px-12 lg:px-20 rounded-b-4xl overflow-hidden"
+      className="bg-[#080807] text-[#d1d1c7] py-24 md:py-32 rounded-b-4xl overflow-hidden"
     >
-      <div className="mb-14 hidden md:block">
-        <AnimatedHeading
-          text={headingText}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
-        />
-        <AnimateDescription
-          text={descriptionText}
-          className="text-base sm:text-lg md:text-xl text-[#a29e9a] font-sans leading-relaxed"
-        />
-      </div>
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
+        <div className="mb-14 hidden md:block">
+          <AnimatedHeading
+            text={headingText}
+            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+          />
+          <AnimateDescription
+            text={descriptionText}
+            className="text-base sm:text-lg md:text-xl text-[#a29e9a] font-sans leading-relaxed"
+          />
+        </div>
 
-      <div className="md:hidden">
-        <AnimatedHeading
-          text="My Stack"
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl pt-5 md:mt-20 mb-4"
-        />
-      </div>
+        <div className="mb-10 md:hidden">
+          <AnimatedHeading
+            text="My Stack"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+          />
+        </div>
 
-      <div className="space-y-24">
-        {STACK_SECTIONS.map((stack, index) => (
-          <div
-            key={stack.id}
-            ref={(el) => (sectionRefs.current[index] = el)}
-            className="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
-          >
-            <h3
-              ref={(el) => (titleRefs.current[index] = el)}
-              className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#bfbdb8] tracking-tight"
+        <div className="space-y-24">
+          {STACK_SECTIONS.map((stack, index) => (
+            <div
+              key={stack.id}
+              ref={(el) => (sectionRefs.current[index] = el)}
+              className="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
             >
-              {stack.title}
-            </h3>
+              <h3
+                ref={(el) => (titleRefs.current[index] = el)}
+                className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#bfbdb8] tracking-tight font-display uppercase"
+              >
+                {stack.title}
+              </h3>
 
-            <div className="md:w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {stack.technologies.map((tech, i) => (
-                <div
-                  key={i}
-                  className="tech-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-[#1a1a18]/40"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <div className="w-10 h-10 flex items-center justify-center relative">
-                    <Image
-                      src={tech.icon}
-                      alt={tech.name}
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-contain"
-                    />
+              <div className="md:w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {stack.technologies.map((tech, i) => (
+                  <div
+                    key={i}
+                    className="tech-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-[#1a1a18]/40"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="w-10 h-10 flex items-center justify-center relative">
+                      <Image
+                        src={tech.icon}
+                        alt={tech.name}
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <p className="text-sm sm:text-base md:text-base lg:text-lg font-mono font-medium text-[#d1d1c7]">
+                      {tech.name}
+                    </p>
                   </div>
-                  <p className="text-sm sm:text-base md:text-base lg:text-lg font-mono font-medium text-[#d1d1c7]">
-                    {tech.name}
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -85,47 +85,49 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
       <section
         ref={sectionRef}
         id="about"
-        className="min-h-screen bg-[#080807] text-[#d1d1c7] pt-5 pb-5 px-6 md:px-12 lg:px-20 rounded-t-4xl"
+        className="min-h-screen bg-[#080807] text-[#d1d1c7] py-24 md:py-32 rounded-t-4xl"
       >
-        <div className="mb-10 md:mb-20">
-          <AnimatedHeading
-            text={headingText}
-            className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl mt-20 mb-4"
-          />
-          <AnimateDescription
-            text={descriptionText}
-            className="text-base sm:text-lg text-[#a29e9a] font-sans"
-          />
-        </div>
-
-        <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20">
-          <div className="col-span-12 md:col-span-5 lg:col-span-5">
-            <div className="about-image-wrapper w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-[#1a1a18] rounded-2xl overflow-hidden border border-[#2a2a28]">
-              <Image
-                src="/zaz.webp"
-                alt="Profile photo"
-                width={380}
-                height={450}
-                className="w-full h-full object-cover"
-                priority
-                quality={90}
-              />
-            </div>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
+          <div className="mb-10 md:mb-20">
+            <AnimatedHeading
+              text={headingText}
+              className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+            />
+            <AnimateDescription
+              text={descriptionText}
+              className="text-base sm:text-lg text-[#a29e9a] font-sans"
+            />
           </div>
 
-          <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
-            <span className="about-label text-sm sm:text-base md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left inline-block">
-              (About Me)
-            </span>
-            <div className="space-y-6">
-              {aboutMeText.split('\n\n').map((p, i) => (
-                <p
-                  key={i}
-                  className="about-bio-para text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"
-                >
-                  {p}
-                </p>
-              ))}
+          <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20">
+            <div className="col-span-12 md:col-span-5 lg:col-span-5">
+              <div className="about-image-wrapper w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-[#1a1a18] rounded-2xl overflow-hidden border border-[#2a2a28]">
+                <Image
+                  src="/zaz.webp"
+                  alt="Profile photo"
+                  width={380}
+                  height={450}
+                  className="w-full h-full object-cover"
+                  priority
+                  quality={90}
+                />
+              </div>
+            </div>
+
+            <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
+              <span className="about-label text-sm sm:text-base md:text-base text-[#6a6a68] uppercase tracking-[0.3em] font-medium text-center md:text-left inline-block">
+                (About Me)
+              </span>
+              <div className="space-y-6">
+                {aboutMeText.split('\n\n').map((p, i) => (
+                  <p
+                    key={i}
+                    className="about-bio-para text-[#a29e9a] text-base sm:text-lg md:text-lg leading-relaxed font-sans"
+                  >
+                    {p}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>
