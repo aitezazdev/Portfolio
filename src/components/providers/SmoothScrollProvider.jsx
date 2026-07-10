@@ -20,14 +20,6 @@ export default function SmoothScrollProvider({ children }) {
     });
     lenisRef.current = lenis;
     window.__lenis = lenis;
-    lenis.on('scroll', ({ progress }) => {
-      const progressBar = document.querySelector('.scroll-progress-bar');
-      if (progressBar) {
-        gsap.set(progressBar, {
-          scaleX: progress,
-        });
-      }
-    });
     function raf(time) {
       lenis.raf(time * 1000);
       ScrollTrigger.update();

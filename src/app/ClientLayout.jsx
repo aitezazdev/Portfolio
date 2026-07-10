@@ -24,7 +24,6 @@ export default function ClientLayout({ children }) {
   return (
     <>
       <div className="film-grain pointer-events-none" />
-      <div className="scroll-progress-bar fixed top-0 left-0 h-[2px] bg-[#10b981] z-[9999] w-full origin-left scale-x-0 pointer-events-none" />
       {showCursor && <CustomCursor />}
       <GlobalPreloader />
       <div className="page-overlay"></div>
