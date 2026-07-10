@@ -339,10 +339,10 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
                   onClick={() => handleLinkClick(link.href)}
                   className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
                 >
-                  <span className="text-[#5a5a58] font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-[#10b981]">
+                  <span className="text-[#5a5a58] font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-[#0c6145]">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-[#e8e8e3] hover:text-[#10b981] transition-colors duration-300 flex overflow-hidden">
+                  <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-[#e8e8e3] hover:text-[#0c6145] transition-colors duration-300 flex overflow-hidden">
                     {link.name.split('').map((char, ci) => (
                       <span
                         key={ci}
@@ -356,7 +356,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
                       </span>
                     ))}
                   </span>
-                  <span className="text-[#10b981] text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                  <span className="text-[#0c6145] text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
                     →
                   </span>
                 </button>

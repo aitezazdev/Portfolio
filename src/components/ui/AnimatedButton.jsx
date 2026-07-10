@@ -27,12 +27,12 @@ const AnimatedButton = ({
       originalBgColor = 'transparent';
       break;
     case 'primary':
-      bgColor = 'bg-[#10b981]';
+      bgColor = 'bg-[#0c6145]';
       textColor = 'text-white';
       borderColor = '';
       rippleColor = 'rgba(255,255,255,0.2)';
-      hoverBgColor = '#0f9f6b';
-      originalBgColor = '#10b981';
+      hoverBgColor = '#084c36';
+      originalBgColor = '#0c6145';
       break;
     case 'outline':
       bgColor = 'bg-transparent';
