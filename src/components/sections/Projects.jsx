@@ -329,7 +329,7 @@ function MobileSnapProjects({ projects, router }) {
                   className="mc-num font-mono font-black leading-none"
                   style={{
                     fontSize: 'clamp(2.4rem,11vw,3.2rem)',
-                    color: '#10b981',
+                    color: '#0c6145',
                     letterSpacing: '-0.03em',
                   }}
                 >
@@ -340,9 +340,9 @@ function MobileSnapProjects({ projects, router }) {
                 <span
                   className="mc-year font-mono text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full"
                   style={{
-                    background: 'rgba(16,185,129,0.13)',
-                    color: '#10b981',
-                    border: '1px solid rgba(16,185,129,0.28)',
+                    background: 'rgba(12, 97, 69, 0.13)',
+                    color: '#0c6145',
+                    border: '1px solid rgba(12, 97, 69, 0.28)',
                   }}
                 >
                   {project.year}
@@ -410,8 +410,8 @@ function MobileSnapProjects({ projects, router }) {
                   <span
                     className="flex items-center justify-center w-9 h-9 rounded-full text-white text-sm"
                     style={{
-                      background: '#10b981',
-                      boxShadow: '0 0 16px rgba(16,185,129,0.35)',
+                      background: '#0c6145',
+                      boxShadow: '0 0 16px rgba(12, 97, 69, 0.35)',
                     }}
                   >
                     →
@@ -616,7 +616,7 @@ export default function ProjectsPage() {
                 <span className="block absolute transition-all duration-300 ease-out group-hover:-translate-y-full group-hover:opacity-0">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className="block absolute translate-y-full opacity-0 text-[#10b981] transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="block absolute translate-y-full opacity-0 text-[#0c6145] transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
                   →
                 </span>
               </div>
@@ -625,7 +625,7 @@ export default function ProjectsPage() {
                 <h3 className="relative text-[clamp(2rem,4vw,3.5rem)] font-extrabold uppercase leading-none tracking-tight overflow-hidden">
                   <span className="block text-[#1a1a1a] select-none">{project.title}</span>
                   <span
-                    className="title-reveal-overlay block text-[#10b981] absolute inset-0 select-none"
+                    className="title-reveal-overlay block text-[#0c6145] absolute inset-0 select-none"
                     style={{
                       clipPath: 'inset(0 100% 0 0)',
                       transition: 'clip-path 0.5s cubic-bezier(0.76,0,0.24,1)',
@@ -650,7 +650,7 @@ export default function ProjectsPage() {
               </div>
 
               <div className="flex-[0_0_200px] text-right flex flex-col justify-end items-end pb-2">
-                <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] group-hover:text-[#10b981] transition-colors duration-250 flex items-center gap-1">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] group-hover:text-[#0c6145] transition-colors duration-250 flex items-center gap-1">
                   <span>View Project</span>
                   <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5">
                     →
@@ -658,7 +658,7 @@ export default function ProjectsPage() {
                 </span>
               </div>
 
-              <div className="absolute bottom-0 left-0 h-[2px] bg-[#10b981] w-0 hover-line-ref pointer-events-none" />
+              <div className="absolute bottom-0 left-0 h-[2px] bg-[#0c6145] w-0 hover-line-ref pointer-events-none" />
             </Link>
           ))}
         </div>

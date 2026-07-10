@@ -153,7 +153,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="John Doe"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981]/30 ${errors.name ? 'border-red-500 focus:border-red-500' : ''}`}
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#0c6145] focus:ring-1 focus:ring-[#0c6145]/30 ${errors.name ? 'border-red-500 focus:border-red-500' : ''}`}
                 disabled={isDisabled}
               />
               {errors.name && <p className="text-red-400 text-xs sm:text-sm">{errors.name}</p>}
@@ -171,7 +171,7 @@ const Contact = () => {
                 onChange={handleChange}
                 autoComplete="off"
                 placeholder="you@example.com"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981]/30 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#0c6145] focus:ring-1 focus:ring-[#0c6145]/30 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
                 disabled={isDisabled}
               />
               {errors.email && <p className="text-red-400 text-xs sm:text-sm">{errors.email}</p>}
@@ -191,7 +191,7 @@ const Contact = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Write your message here..."
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981]/30 ${errors.message ? 'border-red-500 focus:border-red-500' : ''}`}
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-[#161615] text-[#e8e8e3] placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-[#0c6145] focus:ring-1 focus:ring-[#0c6145]/30 ${errors.message ? 'border-red-500 focus:border-red-500' : ''}`}
                 disabled={isDisabled}
               />
               {errors.message && <p className="text-red-400 text-xs sm:text-sm">{errors.message}</p>}
@@ -249,7 +249,7 @@ const Contact = () => {
                   }, 2000);
                 }
               }}
-              className="group relative inline-block cursor-none text-[#d1d1c7] font-display font-black uppercase leading-none hover:text-[#10b981] transition-colors duration-300 max-w-full"
+              className="group relative inline-block cursor-none text-[#d1d1c7] font-display font-black uppercase leading-none hover:text-[#0c6145] transition-colors duration-300 max-w-full"
               style={{
                 fontSize: 'clamp(0.65rem, 4.5vw, 4.5rem)',
                 overflowWrap: 'break-word',
@@ -257,7 +257,7 @@ const Contact = () => {
               }}
             >
               aitezazsikandar@gmail.com
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#10b981] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#0c6145] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
             </button>
           </div>
         </div>
@@ -270,7 +270,7 @@ const Contact = () => {
           bottom: '2rem',
           right: '2rem',
           zIndex: 9998,
-          background: '#10b981',
+          background: '#0c6145',
           color: 'white',
           fontFamily: 'monospace',
           fontSize: '0.75rem',
