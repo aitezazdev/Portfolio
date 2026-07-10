@@ -51,6 +51,7 @@ export default function Home() {
           opacity: 0,
           y: 50,
           scale: 0.95,
+          pointerEvents: 'none',
           ease: 'power2.out',
         });
     });
@@ -73,7 +74,7 @@ export default function Home() {
           <Projects />
         </section>
         <MarqueeStrip />
-        <section className="relative bg-black">
+        <section className="relative z-25 bg-black">
           <Contact />
         </section>
         <Footer />
