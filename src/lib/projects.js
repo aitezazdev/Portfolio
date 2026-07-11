@@ -4,12 +4,12 @@ const projects = [
     slug: 'c-study',
     title: 'Collaborative Study Platform',
     year: '2026',
-    tech: ['React', 'Node.js', 'Express', 'Socket.io', 'MongoDB', 'Gemini AI', 'Tailwind CSS'],
+    tech: ['React', 'Node.js', 'Express', 'Socket.io', 'MongoDB', 'Study Assistant', 'Tailwind CSS'],
     description:
-      'A real-time collaborative study platform featuring interactive classrooms, document rendering, and AI-powered study tools. Students can join virtual study rooms to collaborate on files, utilize text-to-speech learning aids, and query an AI assistant for summaries. Teachers can upload resource materials and participate in peer-to-peer discussions.',
+      'A real-time collaborative study platform featuring interactive classrooms, document rendering, and integrated study tools. Students can join virtual study rooms to collaborate on files, utilize text-to-speech learning aids, and query an automated assistant for summaries. Teachers can upload resource materials and participate in peer-to-peer discussions.',
     myRole: [
       'Designed and implemented real-time classroom state synchronization and live chat using Express and Socket.io.',
-      'Integrated Google Gemini and Groq AI SDKs to build an automated AI Study Assistant capable of generating lecture summaries, flashcards, and quizzes.',
+      'Integrated text processing and search SDKs to build an automated Study Assistant capable of generating lecture summaries, flashcards, and quizzes.',
       'Configured a backend document processor using libreoffice-convert to transform DOCX/PPTX slides into PDFs for frontend rendering.',
       'Implemented multi-format PDF rendering using React PDF and PDF.js to support interactive whiteboard and text highlighting features.',
       'Integrated Cloudinary for persistent media assets and Firebase SDK for secure file hosting and user authentication.',
@@ -31,16 +31,16 @@ const projects = [
     slug: 'hms',
     title: 'Hospital Management System',
     year: '2025',
-    tech: ['React', 'Express', 'Node.js', 'MongoDB', 'Google Gemini AI', 'Redux Toolkit', 'Tailwind CSS'],
+    tech: ['React', 'Express', 'Node.js', 'MongoDB', 'Clinical Assessment', 'Redux Toolkit', 'Tailwind CSS'],
     description:
-      'A full stack hospital management system featuring dedicated, role based dashboards for patients, doctors, and system administrators. The platform integrates Google Gemini AI to assist both patients and medical staff through an interactive symptom checker, automated pre appointment medical history summaries, and suggested prescription generators. Patients can find doctors by specialization, book consultation slots, and track booking statuses, while doctors can manage schedules, record clinical notes, and edit prescriptions. Administrators oversee doctor registrations, verify credentials, and manage patient records with a global search interface.',
+      'A full stack hospital management system featuring dedicated, role based dashboards for patients, doctors, and system administrators. The platform integrates an automated clinical summary system to assist both patients and medical staff through an interactive symptom checker, pre appointment medical history summaries, and suggested prescription generators. Patients can find doctors by specialization, book consultation slots, and track booking statuses, while doctors can manage schedules, record clinical notes, and edit prescriptions. Administrators oversee doctor registrations, verify credentials, and manage patient records with a global search interface.',
     myRole: [
       'Built the full-stack healthcare workflow using React, Express, Node.js, and MongoDB, incorporating Redux Toolkit for state management.',
-      'Integrated Google Gemini API to implement a patient symptom advisor, pre-consultation medical history synthesis, and AI suggested prescriptions.',
+      'Integrated text analysis engines to implement a patient symptom advisor, pre-consultation medical history synthesis, and suggested prescriptions.',
       'Developed independent portals for patients, doctors, and admins with custom dashboards and schedule slot managers.',
       'Implemented doctor registration verification and appointment approval workflows.',
       'Created global patient and staff search functionality for administrative record management.',
-      'Designed a fully responsive UI utilizing Tailwind CSS, Ant Design layouts, and custom loading states for AI text generation.',
+      'Designed a fully responsive UI utilizing Tailwind CSS, Ant Design layouts, and custom loading states for text generation.',
     ],
     images: [
       '/Projects/HMS/hospital-1.webp',
