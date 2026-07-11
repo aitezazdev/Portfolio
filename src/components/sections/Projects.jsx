@@ -281,12 +281,21 @@ function MobileSnapProjects({ projects, router }) {
       {/* ── Cards list ── */}
       <div className="flex flex-col gap-4 px-4">
         {projects.map((project, index) => (
-          <div
+          <Link
             key={project.id}
+            href={`/projects/${project.slug}`}
+            onTouchStart={() => router.prefetch(`/projects/${project.slug}`)}
+            onClick={() => {
+              const scrollY = window.__lenis
+                ? Math.round(window.__lenis.scroll)
+                : Math.round(window.scrollY);
+              sessionStorage.setItem('projects-scroll', scrollY.toString());
+              sessionStorage.setItem('previous-project-url', window.location.pathname);
+            }}
             ref={(el) => {
               cardRefs.current[index] = el;
             }}
-            className="overflow-hidden rounded-3xl"
+            className="overflow-hidden rounded-3xl block no-underline text-inherit"
             style={{
               background: '#111110',
               boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
@@ -321,7 +330,7 @@ function MobileSnapProjects({ projects, router }) {
             </div>
 
             {/* ── Card info area ── */}
-            <div className="px-5 pt-4 pb-5">
+            <div className="px-5 pt-4 pb-5 text-left">
               {/* Number + Year row */}
               <div className="flex items-center justify-between mb-4">
                 {/* Large project number */}
@@ -389,18 +398,7 @@ function MobileSnapProjects({ projects, router }) {
                 />
 
                 {/* CTA row */}
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className="flex items-center justify-between"
-                  onTouchStart={() => router.prefetch(`/projects/${project.slug}`)}
-                  onClick={() => {
-                    const scrollY = window.__lenis
-                      ? Math.round(window.__lenis.scroll)
-                      : Math.round(window.scrollY);
-                    sessionStorage.setItem('projects-scroll', scrollY.toString());
-                    sessionStorage.setItem('previous-project-url', window.location.pathname);
-                  }}
-                >
+                <div className="flex items-center justify-between">
                   <span
                     className="font-mono text-[11px] uppercase tracking-widest"
                     style={{ color: 'rgba(255,255,255,0.45)' }}
@@ -416,10 +414,10 @@ function MobileSnapProjects({ projects, router }) {
                   >
                     →
                   </span>
-                </Link>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
