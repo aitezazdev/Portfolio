@@ -297,7 +297,7 @@ function MobileSnapProjects({ projects, router }) {
               <div
                 className="mc-img-wrap relative overflow-hidden rounded-2xl"
                 style={{
-                  aspectRatio: '16 / 10',
+                  aspectRatio: '1919 / 923',
                   clipPath: 'inset(100% 0 0 0 round 14px)',
                 }}
               >
@@ -676,8 +676,9 @@ export default function ProjectsPage() {
         >
           <div
             ref={setInnerRef}
-            className="w-[420px] aspect-[16/10] rounded-2xl overflow-hidden"
+            className="w-[500px] rounded-2xl overflow-hidden"
             style={{
+              aspectRatio: '1919 / 923',
               willChange: 'transform',
               boxShadow:
                 '0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 8px 20px -8px rgba(0, 0, 0, 0.2)',
@@ -710,7 +711,7 @@ export default function ProjectsPage() {
                       src={imgUrl}
                       alt={project.title}
                       fill
-                      sizes="420px"
+                      sizes="500px"
                       priority
                       className="object-cover object-top"
                     />
