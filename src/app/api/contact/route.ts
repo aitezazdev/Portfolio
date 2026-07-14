@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns';
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
 
 interface ContactRequestBody {
   name?: string;
@@ -184,8 +186,29 @@ export async function POST(request: Request) {
       success: true,
       message: 'Message sent successfully!',
     });
-  } catch (error) {
-    console.error('Contact form error:', error);
+  } catch (error: any) {
+    console.error('Contact form SMTP error:', error);
+
+    // Save message to messages.txt locally as a backup/fallback
+    try {
+      const logDir = process.cwd();
+      const logFile = path.join(logDir, 'messages.txt');
+      const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
+      const logEntry = `\n======================================\nDate: ${timestamp} PKT\nName: ${name}\nEmail: ${email}\nMessage: ${message}\n======================================\n`;
+      fs.appendFileSync(logFile, logEntry, 'utf8');
+      console.log('Saved message to messages.txt fallback successfully.');
+
+      // Return a successful response in local development to allow testing form submission UI
+      if (process.env.NODE_ENV === 'development') {
+        return NextResponse.json({
+          success: true,
+          message: 'Message saved locally (SMTP connection timed out, check messages.txt)!',
+        });
+      }
+    } catch (fsError) {
+      console.error('Failed to write message to fallback file:', fsError);
+    }
+
     return NextResponse.json(
       {
         success: false,
