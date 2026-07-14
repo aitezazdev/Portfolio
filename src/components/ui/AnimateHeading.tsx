@@ -65,9 +65,6 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' 
         <h2
           ref={headingRef}
           className={`font-display font-bold uppercase tracking-tighter ${className}`}
-          style={{
-            opacity: 0,
-          }}
         >
           {text}
         </h2>

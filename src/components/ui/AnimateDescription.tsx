@@ -44,9 +44,6 @@ const AnimateDescription: React.FC<AnimateDescriptionProps> = ({ text, className
         <span
           key={i}
           className="word inline-block mr-2"
-          style={{
-            opacity: 0,
-          }}
         >
           {word}{' '}
         </span>

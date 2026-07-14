@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
 import { useHandleLinkClick } from '@/lib/navigation';
@@ -8,25 +8,54 @@ import Lenis from '@studio-freight/lenis';
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
   const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
   const lenis = lenisRef?.current;
+
   useEffect(() => {
     setIsMounted(true);
+    let interval: NodeJS.Timeout | number | undefined;
+
     const updateTime = () => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: true,
         timeZone: 'Asia/Karachi',
       });
       setCurrentTime(timeString);
     };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          updateTime();
+          // Update once every 30 seconds to preserve resources
+          interval = setInterval(updateTime, 30000);
+        } else {
+          if (interval) {
+            clearInterval(interval);
+            interval = undefined;
+          }
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, []);
+
   const handleLinkClick = useHandleLinkClick();
   const links = [
     {
@@ -59,7 +88,7 @@ const Footer = () => {
     }
   };
   return (
-    <footer className="relative z-30 bg-[#e8e8e3] px-6 sm:px-8 md:px-12 py-12 md:py-16">
+    <footer ref={footerRef} className="relative z-30 bg-[#e8e8e3] px-6 sm:px-8 md:px-12 py-12 md:py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 mb-10 md:mb-12">
           <div>
