@@ -5,7 +5,7 @@ import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import GlobalPreloader from '@/components/shared/GlobalPreloader';
 import CustomCursor from '@/components/shared/CustomCursor';
 import Providers from './providers';
-export default function ClientLayout({ children }) {
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [showCursor, setShowCursor] = useState(false);
   useEffect(() => {
     const alreadyLoaded = sessionStorage.getItem('preloader-shown');
@@ -33,3 +33,4 @@ export default function ClientLayout({ children }) {
     </>
   );
 }
+

@@ -2,10 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
-export const useHandleLinkClick = (setIsMenuOpen) => {
+import Lenis from '@studio-freight/lenis';
+
+export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) => {
   const router = useRouter();
-  const lenisRef = useLenis();
-  const scrollToHash = (hash) => {
+  const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
+  
+  const scrollToHash = (hash: string) => {
     const lenis = lenisRef?.current;
     // Special case: 'top' scrolls to the very top of the page
     if (hash === 'top') {
@@ -36,7 +39,8 @@ export const useHandleLinkClick = (setIsMenuOpen) => {
     };
     tryScroll();
   };
-  return (href) => {
+
+  return (href: string) => {
     const [path, hash] = href.replace('#', '/#').split('/#');
     const currentPath = window.location.pathname;
     if (setIsMenuOpen) {
@@ -58,3 +62,4 @@ export const useHandleLinkClick = (setIsMenuOpen) => {
     window.history.pushState(null, '', `#${hash}`);
   };
 };
+

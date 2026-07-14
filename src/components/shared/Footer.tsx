@@ -3,10 +3,12 @@ import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp } from 'react-icons/fa';
 import { useHandleLinkClick } from '@/lib/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
+import Lenis from '@studio-freight/lenis';
+
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
   const [isMounted, setIsMounted] = useState(false);
-  const lenisRef = useLenis();
+  const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
   const lenis = lenisRef?.current;
   useEffect(() => {
     setIsMounted(true);

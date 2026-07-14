@@ -103,9 +103,9 @@ const STACK_SECTIONS = [
   },
 ];
 const TechStack = () => {
-  const containerRef = useRef(null);
-  const sectionRefs = useRef([]);
-  const titleRefs = useRef([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
   const headingText = 'My Tech Stack';
   const descriptionText =
     'A selection of technologies I use to design, build, and deploy full-stack web applications.';
@@ -156,8 +156,9 @@ const TechStack = () => {
     },
     { scope: containerRef }
   );
-  const handleMouseEnter = (e) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     const img = e.currentTarget.querySelector('img');
+    if (!img) return;
     gsap.to(img, {
       rotation: 360,
       scale: 1.1,
@@ -165,8 +166,9 @@ const TechStack = () => {
       ease: 'power2.out',
     });
   };
-  const handleMouseLeave = (e) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     const img = e.currentTarget.querySelector('img');
+    if (!img) return;
     gsap.to(img, {
       rotation: 0,
       scale: 1,
@@ -174,6 +176,7 @@ const TechStack = () => {
       ease: 'power2.inOut',
     });
   };
+
   return (
     <section
       ref={containerRef}
@@ -203,11 +206,15 @@ const TechStack = () => {
           {STACK_SECTIONS.map((stack, index) => (
             <div
               key={stack.id}
-              ref={(el) => (sectionRefs.current[index] = el)}
+              ref={(el) => {
+                sectionRefs.current[index] = el;
+              }}
               className="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
             >
               <h3
-                ref={(el) => (titleRefs.current[index] = el)}
+                ref={(el) => {
+                  titleRefs.current[index] = el;
+                }}
                 className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#bfbdb8] tracking-tight font-display uppercase"
               >
                 {stack.title}

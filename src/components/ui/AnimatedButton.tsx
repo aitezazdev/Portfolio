@@ -1,8 +1,20 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ElementType } from 'react';
 import gsap from 'gsap';
-const AnimatedButton = ({
+
+interface AnimatedButtonProps {
+  onClick?: (e: React.MouseEvent<any>) => void;
+  topText: React.ReactNode;
+  bottomText: React.ReactNode;
+  variant?: 'light' | 'primary' | 'outline' | 'dark';
+  className?: string;
+  as?: ElementType;
+  disabled?: boolean;
+  [key: string]: any;
+}
+
+const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   onClick,
   topText,
   bottomText,
@@ -12,10 +24,11 @@ const AnimatedButton = ({
   disabled = false,
   ...props
 }) => {
-  const containerRef = useRef(null);
-  const buttonRef = useRef(null);
-  const rippleRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<any>(null);
+  const rippleRef = useRef<HTMLSpanElement>(null);
   const Component = as;
+
   let bgColor, textColor, borderColor, rippleColor, hoverBgColor, originalBgColor;
   switch (variant) {
     case 'light':
@@ -52,9 +65,10 @@ const AnimatedButton = ({
       originalBgColor = '#2a2a2a';
       break;
   }
-  const handleMouseEnter = (e) => {
+  const handleMouseEnter = (e: React.MouseEvent<any>) => {
     const button = buttonRef.current;
     const ripple = rippleRef.current;
+
     if (!button || !ripple) return;
     const rect = button.getBoundingClientRect();
     const x = e.clientX - rect.left;

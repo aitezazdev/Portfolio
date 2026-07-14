@@ -3,18 +3,20 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
+import Lenis from '@studio-freight/lenis';
+
 export default function MarqueeStrip() {
-  const containerRef = useRef(null);
-  const track1Ref = useRef(null);
-  const tween1Ref = useRef(null);
-  const lenisRef = useLenis();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const track1Ref = useRef<HTMLDivElement>(null);
+  const tween1Ref = useRef<gsap.core.Tween | null>(null);
+  const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
   const items = ['Available for Work', 'Open to Opportunities', "Let's Build", 'MERN Stack'];
   useEffect(() => {
     const track1 = track1Ref.current;
     if (!track1) return;
     const totalWidth1 = track1.scrollWidth;
-    const wrap = (val, max) => {
-      const modulus = parseFloat(val) % max;
+    const wrap = (val: string | number, max: number): number => {
+      const modulus = parseFloat(val as string) % max;
       return modulus <= 0 ? modulus : modulus - max;
     };
     tween1Ref.current = gsap.to(track1, {
@@ -33,7 +35,7 @@ export default function MarqueeStrip() {
   useEffect(() => {
     const lenis = lenisRef?.current;
     if (!lenis) return;
-    const handleScroll = ({ velocity }) => {
+    const handleScroll = ({ velocity }: { velocity: number }) => {
       if (tween1Ref.current) {
         const multiplier = Math.min(3, Math.max(1, 1 + Math.abs(velocity) * 0.5));
         tween1Ref.current.timeScale(velocity < -0.5 ? -multiplier : multiplier);
@@ -44,6 +46,7 @@ export default function MarqueeStrip() {
       lenis.off('scroll', handleScroll);
     };
   }, [lenisRef]);
+
   return (
     <div
       ref={containerRef}

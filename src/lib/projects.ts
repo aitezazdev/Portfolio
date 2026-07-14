@@ -1,4 +1,18 @@
-const projects = [
+export interface Project {
+  id: number;
+  slug: string;
+  title: string;
+  year: string;
+  tech: string[];
+  description: string;
+  myRole: string[];
+  images: string[];
+  hoverImage: string;
+  github: string;
+  liveUrl: string;
+}
+
+const projects: Project[] = [
   {
     id: 1,
     slug: 'c-study',
@@ -143,9 +157,10 @@ const projects = [
     liveUrl: 'https://aitezazdev-blog-app.vercel.app/',
   },
 ];
-export function getAllProjects() {
+export function getAllProjects(): Project[] {
   return projects;
 }
-export function getProjectBySlug(slug) {
+export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
+

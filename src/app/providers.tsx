@@ -1,17 +1,25 @@
 'use client';
 
-import { useRef, startTransition, useState, useEffect } from 'react';
+import React, { useRef, startTransition, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import { TransitionRouter } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from '@studio-freight/lenis';
+
 gsap.registerPlugin(ScrollTrigger);
+
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
 
 // Module-level flag — persists across React re-renders / effect cleanups
 let _isCurtainCovering = false;
 
-const getPageName = (path) => {
+const getPageName = (path: string | null | undefined): string => {
   if (!path || path === '/') return 'HOME';
   if (path.startsWith('/projects/')) return 'PROJECT';
   const segment = path.split('/').filter(Boolean).pop();
@@ -24,7 +32,7 @@ const getPageName = (path) => {
  * - Pauses Lenis around ScrollTrigger.refresh() to prevent refresh-triggered position drift.
  * - Keeps a rAF lock running for a few extra frames after Lenis resumes to absorb any late jitter.
  */
-function restoreScroll(target, lenisInst) {
+function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> | null | any) {
   // Step 1: While Lenis is still stopped, sync its internal scroll target
   const lenisObj = lenisInst?.current || window.__lenis;
   if (lenisObj) {
@@ -71,12 +79,12 @@ function restoreScroll(target, lenisInst) {
   });
 }
 
-export default function Providers({ children }) {
-  const overlayRef = useRef(null);
-  const textRef = useRef(null);
-  const scrollTargetRef = useRef(0);
-  const [pageName, setPageName] = useState('');
-  const lenis = useLenis();
+export default function Providers({ children }: { children: React.ReactNode }) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const scrollTargetRef = useRef<number>(0);
+  const [pageName, setPageName] = useState<string>('');
+  const lenis = useLenis() as React.RefObject<Lenis | null> | null;
   const pathname = usePathname();
 
   // Keep a ref to lenis so popstate handler (with [] deps) always gets the latest value
@@ -177,7 +185,7 @@ export default function Providers({ children }) {
       tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
     };
 
-    const handlePopState = (event) => {
+    const handlePopState = (event: PopStateEvent) => {
       const path = window.location.pathname;
       const isProjectPage = path.startsWith('/projects/');
 
@@ -213,7 +221,7 @@ export default function Providers({ children }) {
   return (
     <TransitionRouter
       auto={true}
-      leave={(next, from, to) => {
+      leave={(next: () => void, from: string, to: string) => {
         if (lenis?.current) {
           lenis.current.stop();
         }
@@ -260,7 +268,7 @@ export default function Providers({ children }) {
         }, 0.5);
         return () => tl.kill();
       }}
-      enter={(next) => {
+      enter={(next: () => void) => {
         // If _isCurtainCovering is set, the popstate handler is managing the overlay — don't interfere
         if (_isCurtainCovering) {
           startTransition(next);

@@ -2,13 +2,19 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
-const AnimatedHeading = ({ text, className = '' }) => {
-  const headingRef = useRef(null);
+interface AnimatedHeadingProps {
+  text: string;
+  className?: string;
+}
+
+const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' }) => {
+  const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const el = headingRef.current;
     if (!el) return;
-    let intervalId = null;
-    const scrambleText = (targetEl, finalText, duration = 400) => {
+    let intervalId: any = null;
+    const scrambleText = (targetEl: HTMLElement, finalText: string, duration = 400) => {
+
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01';
       const steps = Math.floor(duration / 50);
       let step = 0;

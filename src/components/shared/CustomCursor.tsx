@@ -4,18 +4,18 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { usePathname } from 'next/navigation';
 export default function CustomCursor() {
-  const cursorDotRef = useRef(null);
-  const cursorOutlineRef = useRef(null);
-  const cursorTextRef = useRef(null);
-  const [cursorText, setCursorText] = useState('');
-  const [enabled, setEnabled] = useState(false);
-  const requestRef = useRef(null);
+  const cursorDotRef = useRef<HTMLDivElement>(null);
+  const cursorOutlineRef = useRef<HTMLDivElement>(null);
+  const cursorTextRef = useRef<HTMLDivElement>(null);
+  const [cursorText, setCursorText] = useState<string>('');
+  const [enabled, setEnabled] = useState<boolean>(false);
+  const requestRef = useRef<number | null>(null);
   const pathname = usePathname();
-  const mouse = useRef({
+  const mouse = useRef<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
-  const delayedMouse = useRef({
+  const delayedMouse = useRef<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
@@ -55,7 +55,7 @@ export default function CustomCursor() {
       xPercent: -50,
       yPercent: -50,
     });
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       mouse.current = {
         x: e.clientX,
         y: e.clientY,
@@ -76,8 +76,10 @@ export default function CustomCursor() {
     };
     animate();
     window.addEventListener('mousemove', handleMouseMove);
-    const handleMouseEnter = (e) => {
-      const type = e.currentTarget.getAttribute('data-cursor');
+    const handleMouseEnter = (e: Event) => {
+      const currentTarget = e.currentTarget as HTMLElement | null;
+      if (!currentTarget) return;
+      const type = currentTarget.getAttribute('data-cursor');
       gsap.to(cursorDot, {
         scale: 0,
         duration: 0.3,
@@ -120,9 +122,10 @@ export default function CustomCursor() {
     const addListeners = () => {
       const els = document.querySelectorAll('a, button, [data-cursor], [role="button"]');
       els.forEach((el) => {
-        el.addEventListener('mouseenter', handleMouseEnter);
-        el.addEventListener('mouseleave', handleMouseLeave);
-        el.style.cursor = 'none';
+        const htmlEl = el as HTMLElement;
+        htmlEl.addEventListener('mouseenter', handleMouseEnter);
+        htmlEl.addEventListener('mouseleave', handleMouseLeave);
+        htmlEl.style.cursor = 'none';
       });
       return els;
     };

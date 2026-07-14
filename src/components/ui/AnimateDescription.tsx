@@ -4,11 +4,18 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
-const AnimateDescription = ({ text, className = '' }) => {
-  const descRef = useRef(null);
+interface AnimateDescriptionProps {
+  text: string;
+  className?: string;
+}
+
+const AnimateDescription: React.FC<AnimateDescriptionProps> = ({ text, className = '' }) => {
+  const descRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const ctx = gsap.context(() => {
+      if (!descRef.current) return;
       const words = descRef.current.querySelectorAll('.word');
+
       gsap.fromTo(
         words,
         {

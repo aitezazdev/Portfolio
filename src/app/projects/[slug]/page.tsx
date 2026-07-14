@@ -1,7 +1,11 @@
 import ProjectDetails from '@/components/project/ProjectDetails';
 import { getProjectBySlug, getAllProjects } from '@/lib/projects';
 import { notFound } from 'next/navigation';
-export async function generateMetadata({ params }) {
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) {
@@ -39,9 +43,10 @@ export async function generateStaticParams() {
     slug: project.slug,
   }));
 }
-export default async function ProjectPage({ params }) {
+export default async function ProjectPage({ params }: PageProps) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) notFound();
   return <ProjectDetails key={project.slug} project={project} />;
 }
+

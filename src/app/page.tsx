@@ -12,9 +12,9 @@ import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
 gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
-  const homeRef = useRef(null);
-  const reuniteRef = useRef(null);
-  const techStackRef = useRef(null);
+  const homeRef = useRef<HTMLDivElement>(null);
+  const reuniteRef = useRef<HTMLDivElement>(null);
+  const techStackRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const home = homeRef.current;
     const reunite = reuniteRef.current;
@@ -23,6 +23,7 @@ export default function Home() {
     if (!home || !reunite || !techStack || !projects) return;
 
     const ctx = gsap.context(() => {
+
       gsap.set(reunite, {
         zIndex: 2,
       });

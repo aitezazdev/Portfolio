@@ -4,23 +4,33 @@ import { createContext, useContext, useEffect, useRef } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
-const LenisContext = createContext(null);
+
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
+const LenisContext = createContext<React.RefObject<Lenis | null> | null>(null);
+
 export const useLenis = () => useContext(LenisContext);
-export default function SmoothScrollProvider({ children }) {
-  const lenisRef = useRef(null);
+
+export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  const lenisRef = useRef<Lenis | null>(null);
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       smoothTouch: false,
-    });
+    } as any);
     lenisRef.current = lenis;
     window.__lenis = lenis;
-    function raf(time) {
+    function raf(time: number) {
       lenis.raf(time * 1000);
       ScrollTrigger.update();
     }
@@ -37,3 +47,4 @@ export default function SmoothScrollProvider({ children }) {
   }, []);
   return <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>;
 }
+

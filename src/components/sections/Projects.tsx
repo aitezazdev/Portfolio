@@ -15,25 +15,38 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 /* ─────────────────────────────────────────────
    DESKTOP: Hover-preview cursor hook (unchanged)
 ───────────────────────────────────────────── */
-const useHoverPreview = (containerRef, onScrollLeave) => {
-  const floatingRef = useRef(null);
-  const innerRef = useRef(null);
-  const imageContainerRef = useRef(null);
-  const rotateTo = useRef(null);
-  const imgXTo = useRef(null);
-  const imgYTo = useRef(null);
-  const mouse = useRef({ x: 0, y: 0, prevX: 0, prevY: 0 });
-  const delayedMouse = useRef({ x: 0, y: 0 });
-  const isHovering = useRef(false);
-  const rafId = useRef(null);
-  const dynamics = useRef({
+const useHoverPreview = (
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  onScrollLeave: () => void
+) => {
+  const floatingRef = useRef<HTMLDivElement | null>(null);
+  const innerRef = useRef<HTMLDivElement | null>(null);
+  const imageContainerRef = useRef<HTMLDivElement | null>(null);
+  const rotateTo = useRef<any>(null);
+  const imgXTo = useRef<any>(null);
+  const imgYTo = useRef<any>(null);
+  const mouse = useRef<{ x: number; y: number; prevX: number; prevY: number }>({
+    x: 0,
+    y: 0,
+    prevX: 0,
+    prevY: 0,
+  });
+  const delayedMouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const isHovering = useRef<boolean>(false);
+  const rafId = useRef<number | null>(null);
+  const dynamics = useRef<{
+    velocityX: number;
+    velocityY: number;
+    currentRotation: number;
+    targetRotation: number;
+  }>({
     velocityX: 0,
     velocityY: 0,
     currentRotation: 0,
     targetRotation: 0,
   });
 
-  const setFloatingRef = useCallback((el) => {
+  const setFloatingRef = useCallback((el: HTMLDivElement | null) => {
     floatingRef.current = el;
     if (!el) return;
     gsap.set(el, {
@@ -48,11 +61,11 @@ const useHoverPreview = (containerRef, onScrollLeave) => {
     rotateTo.current = gsap.quickTo(el, 'rotation', { duration: 0.4, ease: 'power3' });
   }, []);
 
-  const setInnerRef = useCallback((el) => {
+  const setInnerRef = useCallback((el: HTMLDivElement | null) => {
     innerRef.current = el;
   }, []);
 
-  const setImageContainerRef = useCallback((el) => {
+  const setImageContainerRef = useCallback((el: HTMLDivElement | null) => {
     imageContainerRef.current = el;
     if (!el) return;
     imgXTo.current = gsap.quickTo(el, 'x', { duration: 0.2, ease: 'power2' });
@@ -107,7 +120,7 @@ const useHoverPreview = (containerRef, onScrollLeave) => {
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
     };
@@ -169,9 +182,16 @@ const useHoverPreview = (containerRef, onScrollLeave) => {
 /* ─────────────────────────────────────────────
    MOBILE: Editorial Contained-Image Cards
 ───────────────────────────────────────────── */
-function MobileSnapProjects({ projects, router }) {
-  const sectionRef = useRef(null);
-  const cardRefs = useRef([]);
+import { Project } from '@/lib/projects';
+
+interface MobileSnapProjectsProps {
+  projects: Project[];
+  router: any;
+}
+
+function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   useGSAP(
     () => {
@@ -429,11 +449,11 @@ function MobileSnapProjects({ projects, router }) {
 ───────────────────────────────────────────── */
 export default function ProjectsPage() {
   const router = useRouter();
-  const [projects, setProjects] = useState(() => getAllProjects());
-  const [isLoading, setIsLoading] = useState(false);
-  const containerRef = useRef(null);
-  const [hoveredImage, setHoveredImage] = useState('');
-  const lastHoveredImgRef = useRef('');
+  const [projects, setProjects] = useState<Project[]>(() => getAllProjects());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredImage, setHoveredImage] = useState<string>('');
+  const lastHoveredImgRef = useRef<string>('');
 
   const handleScrollLeave = useCallback(() => {
     if (!containerRef.current) return;
@@ -443,7 +463,7 @@ export default function ProjectsPage() {
     );
     const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
     overlays.forEach((ov) => {
-      ov.style.clipPath = 'inset(0 100% 0 0)';
+      (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
     });
     lastHoveredImgRef.current = '';
   }, []);
@@ -497,11 +517,11 @@ export default function ProjectsPage() {
     { scope: containerRef, dependencies: [isLoading, projects] },
   );
 
-  const handleRowMouseEnter = (e, imageUrl, index) => {
+  const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, imageUrl: string, index: number) => {
     router.prefetch(`/projects/${projects[index]?.slug || ''}`);
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay');
+    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 0% 0 0)';
     const isNewImage = lastHoveredImgRef.current !== imageUrl;
     lastHoveredImgRef.current = imageUrl;
@@ -530,15 +550,15 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleRowMouseLeave = (e) => {
+  const handleRowMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '0%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay');
+    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 100% 0 0)';
     hide();
   };
 
-  const handleRowClick = (e, slug) => {
+  const handleRowClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });

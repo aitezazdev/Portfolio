@@ -7,9 +7,10 @@ import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 gsap.registerPlugin(ScrollTrigger);
 const Services = () => {
-  const sectionRef = useRef(null);
-  const servicesRef = useRef([]);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
+
     if (window.innerWidth < 768) return;
     const ctx = gsap.context(() => {
       const allSections = servicesRef.current.filter(Boolean);
@@ -97,7 +98,9 @@ const Services = () => {
           {services.map((service, index) => (
             <div
               key={service.id}
-              ref={(el) => (servicesRef.current[index] = el)}
+              ref={(el) => {
+                servicesRef.current[index] = el;
+              }}
               className="bg-[#080807] pb-20 md:pb-64"
               style={{
                 zIndex: index + 1,

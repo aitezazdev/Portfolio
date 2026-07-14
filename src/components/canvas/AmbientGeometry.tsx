@@ -1,15 +1,23 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+interface NodeItem {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+}
+
 export default function AmbientGeometry() {
-  const canvasRef = useRef(null);
-  const containerRef = useRef(null);
-  const mouseRef = useRef({
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouseRef = useRef<{ x: number; y: number }>({
     x: -9999,
     y: -9999,
   });
-  const animationFrameRef = useRef(null);
-  const nodesRef = useRef([]);
+  const animationFrameRef = useRef<number | null>(null);
+  const nodesRef = useRef<NodeItem[]>([]);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -21,7 +29,7 @@ export default function AmbientGeometry() {
     const initNodes = () => {
       isMobile = window.innerWidth < 768;
       const count = isMobile ? 60 : 120;
-      const nodes = [];
+      const nodes: NodeItem[] = [];
       for (let i = 0; i < count; i++) {
         nodes.push({
           x: Math.random() * width,
@@ -42,7 +50,7 @@ export default function AmbientGeometry() {
       canvas.height = height;
       initNodes();
     };
-    let resizeTimeout;
+    let resizeTimeout: NodeJS.Timeout | number | undefined;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
@@ -51,7 +59,7 @@ export default function AmbientGeometry() {
     };
     resizeCanvas();
     window.addEventListener('resize', handleResize);
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (isMobile) return;
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
