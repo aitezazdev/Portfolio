@@ -20,8 +20,28 @@ function escapeHtml(unsafe: string): string {
 }
 
 export async function POST(request: Request) {
+  let name = '';
+  let email = '';
+  let message = '';
+
   try {
-    const { name, email, message } = (await request.json()) as ContactRequestBody;
+    const body = (await request.json()) as ContactRequestBody;
+    name = body.name || '';
+    email = body.email || '';
+    message = body.message || '';
+  } catch {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Invalid JSON request body',
+      },
+      {
+        status: 400,
+      },
+    );
+  }
+
+  try {
     if (!name || !email || !message)
       return NextResponse.json(
         {
