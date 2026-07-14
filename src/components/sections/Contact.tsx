@@ -17,6 +17,7 @@ const Contact = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string>('');
   useEffect(() => {
     if (submitStatus) {
       const timer = setTimeout(() => setSubmitStatus(null), 5000);
@@ -106,6 +107,7 @@ const Contact = () => {
       const data = await response.json();
       if (response.ok && data.success) {
         setSubmitStatus('success');
+        setSuccessMessage(data.message || 'Thank you! Your message has been sent successfully.');
         setFormData({
           name: '',
           email: '',
@@ -204,7 +206,7 @@ const Contact = () => {
             {submitStatus === 'success' && (
               <div className="p-4 bg-green-900/20 border border-green-600/40 rounded-xl">
                 <p className="text-green-400 text-sm">
-                  Thank you! Your message has been sent successfully.
+                  {successMessage}
                 </p>
               </div>
             )}
