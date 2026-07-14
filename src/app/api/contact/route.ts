@@ -177,6 +177,19 @@ export async function POST(request: Request) {
     const escapedEmail = escapeHtml(email.trim());
     const escapedMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br>');
 
+    if (!process.env.GMAIL_APP_PASSWORD) {
+      console.error('SMTP Error: GMAIL_APP_PASSWORD env variable is not configured in this environment!');
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Email configuration error. GMAIL_APP_PASSWORD is not set.',
+        },
+        {
+          status: 500,
+        },
+      );
+    }
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -209,24 +222,23 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Contact form SMTP error:', error);
 
-    // Save message to messages.txt locally as a backup/fallback
-    try {
-      const logDir = process.cwd();
-      const logFile = path.join(logDir, 'messages.txt');
-      const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-      const logEntry = `\n======================================\nDate: ${timestamp} PKT\nName: ${name}\nEmail: ${email}\nMessage: ${message}\n======================================\n`;
-      fs.appendFileSync(logFile, logEntry, 'utf8');
-      console.log('Saved message to messages.txt fallback successfully.');
+    // Save message to messages.txt locally as a backup/fallback (only in local development)
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const logDir = process.cwd();
+        const logFile = path.join(logDir, 'messages.txt');
+        const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
+        const logEntry = `\n======================================\nDate: ${timestamp} PKT\nName: ${name}\nEmail: ${email}\nMessage: ${message}\n======================================\n`;
+        fs.appendFileSync(logFile, logEntry, 'utf8');
+        console.log('Saved message to messages.txt fallback successfully.');
 
-      // Return a successful response in local development to allow testing form submission UI
-      if (process.env.NODE_ENV === 'development') {
         return NextResponse.json({
           success: true,
           message: 'Message saved locally (SMTP connection timed out, check messages.txt)!',
         });
+      } catch (fsError) {
+        console.error('Failed to write message to fallback file:', fsError);
       }
-    } catch (fsError) {
-      console.error('Failed to write message to fallback file:', fsError);
     }
 
     return NextResponse.json(
