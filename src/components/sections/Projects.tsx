@@ -449,8 +449,8 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
 ───────────────────────────────────────────── */
 export default function ProjectsPage() {
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>(() => getAllProjects());
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const projects = getAllProjects();
+  const isLoading = false;
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredImage, setHoveredImage] = useState<string>('');
   const lastHoveredImgRef = useRef<string>('');
@@ -473,15 +473,10 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     const data = getAllProjects();
-    const criticalImages = data.slice(0, 4).map(
-      (project) =>
-        new Promise((resolve) => {
-          const img = new window.Image();
-          img.src = project.hoverImage || project.images[0];
-          img.onload = resolve;
-          img.onerror = resolve;
-        }),
-    );
+    data.slice(0, 4).forEach((project) => {
+      const img = new window.Image();
+      img.src = project.hoverImage || project.images[0];
+    });
   }, []);
 
   useGSAP(
@@ -558,7 +553,7 @@ export default function ProjectsPage() {
     hide();
   };
 
-  const handleRowClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+  const handleRowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });
@@ -628,7 +623,7 @@ export default function ProjectsPage() {
               }
               onMouseLeave={handleRowMouseLeave}
               data-cursor="view"
-              onClick={(e) => handleRowClick(e, project.slug)}
+              onClick={handleRowClick}
             >
               <div className="flex-[0_0_80px] font-mono text-[13px] text-[#9a9a90] pt-2 relative h-6 overflow-hidden">
                 <span className="block absolute transition-all duration-300 ease-out group-hover:-translate-y-full group-hover:opacity-0">

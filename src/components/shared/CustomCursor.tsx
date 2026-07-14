@@ -50,17 +50,20 @@ export default function CustomCursor() {
     const cursorDot = cursorDotRef.current;
     const cursorOutline = cursorOutlineRef.current;
     const cursorTextEl = cursorTextRef.current;
-    if (!cursorDot || !cursorOutline) return;
+    if (!cursorDot || !cursorOutline || !cursorTextEl) return;
+
     gsap.set([cursorDot, cursorOutline, cursorTextEl], {
       xPercent: -50,
       yPercent: -50,
     });
+
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current = {
         x: e.clientX,
         y: e.clientY,
       };
     };
+
     const animate = () => {
       delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.1;
       delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.1;
@@ -74,11 +77,11 @@ export default function CustomCursor() {
       });
       requestRef.current = requestAnimationFrame(animate);
     };
+
     animate();
     window.addEventListener('mousemove', handleMouseMove);
-    const handleMouseEnter = (e: Event) => {
-      const currentTarget = e.currentTarget as HTMLElement | null;
-      if (!currentTarget) return;
+
+    const handleMouseEnter = (currentTarget: HTMLElement) => {
       const type = currentTarget.getAttribute('data-cursor');
       gsap.to(cursorDot, {
         scale: 0,
@@ -103,6 +106,7 @@ export default function CustomCursor() {
         });
       }
     };
+
     const handleMouseLeave = () => {
       setCursorText('');
       gsap.to(cursorDot, {
@@ -119,33 +123,48 @@ export default function CustomCursor() {
         duration: 0.2,
       });
     };
-    const addListeners = () => {
-      const els = document.querySelectorAll('a, button, [data-cursor], [role="button"]');
-      els.forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        htmlEl.addEventListener('mouseenter', handleMouseEnter);
-        htmlEl.addEventListener('mouseleave', handleMouseLeave);
-        htmlEl.style.cursor = 'none';
-      });
-      return els;
+
+    // Event Delegation: listen on window for mouseover/mouseout
+    const currentHoveredEl = { current: null as HTMLElement | null };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const interactive = target.closest('a, button, [data-cursor], [role="button"]') as HTMLElement | null;
+
+      if (interactive) {
+        if (interactive !== currentHoveredEl.current) {
+          if (currentHoveredEl.current) {
+            handleMouseLeave();
+          }
+          currentHoveredEl.current = interactive;
+          handleMouseEnter(interactive);
+        }
+      } else if (currentHoveredEl.current) {
+        handleMouseLeave();
+        currentHoveredEl.current = null;
+      }
     };
-    const elements = addListeners();
-    const observer = new MutationObserver(addListeners);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+
+    const handleMouseLeavePage = () => {
+      if (currentHoveredEl.current) {
+        handleMouseLeave();
+        currentHoveredEl.current = null;
+      }
+    };
+
+    window.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseleave', handleMouseLeavePage);
+
     const style = document.createElement('style');
     style.innerHTML = `*{cursor:none!important}`;
     document.head.appendChild(style);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseleave', handleMouseLeavePage);
       cancelAnimationFrame(requestRef.current);
-      elements.forEach((el) => {
-        el.removeEventListener('mouseenter', handleMouseEnter);
-        el.removeEventListener('mouseleave', handleMouseLeave);
-      });
-      observer.disconnect();
       style.remove();
     };
   }, [enabled]);

@@ -350,26 +350,17 @@ const HomeBanner = () => {
       />
 
       <div ref={innerContentRef} className="max-w-7xl mx-auto w-full relative z-10">
-        <div className="text-center md:hidden">
+        <div className="text-center">
           <h1
             ref={nameRef}
             aria-label="Aitezaz Sikandar"
-            className="font-display text-6xl sm:text-6xl select-none font-semibold leading-none uppercase cursor-pointer overflow-hidden mb-3"
+            className="font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
-            <span aria-hidden="true" className="block">
+            <span aria-hidden="true" className="block md:hidden">
               <span className="block">{splitText('Aitezaz')}</span>
               <span className="block">{splitText('Sikandar')}</span>
             </span>
-          </h1>
-        </div>
-
-        <div className="hidden md:block text-center">
-          <h1
-            ref={nameRef}
-            aria-label="Aitezaz Sikandar"
-            className="font-display text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
-          >
-            <span aria-hidden="true" className="block">
+            <span aria-hidden="true" className="hidden md:block">
               {splitText('Aitezaz Sikandar')}
             </span>
           </h1>

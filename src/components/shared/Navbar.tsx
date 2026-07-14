@@ -12,10 +12,9 @@ import Lenis from '@studio-freight/lenis';
 gsap.registerPlugin(ScrollTrigger);
 interface AnimatedHamburgerProps {
   isOpen: boolean;
-  hamburgerOnly: boolean;
 }
 
-const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, hamburgerOnly }) => {
+const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen }) => {
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
   const hasInitRef = useRef<boolean>(false);
@@ -436,16 +435,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     </div>
   );
 };
-interface MobileNavLinkProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-}
 
-const MobileNavLink: React.FC<MobileNavLinkProps> = ({ children, onClick }) => (
-  <li className="cursor-pointer text-xl" onClick={onClick}>
-    {children}
-  </li>
-);
 
 interface NavbarProps {
   hamburgerOnly?: boolean;
@@ -766,7 +756,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         }
         aria-label="Toggle menu"
       >
-        <AnimatedHamburger isOpen={isMenuOpen} hamburgerOnly={hamburgerOnly} />
+        <AnimatedHamburger isOpen={isMenuOpen} />
       </button>
 
       <FullscreenMenu

@@ -8,7 +8,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
-import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 import { Project } from '@/lib/projects';
@@ -31,8 +30,9 @@ export default function ProjectDetails({ project }: { project: Project }) {
         st.kill();
       }
     });
+    const currentRevealed = revealedRef.current;
     return () => {
-      revealedRef.current.clear();
+      currentRevealed.clear();
     };
   }, [project.slug]);
   useGSAP(

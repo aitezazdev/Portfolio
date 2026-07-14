@@ -139,8 +139,9 @@ export default function AmbientGeometry() {
           const n2 = nodes[j];
           const dx = n2.x - n1.x;
           const dy = n2.y - n1.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 14400) { // 120 * 120
+            const dist = Math.sqrt(distSq);
             const alpha = (1 - dist / 120) * 0.12;
             ctx.beginPath();
             ctx.moveTo(n1.x, n1.y);
