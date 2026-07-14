@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns';
 import nodemailer from 'nodemailer';
-export async function POST(request) {
+
+interface ContactRequestBody {
+  name?: string;
+  email?: string;
+  message?: string;
+}
+
+export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message } = (await request.json()) as ContactRequestBody;
     if (!name || !email || !message)
       return NextResponse.json(
         {
@@ -77,10 +84,15 @@ export async function POST(request) {
         pass: process.env.GMAIL_APP_PASSWORD,
       },
       // Force IPv4 lookup to prevent timeouts in serverless/hosting environments
-      lookup: (hostname, options, callback) => {
+      lookup: (
+        hostname: string,
+        options: dns.LookupOneOptions,
+        callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void
+      ) => {
         dns.lookup(hostname, { family: 4 }, callback);
       },
-    });
+    } as any);
+
     await transporter.sendMail({
       from: `"Portfolio Contact" <aitezazsikandar@gmail.com>`,
       to: 'aitezazsikandar@gmail.com',

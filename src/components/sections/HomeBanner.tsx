@@ -15,8 +15,8 @@ const RoleTicker = () => {
     'MERN Stack Developer',
     'Open to Work Worldwide',
   ];
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const containerRef = useRef(null);
+  const [currentIdx, setCurrentIdx] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const interval = setInterval(() => {
       const wrapper = containerRef.current;
@@ -65,16 +65,16 @@ const RoleTicker = () => {
   );
 };
 const HomeBanner = () => {
-  const nameRef = useRef(null);
-  const paragraphRef = useRef(null);
-  const tickerRef = useRef(null);
-  const buttonsRef = useRef(null);
-  const sectionRef = useRef(null);
-  const innerContentRef = useRef(null);
-  const spotlightRef = useRef(null);
-  const [preloaderComplete, setPreloaderComplete] = useState(false);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const innerContentRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
   const { isReady } = useTransitionState();
-  const splitText = (text) =>
+  const splitText = (text: string) =>
     text.split('').map((char, idx) => (
       <span
         key={idx}
@@ -260,7 +260,7 @@ const HomeBanner = () => {
     };
   }, [preloaderComplete, isReady]);
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -314,7 +314,7 @@ const HomeBanner = () => {
       scope: sectionRef,
     },
   );
-  const handleScroll = (id) => {
+  const handleScroll = (id: string) => {
     const section = document.getElementById(id);
     if (!section) return;
     if (window.__lenis) {

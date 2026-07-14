@@ -7,11 +7,18 @@ import { useTransitionState } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
+import Lenis from '@studio-freight/lenis';
+
 gsap.registerPlugin(ScrollTrigger);
-const AnimatedHamburger = ({ isOpen, hamburgerOnly }) => {
-  const line1Ref = useRef(null);
-  const line2Ref = useRef(null);
-  const hasInitRef = useRef(false);
+interface AnimatedHamburgerProps {
+  isOpen: boolean;
+  hamburgerOnly: boolean;
+}
+
+const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, hamburgerOnly }) => {
+  const line1Ref = useRef<HTMLSpanElement>(null);
+  const line2Ref = useRef<HTMLSpanElement>(null);
+  const hasInitRef = useRef<boolean>(false);
   useEffect(() => {
     const l1 = line1Ref.current;
     const l2 = line2Ref.current;
@@ -86,16 +93,30 @@ const AnimatedHamburger = ({ isOpen, hamburgerOnly }) => {
     </div>
   );
 };
-const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, links }) => {
-  const menuRef = useRef(null);
-  const panelRef = useRef(null);
-  const tlRef = useRef(null);
-  const linksRef = useRef([]);
-  const metaRef = useRef(null);
-  const lineTopRef = useRef(null);
-  const lineBotRef = useRef(null);
-  const overlayRef = useRef(null);
-  const magnetRefs = useRef([]);
+interface LinkItem {
+  name: string;
+  href: string;
+  menuOnly?: boolean;
+}
+
+interface FullscreenMenuProps {
+  isOpen: boolean;
+  isTransitioning: boolean;
+  onClose: () => void;
+  handleLinkClick: (href: string) => void;
+  links: LinkItem[];
+}
+
+const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning, onClose, handleLinkClick, links }) => {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const linksRef = useRef<(HTMLDivElement | null)[]>([]);
+  const metaRef = useRef<HTMLDivElement>(null);
+  const lineTopRef = useRef<HTMLDivElement>(null);
+  const lineBotRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const magnetRefs = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
     if (!menuRef.current) return;
     if (isOpen && !isTransitioning) {
@@ -254,7 +275,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
       );
     }
   }, [isOpen, isTransitioning]);
-  const handleMagneticMouseMove = (e, index) => {
+  const handleMagneticMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
     const el = magnetRefs.current[index];
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -269,7 +290,7 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
       ease: 'power2.out',
     });
   };
-  const handleMagneticMouseLeave = (index) => {
+  const handleMagneticMouseLeave = (index: number) => {
     const el = magnetRefs.current[index];
     if (!el) return;
     gsap.to(el, {
@@ -326,11 +347,15 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
           {links.map((link, i) => (
             <div
               key={link.href}
-              ref={(el) => (linksRef.current[i] = el)}
+              ref={(el) => {
+                linksRef.current[i] = el;
+              }}
               className="overflow-hidden py-2"
             >
               <div
-                ref={(el) => (magnetRefs.current[i] = el)}
+                ref={(el) => {
+                  magnetRefs.current[i] = el;
+                }}
                 onMouseMove={(e) => handleMagneticMouseMove(e, i)}
                 onMouseLeave={() => handleMagneticMouseLeave(i)}
                 className="inline-block"
@@ -411,22 +436,32 @@ const FullscreenMenu = ({ isOpen, isTransitioning, onClose, handleLinkClick, lin
     </div>
   );
 };
-const MobileNavLink = ({ children, onClick }) => (
+interface MobileNavLinkProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const MobileNavLink: React.FC<MobileNavLinkProps> = ({ children, onClick }) => (
   <li className="cursor-pointer text-xl" onClick={onClick}>
     {children}
   </li>
 );
-const Navbar = ({ hamburgerOnly = false }) => {
-  const navRef = useRef(null);
-  const hamburgerRef = useRef(null);
-  const mobileNavRef = useRef(null);
-  const logoRef = useRef(null);
-  const linksContainerRef = useRef(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [preloaderComplete, setPreloaderComplete] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [shouldHideNav, setShouldHideNav] = useState(false);
-  const lenisRef = useLenis();
+
+interface NavbarProps {
+  hamburgerOnly?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
+  const navRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLElement>(null);
+  const linksContainerRef = useRef<HTMLUListElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
+  const [hasAnimated, setHasAnimated] = useState<boolean>(false);
+  const [shouldHideNav, setShouldHideNav] = useState<boolean>(false);
+  const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
   const lenis = lenisRef?.current;
   const { stage, isReady } = useTransitionState();
   const isTransitioning = stage === 'entering' || stage === 'leaving';
@@ -657,7 +692,7 @@ const Navbar = ({ hamburgerOnly = false }) => {
       href: '/#contact',
     },
   ];
-  const navStyle = {
+  const navStyle: React.CSSProperties = {
     opacity: isTransitioning ? 0 : 1,
     pointerEvents: isTransitioning ? 'none' : 'auto',
     transition: 'opacity 0.5s ease-in-out',

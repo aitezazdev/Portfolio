@@ -17,7 +17,8 @@ const About = () => {
 My tech journey started out of a pure curiosity to understand how software ticks under the hood. Today, that curiosity has translated into a love for clean code, optimistic UI updates, and building user journeys that feel alive and intuitive.
 
 Outside of the editor, I enjoy collaborating on team-focused development, discussing code architecture, and learning new tools. My goal is to build impactful, scalable applications that make a meaningful difference.`;
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
   useGSAP(
     () => {
       gsap.fromTo(

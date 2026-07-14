@@ -1,4 +1,6 @@
-export const siteMetadata = {
+import { Metadata } from 'next';
+
+export const siteMetadata: Metadata = {
   title: {
     default: 'Aitezaz Sikandar - Full Stack Developer',
     template: '%s | Aitezaz Sikandar',
@@ -54,3 +56,4 @@ export const siteMetadata = {
     follow: true,
   },
 };
+

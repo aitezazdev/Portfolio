@@ -11,9 +11,11 @@ import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
-export default function ProjectDetails({ project }) {
-  const detailsRef = useRef(null);
-  const revealedRef = useRef(new Set());
+import { Project } from '@/lib/projects';
+
+export default function ProjectDetails({ project }: { project: Project }) {
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const revealedRef = useRef<Set<number>>(new Set());
   useEffect(() => {
     if (!detailsRef.current) return;
     const allContainers = detailsRef.current.querySelectorAll('.image-reveal-container');
@@ -151,7 +153,7 @@ export default function ProjectDetails({ project }) {
       });
     }
   };
-  const handleImageEnter = (e) => {
+  const handleImageEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const img = e.currentTarget.querySelector('img');
     if (img) {
       gsap.to(img, {
@@ -162,7 +164,7 @@ export default function ProjectDetails({ project }) {
       });
     }
   };
-  const handleImageLeave = (e) => {
+  const handleImageLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const img = e.currentTarget.querySelector('img');
     if (img) {
       gsap.to(img, {
@@ -305,13 +307,16 @@ export default function ProjectDetails({ project }) {
                 placeholder="blur"
                 blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFhMTkxNyIvPjwvc3ZnPg=="
                 onError={(e) => {
-                  const container = e.target.closest('.image-reveal-container');
-                  if (container) {
-                    gsap.set(container, {
-                      clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
-                    });
+                  const target = e.target as HTMLImageElement | null;
+                  if (target) {
+                    const container = target.closest('.image-reveal-container');
+                    if (container) {
+                      gsap.set(container, {
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                      });
+                    }
+                    target.style.opacity = '0';
                   }
-                  e.target.style.opacity = '0';
                 }}
               />
             </a>

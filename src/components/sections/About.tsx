@@ -2,7 +2,11 @@ import React from 'react';
 import About from './AboutMe';
 import Services from './Services';
 import TechStack from './TechStack';
-const ReuniteBlack = ({ techStackRef }) => {
+interface ReuniteBlackProps {
+  techStackRef: React.RefObject<HTMLDivElement | null> | any;
+}
+
+const ReuniteBlack: React.FC<ReuniteBlackProps> = ({ techStackRef }) => {
   return (
     <>
       <About />
@@ -14,4 +18,5 @@ const ReuniteBlack = ({ techStackRef }) => {
     </>
   );
 };
+
 export default ReuniteBlack;

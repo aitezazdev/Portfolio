@@ -5,7 +5,7 @@ import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 const Contact = () => {
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const headingText = 'Contact';
   const descriptionText =
     'Have a project in mind or just want to say hello? Feel free to reach out.';
@@ -14,9 +14,9 @@ const Contact = () => {
     email: '',
     message: '',
   });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   useEffect(() => {
     if (submitStatus) {
       const timer = setTimeout(() => setSubmitStatus(null), 5000);
@@ -45,7 +45,7 @@ const Contact = () => {
       if (section) observer.unobserve(section);
     };
   }, []);
-  const validateName = (name) => {
+  const validateName = (name: string) => {
     if (name.trim().length < 2) return false;
     if (!/[a-zA-Z]/.test(name)) return false;
     const fakeNames = ['test', 'abc', 'xyz', 'asdf', 'qwerty', 'john doe', 'test user'];
@@ -54,7 +54,7 @@ const Contact = () => {
     if (/(.)\1{4,}/.test(name)) return false;
     return true;
   };
-  const validateMessage = (message) => {
+  const validateMessage = (message: string) => {
     if (message.trim().length < 30) return false;
     const words = message.trim().split(/\s+/);
     if (words.length < 5) return false;
@@ -63,7 +63,7 @@ const Contact = () => {
     if (/(.)\1{10,}/.test(message)) return false;
     return true;
   };
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -78,8 +78,9 @@ const Contact = () => {
   const handleSubmit = async () => {
     setErrors({});
     setSubmitStatus(null);
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
+
     else if (!validateName(formData.name)) newErrors.name = 'Please enter a valid name';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else {

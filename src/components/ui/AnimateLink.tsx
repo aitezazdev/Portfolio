@@ -1,10 +1,17 @@
 import React from 'react';
 
-const AnimatedLink = ({ children, onClick, className = '' }) => {
+interface AnimatedLinkProps {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<any>) => void;
+  className?: string;
+}
+
+const AnimatedLink: React.FC<AnimatedLinkProps> = ({ children, onClick, className = '' }) => {
   // If children is a React element and is an <a> tag, we render a single <a> on the outside
   // and animate the text inside to avoid duplicate interactive tags.
   if (React.isValidElement(children) && children.type === 'a') {
-    const { href, children: text, onClick: childOnClick, target, rel, className: childClassName, ...rest } = children.props;
+    const { href, children: text, onClick: childOnClick, target, rel, className: childClassName, ...rest } = children.props as any;
+
 
     return (
       <li className={`${className} list-none`}>
