@@ -1,62 +1,80 @@
-# Contributing Guidelines
+# Contributing
 
-Thank you for choosing to contribute to nextjs-3d-gsap-portfolio. We welcome issues, bug reports, feature requests, and pull requests to help improve the project.
+Thanks for your interest in contributing. This guide covers the workflow for reporting bugs, suggesting changes, and submitting pull requests.
 
-Please review these guidelines to ensure a clear and efficient review process.
+## Getting Started
 
----
+1. **Fork** the repository on GitHub.
+2. **Clone** your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/Portfolio.git
+   cd Portfolio
+   ```
+3. **Install** dependencies:
+   ```bash
+   npm install
+   ```
+4. **Create a branch** for your changes:
+   ```bash
+   git checkout -b your-branch-name
+   ```
+5. **Start** the dev server to test your changes:
+   ```bash
+   npm run dev
+   ```
+
+## Code Quality
+
+This project uses Prettier for formatting and ESLint for linting. Run both before committing:
+
+```bash
+npm run format
+npm run lint
+```
+
+To auto-fix lint issues:
+
+```bash
+npm run lint:fix
+```
+
+**Prettier config** (from `.prettierrc`):
+- Single quotes
+- Semicolons
+- Trailing commas
+- 100 character print width
+- 2 space indentation
+
+## Commits
+
+Use short, clear commit messages with a conventional prefix:
+
+- `feat:` new feature or component
+- `fix:` bug fix
+- `docs:` documentation changes
+- `style:` formatting or CSS changes (no logic changes)
+- `refactor:` code restructuring without changing behavior
+
+Example: `feat: add dark mode toggle to navbar`
+
+## Pull Requests
+
+1. Make sure your branch is up to date with `main`.
+2. Run `npm run lint` and `npm run build` to verify nothing is broken.
+3. Open a PR targeting the `main` branch.
+4. Provide a short description of what changed and why.
+5. Include screenshots if you changed any UI.
+
+A maintainer will review your PR and may request changes before merging.
 
 ## Reporting Issues
 
-If you find a bug or have a suggestion:
-1. Search the issue tracker to check if your topic is already documented.
-2. If it is new, open a detailed issue. Include reproduction steps, expected behavior, your operating system, and Node.js version.
+Before opening an issue, check if it already exists. If not, include:
 
----
+- Steps to reproduce the problem
+- Expected vs actual behavior
+- Your Node.js version and operating system
 
-## Local Development Workflow
+## Feature Requests
 
-Follow these rules when writing code locally.
-
-### 1. Set Up Your Environment
-Follow the installation steps in the [README.md](file:///home/aitezaz/Code/Portfolio-Nextjs/README.md) to set up your local server.
-
-### 2. Code Quality & Linting
-This repository relies on Prettier for formatting and ESLint for code verification. Run validation checks before committing files:
-* **Lint Check**—run ESLint rules to identify syntax errors or quality violations:
-  ```bash
-  npm run lint
-  ```
-* **Auto-Fix**—run ESLint with the fix flag to resolve simple issues automatically:
-  ```bash
-  npm run lint:fix
-  ```
-* **Format Code**—format your files using Prettier to maintain a clean style:
-  ```bash
-  npm run format
-  ```
-
----
-
-## Commit Guidelines
-
-Keep your commit messages short, direct, and structured. We prefer conventional-like prefixes to categorize changes:
-
-* `feat:` for new capabilities or components (e.g., `feat: add custom cursor component`)
-* `fix:` for bug fixes (e.g., `fix: resolve page transition scroll drift`)
-* `docs:` for documentation updates (e.g., `docs: update setup steps in readme`)
-* `style:` for changes that do not affect code logic—such as formatting or CSS edits
-* `refactor:` for code changes that neither fix bugs nor add features
-
-Provide a concise description. Avoid long sentences or buzzwords.
-
----
-
-## Pull Request Process
-
-When you are ready to submit your contributions, follow this process:
-
-1. **Branching**—create a branch off the main branch. Use a descriptive name (e.g., `feature/custom-cursor` or `fix/transition-drift`).
-2. **Coding Standards**—write clean TypeScript and CSS. Test your changes locally to ensure animations remain smooth—maintaining target frame rates during scroll events.
-3. **Submit PR**—open a pull request targeting the `main` branch. Provide a brief explanation of the changes, references to any relevant issues, and screenshots if you modified UI components.
-4. **Code Review**—maintainers will review your submission. Address any requested changes or code styling adjustments. Once approved, a maintainer will merge your code.
+Open an issue with the `enhancement` label describing what you would like to see and why it would be useful.
