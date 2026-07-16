@@ -194,6 +194,60 @@ const HomeBanner = () => {
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady]);
 
+  const handleMouseEnter = () => {
+    if (!nameRef.current) return;
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
+    letters.forEach((wrapper, idx) => {
+      const original = wrapper.querySelector('.letter-original');
+      const duplicate = wrapper.querySelector('.letter-duplicate');
+      if (original && duplicate) {
+        gsap.to(original, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+      }
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!nameRef.current) return;
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
+    letters.forEach((wrapper, idx) => {
+      const original = wrapper.querySelector('.letter-original');
+      const duplicate = wrapper.querySelector('.letter-duplicate');
+      if (original && duplicate) {
+        gsap.to(original, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+      }
+    });
+  };
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
@@ -289,6 +343,8 @@ const HomeBanner = () => {
           <h1
             ref={nameRef}
             aria-label="Aitezaz Sikandar"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
             <span aria-hidden="true" className="block md:hidden">
