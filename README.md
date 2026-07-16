@@ -1,6 +1,6 @@
 # Portfolio
 
-A creative developer portfolio built with Next.js 15, GSAP, Three.js, and Lenis. It features scroll-driven animations, animated page transitions, 3D elements, smooth scrolling, and a working contact form.
+The personal creative portfolio of **Aitezaz Sikandar** ([@aitezazdev](https://github.com/aitezazdev)). Built with Next.js 15, GSAP, Three.js, and Lenis, it features scroll-driven animations, animated page transitions, 3D elements, smooth scrolling, and a working contact form.
 
 **Live Site:** [aitezaz.xyz](https://aitezaz.xyz)
 
