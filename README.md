@@ -30,6 +30,7 @@ Create a `.env.local` file in the root:
 
 ```env
 GMAIL_APP_PASSWORD=your_gmail_app_password
+NEXT_PUBLIC_GA_ID=your_google_analytics_id
 ```
 
 Start the development server:
