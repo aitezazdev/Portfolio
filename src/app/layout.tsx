@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright (c) 2026 Aitezaz Sikandar. All rights reserved.
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
+ * Project: Portfolio-NextJs
+ * Author: Aitezaz Sikandar (aitezazdev)
+ * Website: https://aitezaz.xyz
+ */
+
 import { Geist, Geist_Mono, Space_Grotesk, Syne } from 'next/font/google';
 import './globals.css';
 import ClientLayout from './ClientLayout';

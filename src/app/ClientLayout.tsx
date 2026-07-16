@@ -8,6 +8,12 @@ import Providers from './providers';
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [showCursor, setShowCursor] = useState(false);
   useEffect(() => {
+    console.log(
+      '%c Creative Portfolio Blueprint %c by Aitezaz Sikandar (https://aitezaz.xyz) ',
+      'background: #080807; color: #e8e8e3; padding: 4px 8px; border-radius: 4px 0 0 4px; font-family: monospace; font-weight: bold;',
+      'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
+    );
+
     const alreadyLoaded = sessionStorage.getItem('preloader-shown');
     if (alreadyLoaded) {
       setShowCursor(true);
