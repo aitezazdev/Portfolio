@@ -205,3 +205,22 @@ html {
 html::-webkit-scrollbar {
   display: none;
 }
+
+/* Scoped Hover Animations for the Name Heading */
+.name-heading .letter-wrapper .letter-original,
+.name-heading .letter-wrapper .letter-duplicate {
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.name-heading:hover .letter-wrapper .letter-original,
+.name-heading:hover .letter-wrapper .letter-duplicate {
+  transform: translateY(-100%);
+  transition-delay: calc(var(--idx) * 0.03s) !important;
+}
+
+.name-heading .letter-wrapper .letter-original,
+.name-heading .letter-wrapper .letter-duplicate {
+  transform: translateY(0%);
+  transition-delay: calc(var(--idx) * 0.03s);
+}
