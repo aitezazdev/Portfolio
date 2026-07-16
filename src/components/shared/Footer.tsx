@@ -136,6 +136,11 @@ const Footer = () => {
                   Github
                 </a>
               </AnimatedLink>
+              <AnimatedLink>
+                <a href="https://github.com/aitezazdev/Portfolio" target="_blank" rel="noopener noreferrer">
+                  Source Code
+                </a>
+              </AnimatedLink>
             </ul>
           </div>
 

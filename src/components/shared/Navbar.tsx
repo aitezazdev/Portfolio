@@ -415,6 +415,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
                 href: 'https://github.com/aitezazdev',
               },
               {
+                label: 'Source Code',
+                href: 'https://github.com/aitezazdev/Portfolio',
+              },
+              {
                 label: 'LinkedIn',
                 href: 'https://linkedin.com/in/aitezaz-sikandar',
               },
