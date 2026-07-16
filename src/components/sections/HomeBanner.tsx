@@ -81,6 +81,7 @@ const HomeBanner = () => {
         className="letter-wrapper inline-block relative overflow-hidden"
         style={{
           display: 'inline-block',
+          ['--idx' as any]: idx,
         }}
       >
         <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
@@ -192,73 +193,7 @@ const HomeBanner = () => {
     }, 100);
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady]);
-  const handleMouseEnter = () => {
-    if (!nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.killTweensOf([original, duplicate]);
-        gsap
-          .timeline()
-          .to(
-            original,
-            {
-              y: '-100%',
-              duration: 0.5,
-              ease: 'power3.out',
-            },
-            idx * 0.04,
-          )
-          .to(
-            duplicate,
-            {
-              y: '-100%',
-              duration: 0.5,
-              ease: 'power3.out',
-            },
-            idx * 0.04,
-          );
-      }
-    });
-  };
 
-  const handleMouseLeave = () => {
-    if (!nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.killTweensOf([original, duplicate]);
-        gsap
-          .timeline()
-          .to(
-            original,
-            {
-              y: '0%',
-              duration: 0.5,
-              ease: 'power3.out',
-            },
-            idx * 0.04,
-          )
-          .to(
-            duplicate,
-            {
-              y: '0%',
-              duration: 0.5,
-              ease: 'power3.out',
-            },
-            idx * 0.04,
-          );
-      }
-    });
-  };
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
@@ -354,9 +289,7 @@ const HomeBanner = () => {
           <h1
             ref={nameRef}
             aria-label="Aitezaz Sikandar"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className="font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
+            className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
             <span aria-hidden="true" className="block md:hidden">
               <span className="block">{splitText('Aitezaz')}</span>
