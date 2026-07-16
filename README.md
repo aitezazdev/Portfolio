@@ -1,6 +1,6 @@
 # Portfolio
 
-The personal creative portfolio of [**Aitezaz Sikandar**](https://github.com/aitezazdev). Built with Next.js 15, GSAP, Three.js, and Lenis, it features scroll-driven animations, animated page transitions, 3D elements, smooth scrolling, and a working contact form.
+The personal portfolio of [**Aitezaz Sikandar**](https://github.com/aitezazdev). Built with Next.js 15, GSAP, and Lenis, it features scroll-driven animations, animated page transitions, smooth scrolling, and a working contact form.
 
 **Live Site:** [aitezaz.xyz](https://aitezaz.xyz)
 
@@ -8,10 +8,9 @@ The personal creative portfolio of [**Aitezaz Sikandar**](https://github.com/ait
 
 - Scroll-driven GSAP animations using ScrollTrigger
 - Smooth scrolling powered by Lenis
-- 3D rendering with React Three Fiber and Drei
 - Animated page transitions using next-transition-router
 - Custom cursor with interactive hover states
-- Film grain overlay and marquee strips
+- Film grain overlay, marquee strips, and dynamic interactive background
 - Contact form backed by Nodemailer with validation and spam checks
 - Vercel Analytics and Google Analytics integration
 - Fully typed with TypeScript
@@ -58,7 +57,7 @@ src/
 │   ├── api/              # Backend handlers (contact form)
 │   └── projects/         # Individual project pages
 ├── components/
-│   ├── canvas/           # WebGL and 3D canvas components
+│   ├── canvas/           # Canvas background components
 │   ├── project/          # Project detail components
 │   ├── providers/        # Lenis smooth scroll provider
 │   ├── sections/         # Page sections (Banner, About, Projects, Contact)
