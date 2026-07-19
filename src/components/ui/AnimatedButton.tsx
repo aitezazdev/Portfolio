@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, ElementType } from 'react';
-import gsap from 'gsap';
+import { gsap } from '@/lib/gsap';
 
 interface AnimatedButtonProps {
   onClick?: (e: React.MouseEvent<any>) => void;
@@ -27,20 +27,21 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<any>(null);
   const rippleRef = useRef<HTMLSpanElement>(null);
+
   const Component = as;
 
   let bgColor, textColor, borderColor, rippleColor, hoverBgColor, originalBgColor;
   switch (variant) {
     case 'light':
       bgColor = 'bg-transparent';
-      textColor = 'text-[#2a2a2a]';
-      borderColor = 'border-2 border-[#2a2a2a]';
+      textColor = 'text-elevated';
+      borderColor = 'border-2 border-elevated';
       rippleColor = 'rgba(42, 42, 42, 0.1)';
       hoverBgColor = 'rgba(42, 42, 42, 0.05)';
       originalBgColor = 'transparent';
       break;
     case 'primary':
-      bgColor = 'bg-[#0c6145]';
+      bgColor = 'bg-forest';
       textColor = 'text-white';
       borderColor = '';
       rippleColor = 'rgba(255,255,255,0.2)';
@@ -49,15 +50,15 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       break;
     case 'outline':
       bgColor = 'bg-transparent';
-      textColor = 'text-[#615c56]';
-      borderColor = 'border border-[#a29e9a]';
+      textColor = 'text-warm';
+      borderColor = 'border border-muted';
       rippleColor = 'rgba(97, 92, 86, 0.1)';
       hoverBgColor = 'rgba(97, 92, 86, 0.05)';
       originalBgColor = 'transparent';
       break;
     case 'dark':
     default:
-      bgColor = 'bg-[#2a2a2a]';
+      bgColor = 'bg-elevated';
       textColor = 'text-white';
       borderColor = '';
       rippleColor = 'rgba(255, 255, 255, 0.15)';
@@ -65,11 +66,12 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       originalBgColor = '#2a2a2a';
       break;
   }
+
   const handleMouseEnter = (e: React.MouseEvent<any>) => {
     const button = buttonRef.current;
     const ripple = rippleRef.current;
-
     if (!button || !ripple) return;
+
     const rect = button.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -80,62 +82,35 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       Math.hypot(rect.width - x, rect.height - y),
     );
     const finalScale = (maxDistance * 2) / 100;
-    gsap.set(ripple, {
-      left: x,
-      top: y,
-      scale: 0,
-      opacity: 1,
-    });
-    gsap.to(ripple, {
-      scale: finalScale,
-      opacity: 0.6,
-      duration: 0.6,
-      ease: 'power2.out',
-    });
-    gsap.to(button, {
-      backgroundColor: hoverBgColor,
-      duration: 0.4,
-      ease: 'power2.out',
-    });
+
+    gsap.set(ripple, { left: x, top: y, scale: 0, opacity: 1 });
+    gsap.to(ripple, { scale: finalScale, opacity: 0.6, duration: 0.6, ease: 'power2.out' });
+    gsap.to(button, { backgroundColor: hoverBgColor, duration: 0.4, ease: 'power2.out' });
   };
+
   const handleButtonMouseLeave = () => {
     const button = buttonRef.current;
     const ripple = rippleRef.current;
     if (!button || !ripple) return;
-    gsap.to(ripple, {
-      scale: 0,
-      opacity: 0,
-      duration: 0.5,
-      ease: 'power2.out',
-    });
-    gsap.to(button, {
-      backgroundColor: originalBgColor,
-      duration: 0.4,
-      ease: 'power2.out',
-    });
+    gsap.to(ripple, { scale: 0, opacity: 0, duration: 0.5, ease: 'power2.out' });
+    gsap.to(button, { backgroundColor: originalBgColor, duration: 0.4, ease: 'power2.out' });
   };
+
   useEffect(() => {
     const el = buttonRef.current;
     if (!el || disabled) return;
-    const handleMouseMove = (e) => {
+
+    const handleMouseMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      gsap.to(el, {
-        x: x * 0.35,
-        y: y * 0.35,
-        duration: 0.4,
-        ease: 'power2.out',
-      });
+      gsap.to(el, { x: x * 0.35, y: y * 0.35, duration: 0.4, ease: 'power2.out' });
     };
+
     const handleMouseLeave = () => {
-      gsap.to(el, {
-        x: 0,
-        y: 0,
-        duration: 0.6,
-        ease: 'elastic.out(1, 0.4)',
-      });
+      gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
     };
+
     el.addEventListener('mousemove', handleMouseMove);
     el.addEventListener('mouseleave', handleMouseLeave);
     return () => {
@@ -143,6 +118,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       el.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [disabled]);
+
   return (
     <div ref={containerRef} className="inline-block p-8 -m-8 pointer-events-auto">
       <Component
@@ -152,18 +128,13 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         onMouseLeave={handleButtonMouseLeave}
         disabled={disabled}
         className={`relative text-xs md:text-sm outline-none overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-block ${className}`}
-        style={{
-          transformOrigin: 'center',
-        }}
+        style={{ transformOrigin: 'center' }}
         {...props}
       >
         <span
           ref={rippleRef}
           className="absolute pointer-events-none rounded-full w-[100px] h-[100px] -translate-x-1/2 -translate-y-1/2"
-          style={{
-            backgroundColor: rippleColor,
-            opacity: 0,
-          }}
+          style={{ backgroundColor: rippleColor, opacity: 0 }}
         />
 
         <span className="flex items-center justify-center h-full transition-transform duration-400 ease-in-out group-hover:-translate-y-full relative z-10">
@@ -177,4 +148,5 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     </div>
   );
 };
+
 export default AnimatedButton;

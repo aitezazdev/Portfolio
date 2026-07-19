@@ -9,9 +9,8 @@
 
 'use client';
 
-import gsap from 'gsap';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useEffect, useRef } from 'react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import HomeBanner from '@/components/sections/HomeBanner';
 import Projects from '@/components/sections/Projects';
 import About from '@/components/sections/About';
@@ -19,7 +18,6 @@ import MarqueeStrip from '@/components/sections/MarqueeStrip';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
-gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const homeRef = useRef<HTMLDivElement>(null);
   const reuniteRef = useRef<HTMLDivElement>(null);
@@ -76,7 +74,7 @@ export default function Home() {
           <HomeBanner />
         </section>
         <div id="about-section-wrapper" className="relative bg-black">
-          <div ref={reuniteRef} className="relative z-10 bg-[#080807] min-h-screen overflow-hidden">
+          <div ref={reuniteRef} className="relative z-10 bg-ink min-h-screen overflow-hidden">
             <About techStackRef={techStackRef} />
           </div>
         </div>

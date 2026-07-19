@@ -4,8 +4,58 @@
   --font-display: var(--font-space-grotesk), sans-serif;
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
-  --font-syne: var(--font-syne), sans-serif;
-  --font-inter: var(--font-inter), sans-serif;
+
+  /* ── Core palette ── */
+  --color-cream: #e8e8e3;
+  --color-ink: #080807;
+  --color-forest: #0c6145;
+  --color-forest-light: #0a7a56;
+  --color-warm: #6b645c;
+  --color-muted: #a29e9a;
+  --color-light: #d1d1c7;
+  --color-elevated: #2a2a2a;
+  --color-elevated-dark: #1a1a18;
+  --color-surface: #0d0d0c;
+  --color-surface-mid: #161615;
+  --color-border: #d0d0c8;
+  --color-border-dark: #c8c8c0;
+  --color-border-subtle: #393632;
+  --color-border-subtler: #2a2a28;
+  --color-charcoal: #1a1a1a;
+  --color-gray-soft: #9a9a90;
+  --color-gray-mid: #4a4a48;
+  --color-gray-btn: #524f4c;
+  --color-footer-bg: #dfdfd9;
+  --color-footer-border: #cfcfc8;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .film-grain {
+    animation: none !important;
+  }
+
+  .marquee-content-left,
+  .marquee-content-right {
+    animation: none !important;
+  }
+
+  .arrow-pulse {
+    animation: none !important;
+  }
+
+  .preloader-active main {
+    visibility: visible !important;
+  }
 }
 
 body.menu-open {
@@ -34,6 +84,12 @@ body.menu-open {
   color: #ffffff;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .preloader-active main {
+    visibility: visible !important;
+  }
+}
+
 .bg-primary {
   background-color: #83cf7b;
 }
@@ -57,39 +113,19 @@ body.menu-open {
 }
 
 @keyframes grain {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  10% {
-    transform: translate(-2%, -3%);
-  }
-  20% {
-    transform: translate(3%, 2%);
-  }
-  30% {
-    transform: translate(-3%, 3%);
-  }
-  40% {
-    transform: translate(2%, -1%);
-  }
-  50% {
-    transform: translate(-1%, 2%);
-  }
-  60% {
-    transform: translate(3%, -3%);
-  }
-  70% {
-    transform: translate(-2%, 1%);
-  }
-  80% {
-    transform: translate(1%, -2%);
-  }
-  90% {
-    transform: translate(-3%, -2%);
-  }
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  20% { transform: translate(3%, 2%); }
+  30% { transform: translate(-3%, 3%); }
+  40% { transform: translate(2%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  60% { transform: translate(3%, -3%); }
+  70% { transform: translate(-2%, 1%); }
+  80% { transform: translate(1%, -2%); }
+  90% { transform: translate(-3%, -2%); }
 }
 
+/* ── Marquee ── */
 .marquee-container {
   overflow: hidden;
   width: 100%;
@@ -120,21 +156,13 @@ body.menu-open {
 }
 
 @keyframes marquee-left {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes marquee-right {
-  0% {
-    transform: translate3d(-50%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }
 
 .scroll-progress-bar {
@@ -145,13 +173,8 @@ body.menu-open {
 }
 
 @keyframes arrowPulse {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(6px);
-  }
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
 }
 .arrow-pulse {
   animation: arrowPulse 1.5s ease-in-out infinite;
@@ -189,14 +212,22 @@ body.menu-open {
   background: linear-gradient(to left, #080807, transparent);
 }
 
-* {
+/* ── Custom cursor — only when JS is active ── */
+body:not(.cursor-disabled) * {
   cursor: none;
 }
-a,
-button,
-[role='button'],
-[data-cursor] {
+body:not(.cursor-disabled) a,
+body:not(.cursor-disabled) button,
+body:not(.cursor-disabled) [role='button'],
+body:not(.cursor-disabled) [data-cursor] {
   cursor: none;
+}
+body.cursor-disabled * {
+  cursor: auto;
+}
+body.cursor-disabled a,
+body.cursor-disabled button {
+  cursor: pointer;
 }
 
 html {
