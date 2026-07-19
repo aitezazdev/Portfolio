@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
+import { safeSessionStorage } from '@/utils/storage';
 
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -10,7 +11,7 @@ export default function GlobalPreloader() {
   const reduced = useReducedMotion();
 
   useEffect(() => {
-    const shown = sessionStorage.getItem('preloader-shown');
+    const shown = safeSessionStorage.getItem('preloader-shown');
     if (shown) {
       setIsLoading(false);
       document.body.classList.add('preloader-complete');
@@ -19,7 +20,7 @@ export default function GlobalPreloader() {
 
     // Skip animation if user prefers reduced motion
     if (reduced) {
-      sessionStorage.setItem('preloader-shown', 'true');
+      safeSessionStorage.setItem('preloader-shown', 'true');
       setIsLoading(false);
       document.body.classList.add('preloader-complete');
       window.dispatchEvent(new CustomEvent('preloaderComplete'));
@@ -36,7 +37,7 @@ export default function GlobalPreloader() {
           duration: 0.8,
           ease: 'power3.inOut',
           onComplete: () => {
-            sessionStorage.setItem('preloader-shown', 'true');
+            safeSessionStorage.setItem('preloader-shown', 'true');
             setIsLoading(false);
             document.body.classList.remove('preloader-active');
             document.body.classList.add('preloader-complete');

@@ -6,6 +6,7 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { TransitionRouter } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import Lenis from '@studio-freight/lenis';
+import { safeSessionStorage } from '@/utils/storage';
 
 declare global {
   interface Window {
@@ -160,14 +161,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       }
 
       if ((path === '/' || path === '') && _isCurtainCovering) {
-        const savedScroll = sessionStorage.getItem('projects-scroll');
+        const savedScroll = safeSessionStorage.getItem('projects-scroll');
         const target = savedScroll ? parseInt(savedScroll, 10) : 0;
         playCurtainOut(target);
         return;
       }
 
       if (path === '/' || path === '') {
-        const savedScroll = sessionStorage.getItem('projects-scroll');
+        const savedScroll = safeSessionStorage.getItem('projects-scroll');
         if (savedScroll) {
           restoreScroll(parseInt(savedScroll, 10), lenisRef.current);
         }
@@ -185,9 +186,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         if (lenis?.current) lenis.current.stop();
         setPageName(getPageName(to));
         const isGoingToProject = to.startsWith('/projects/');
-        const savedScroll = sessionStorage.getItem('projects-scroll');
+        const savedScroll = safeSessionStorage.getItem('projects-scroll');
         const isReturningHome = (to === '/' || to === '') && savedScroll && !isGoingToProject;
-        if (isGoingToProject) sessionStorage.setItem('navigating-to-project', 'true');
+        if (isGoingToProject) safeSessionStorage.setItem('navigating-to-project', 'true');
         scrollTargetRef.current = isReturningHome ? parseInt(savedScroll, 10) : 0;
 
         gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
@@ -234,15 +235,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         });
 
         tl.add(() => {
-          const isNavigatingToProject = sessionStorage.getItem('navigating-to-project') === 'true';
-          const savedScroll = sessionStorage.getItem('projects-scroll');
+          const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
+          const savedScroll = safeSessionStorage.getItem('projects-scroll');
           if (!isNavigatingToProject && savedScroll) {
             scrollTargetRef.current = parseInt(savedScroll, 10);
-            sessionStorage.removeItem('projects-scroll');
+            safeSessionStorage.removeItem('projects-scroll');
           } else {
             scrollTargetRef.current = 0;
           }
-          sessionStorage.removeItem('navigating-to-project');
+          safeSessionStorage.removeItem('navigating-to-project');
           document.documentElement.scrollTop = scrollTargetRef.current;
           document.body.scrollTop = scrollTargetRef.current;
           if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
