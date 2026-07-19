@@ -6,6 +6,7 @@ import { useTransitionState } from 'next-transition-router';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import AmbientGeometry from '@/components/canvas/AmbientGeometry';
 import { useReducedMotion } from '@/lib/useReducedMotion';
+import { safeSessionStorage } from '@/utils/storage';
 
 const RoleTicker = () => {
   const roles = [
@@ -106,7 +107,7 @@ const HomeBanner = () => {
   }, [reduced]);
 
   useEffect(() => {
-    const hasShownPreloader = sessionStorage.getItem('preloader-shown');
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
