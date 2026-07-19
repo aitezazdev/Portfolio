@@ -20,8 +20,12 @@ export default function AmbientGeometry() {
   const nodesRef = useRef<NodeItem[]>([]);
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    let ctx: CanvasRenderingContext2D | null = null;
+    try {
+      ctx = canvas?.getContext('2d') || null;
+    } catch {
+      return;
+    }
     if (!ctx) return;
     let width = 0;
     let height = 0;
