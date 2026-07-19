@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { useTransitionState } from 'next-transition-router';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import AmbientGeometry from '@/components/canvas/AmbientGeometry';
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+import { useReducedMotion } from '@/lib/useReducedMotion';
+
 const RoleTicker = () => {
   const roles = [
     'Full Stack Developer',
@@ -17,16 +16,17 @@ const RoleTicker = () => {
   ];
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
   useEffect(() => {
+    if (reduced) return;
     const interval = setInterval(() => {
       const wrapper = containerRef.current;
       if (!wrapper) return;
       const currentWord = wrapper.querySelector('.ticker-word-current');
       const nextWord = wrapper.querySelector('.ticker-word-next');
       if (currentWord && nextWord) {
-        gsap.set(nextWord, {
-          yPercent: 100,
-        });
+        gsap.set(nextWord, { yPercent: 100 });
         gsap.to(currentWord, {
           yPercent: -100,
           duration: 0.4,
@@ -38,21 +38,20 @@ const RoleTicker = () => {
           ease: 'power3.out',
           onComplete: () => {
             setCurrentIdx((prev) => (prev + 1) % roles.length);
-            gsap.set(currentWord, {
-              yPercent: 0,
-            });
+            gsap.set(currentWord, { yPercent: 0 });
           },
         });
       }
     }, 2600);
     return () => clearInterval(interval);
-  }, [roles.length]);
+  }, [roles.length, reduced]);
+
   const nextIdx = (currentIdx + 1) % roles.length;
   return (
     <div className="h-6 overflow-hidden mb-8 flex justify-center items-center select-none">
       <div
         ref={containerRef}
-        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-[#6b645c]"
+        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-warm"
       >
         <div className="ticker-word-current absolute inset-0 flex items-center justify-center">
           {roles[currentIdx]}
@@ -64,6 +63,7 @@ const RoleTicker = () => {
     </div>
   );
 };
+
 const HomeBanner = () => {
   const nameRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
@@ -74,201 +74,118 @@ const HomeBanner = () => {
   const spotlightRef = useRef<HTMLDivElement>(null);
   const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
   const { isReady } = useTransitionState();
+  const reduced = useReducedMotion();
+
   const splitText = (text: string) =>
     text.split('').map((char, idx) => (
       <span
         key={idx}
         className="letter-wrapper inline-block relative overflow-hidden"
-        style={{
-          display: 'inline-block',
-          ['--idx' as any]: idx,
-        }}
+        style={{ display: 'inline-block', ['--idx' as any]: idx }}
       >
-        <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
+        <span className="letter-original block">{char === ' ' ? ' ' : char}</span>
         <span aria-hidden="true" className="letter-duplicate block absolute top-full left-0 w-full select-none">
-          {char === ' ' ? '\u00A0' : char}
+          {char === ' ' ? ' ' : char}
         </span>
       </span>
     ));
+
+  // Initial hidden states
   useEffect(() => {
-    if (sectionRef.current) {
-      gsap.set(sectionRef.current, {
-        opacity: 0,
-      });
+    if (reduced) {
+      gsap.set(sectionRef.current, { opacity: 1 });
+      return;
     }
+    if (sectionRef.current) gsap.set(sectionRef.current, { opacity: 0 });
     if (nameRef.current) {
-      gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), {
-        y: '100%',
-        opacity: 0,
-      });
+      gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
     }
-    if (paragraphRef.current) {
-      gsap.set(paragraphRef.current, {
-        y: 40,
-        opacity: 0,
-      });
-    }
-    if (tickerRef.current) {
-      gsap.set(tickerRef.current, {
-        y: 40,
-        opacity: 0,
-      });
-    }
-    if (buttonsRef.current) {
-      gsap.set(buttonsRef.current, {
-        y: 40,
-        opacity: 0,
-      });
-    }
-  }, []);
+    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+      if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
+    });
+  }, [reduced]);
+
   useEffect(() => {
     const hasShownPreloader = sessionStorage.getItem('preloader-shown');
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
-      const handlePreloaderComplete = () => {
-        setPreloaderComplete(true);
-      };
-      window.addEventListener('preloaderComplete', handlePreloaderComplete);
-      return () => {
-        window.removeEventListener('preloaderComplete', handlePreloaderComplete);
-      };
+      const handler = () => setPreloaderComplete(true);
+      window.addEventListener('preloaderComplete', handler);
+      return () => window.removeEventListener('preloaderComplete', handler);
     }
   }, []);
+
   useEffect(() => {
     if (!preloaderComplete || !isReady) return;
-    if (!nameRef.current) return;
+    if (reduced) {
+      gsap.set(sectionRef.current, { opacity: 1 });
+      return;
+    }
+
     const timer = setTimeout(() => {
-      gsap.to(sectionRef.current, {
-        opacity: 1,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-      const letters = nameRef.current.querySelectorAll('.letter-wrapper');
-      gsap.to(letters, {
-        y: '0%',
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.05,
-        ease: 'power3.out',
-        delay: 0.3,
-      });
-      const tl = gsap.timeline({
-        delay: 1.1,
-        ease: 'power3.out',
-      });
-      if (paragraphRef.current) {
-        tl.to(
-          paragraphRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-          },
-          '-=0.4',
-        );
+      gsap.to(sectionRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+      const letters = nameRef.current?.querySelectorAll('.letter-wrapper');
+      if (letters?.length) {
+        gsap.to(letters, {
+          y: '0%',
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: 'power3.out',
+          delay: 0.3,
+        });
       }
-      if (tickerRef.current) {
-        tl.to(
-          tickerRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-          },
-          '-=0.4',
-        );
-      }
-      if (buttonsRef.current) {
-        tl.to(
-          buttonsRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-          },
-          '-=0.4',
-        );
-      }
+      const tl = gsap.timeline({ delay: 1.1, ease: 'power3.out' });
+      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+        if (ref.current) {
+          tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
+        }
+      });
     }, 100);
     return () => clearTimeout(timer);
-  }, [preloaderComplete, isReady]);
+  }, [preloaderComplete, isReady, reduced]);
 
   const handleMouseEnter = () => {
-    if (!nameRef.current) return;
+    if (reduced || !nameRef.current) return;
     const isDesktop = window.innerWidth >= 768;
     const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
+    nameRef.current.querySelectorAll(selector).forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
+        gsap.to(original, { y: '-100%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
+        gsap.to(duplicate, { y: '-100%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
       }
     });
   };
 
   const handleMouseLeave = () => {
-    if (!nameRef.current) return;
+    if (reduced || !nameRef.current) return;
     const isDesktop = window.innerWidth >= 768;
     const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
+    nameRef.current.querySelectorAll(selector).forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
+        gsap.to(original, { y: '0%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
+        gsap.to(duplicate, { y: '0%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
       }
     });
   };
 
+  // Mouse spotlight
   useEffect(() => {
+    if (reduced) return;
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      gsap.to(spotlightRef.current, {
-        opacity: 1,
-        duration: 0.5,
-        overwrite: 'auto',
-      });
-      spotlightRef.current.style.setProperty('--x', `${x}px`);
-      spotlightRef.current.style.setProperty('--y', `${y}px`);
+      spotlightRef.current.style.setProperty('--x', `${e.clientX - rect.left}px`);
+      spotlightRef.current.style.setProperty('--y', `${e.clientY - rect.top}px`);
+      gsap.to(spotlightRef.current, { opacity: 1, duration: 0.5, overwrite: 'auto' });
     };
     const handleMouseLeave = () => {
-      if (!spotlightRef.current) return;
-      gsap.to(spotlightRef.current, {
-        opacity: 0,
-        duration: 0.8,
-        overwrite: 'auto',
-      });
+      gsap.to(spotlightRef.current, { opacity: 0, duration: 0.8, overwrite: 'auto' });
     };
     const section = sectionRef.current;
     if (section) {
@@ -281,62 +198,51 @@ const HomeBanner = () => {
         section.removeEventListener('mouseleave', handleMouseLeave);
       }
     };
-  }, []);
+  }, [reduced]);
+
   useGSAP(
     () => {
-      if (!sectionRef.current || !innerContentRef.current) return;
+      if (reduced || !sectionRef.current || !innerContentRef.current) return;
       const trigger = ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
         end: 'bottom top',
         scrub: true,
-        animation: gsap.to(innerContentRef.current, {
-          y: '-15vh',
-          ease: 'none',
-        }),
+        animation: gsap.to(innerContentRef.current, { y: '-15vh', ease: 'none' }),
       });
-      return () => {
-        trigger.kill();
-      };
+      return () => trigger.kill();
     },
-    {
-      scope: sectionRef,
-    },
+    { scope: sectionRef, dependencies: [reduced] },
   );
+
   const handleScroll = (id: string) => {
     const section = document.getElementById(id);
     if (!section) return;
-    if (window.__lenis) {
-      window.__lenis.scrollTo(section, {
-        offset: 0,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
+    if ((window as any).__lenis) {
+      (window as any).__lenis.scrollTo(section, { offset: 0, duration: 1.2 });
     } else {
-      section.scrollIntoView({
-        behavior: 'smooth',
-      });
+      section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen px-6 sm:px-8 md:px-12 pt-28 pb-8 md:pt-20 md:pb-0 bg-[#e8e8e3] flex items-center relative overflow-hidden"
-      style={{
-        opacity: 0,
-      }}
+      className="min-h-screen px-6 sm:px-8 md:px-12 pt-28 pb-8 md:pt-20 md:pb-0 bg-cream flex items-center relative overflow-hidden"
+      style={{ opacity: reduced ? 1 : 0 }}
     >
       <AmbientGeometry />
 
-      <div
-        ref={spotlightRef}
-        className="absolute inset-0 pointer-events-none z-[1] opacity-0"
-        style={{
-          background:
-            'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(16, 185, 129, 0.08), transparent 85%)',
-          willChange: 'opacity',
-        }}
-      />
+      {!reduced && (
+        <div
+          ref={spotlightRef}
+          className="absolute inset-0 pointer-events-none z-[1] opacity-0"
+          style={{
+            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(16, 185, 129, 0.08), transparent 85%)',
+            willChange: 'opacity',
+          }}
+        />
+      )}
 
       <div ref={innerContentRef} className="max-w-7xl mx-auto w-full relative z-10">
         <div className="text-center">
@@ -361,7 +267,7 @@ const HomeBanner = () => {
           <div className="max-w-xl text-center">
             <p
               ref={paragraphRef}
-              className="text-[#615c56] font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10"
+              className="text-muted font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10"
             >
               Open to job opportunities worldwide. Passionate about building polished, intuitive,
               and thoughtful digital experiences that leave a mark.
@@ -397,4 +303,5 @@ const HomeBanner = () => {
     </section>
   );
 };
+
 export default HomeBanner;

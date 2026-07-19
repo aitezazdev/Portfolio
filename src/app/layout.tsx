@@ -7,7 +7,7 @@
  * Website: https://aitezaz.xyz
  */
 
-import { Geist, Geist_Mono, Space_Grotesk, Syne } from 'next/font/google';
+import { Geist, Geist_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import ClientLayout from './ClientLayout';
 import { siteMetadata } from '@/lib/metadata';
@@ -32,19 +32,12 @@ const spaceGrotesk = Space_Grotesk({
   preload: true,
   display: 'swap',
 });
-const syne = Syne({
-  subsets: ['latin'],
-  variable: '--font-syne',
-  weight: ['400', '700', '800'],
-  preload: true,
-  display: 'swap',
-});
 export const metadata = siteMetadata;
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${syne.variable} antialiased bg-[#e8e8e3]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased bg-cream`}
       >
         <ClientLayout>{children}</ClientLayout>
         <Analytics />
