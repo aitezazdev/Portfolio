@@ -145,7 +145,7 @@ const Contact = () => {
                 type="text"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="John Doe"
+                placeholder="Your Name"
                 className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-forest focus:ring-1 focus:ring-forest/30 ${errors.name ? 'border-red-500 focus:border-red-500' : ''}`}
                 disabled={isDisabled}
               />
@@ -238,11 +238,10 @@ const Contact = () => {
                   }, 2000);
                 }
               }}
-              className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-forest transition-colors duration-300 max-w-full"
+              className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-forest transition-colors duration-300 max-w-full whitespace-nowrap"
               style={{
-                fontSize: 'clamp(0.65rem, 4.5vw, 4.5rem)',
-                overflowWrap: 'break-word',
-                wordBreak: 'break-all',
+                fontSize: 'clamp(0.65rem, 3.4vw, 4.5rem)',
+                whiteSpace: 'nowrap',
               }}
             >
               aitezazsikandar@gmail.com
