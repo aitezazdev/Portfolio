@@ -52,7 +52,7 @@ const RoleTicker = () => {
     <div className="h-6 overflow-hidden mb-8 flex justify-center items-center select-none">
       <div
         ref={containerRef}
-        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-warm"
+        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-forest"
       >
         <div className="ticker-word-current absolute inset-0 flex items-center justify-center">
           {roles[currentIdx]}
@@ -132,12 +132,12 @@ const HomeBanner = () => {
           y: '0%',
           opacity: 1,
           duration: 0.8,
-          stagger: 0.05,
+          stagger: 0.035,
           ease: 'power3.out',
           delay: 0.3,
         });
       }
-      const tl = gsap.timeline({ delay: 1.1, ease: 'power3.out' });
+      const tl = gsap.timeline({ delay: 0.6, ease: 'power3.out' });
       [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
         if (ref.current) {
           tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
@@ -239,7 +239,7 @@ const HomeBanner = () => {
           ref={spotlightRef}
           className="absolute inset-0 pointer-events-none z-[1] opacity-0"
           style={{
-            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(16, 185, 129, 0.08), transparent 85%)',
+            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(108, 60, 225, 0.07), transparent 85%)',
             willChange: 'opacity',
           }}
         />
@@ -268,7 +268,7 @@ const HomeBanner = () => {
           <div className="max-w-xl text-center">
             <p
               ref={paragraphRef}
-              className="text-muted font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10"
+              className="text-warm font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10"
             >
               Open to job opportunities worldwide. Passionate about building polished, intuitive,
               and thoughtful digital experiences that leave a mark.

@@ -130,7 +130,7 @@ const Contact = () => {
           <div className="max-w-2xl mb-12">
             <AnimateDescription
               text={descriptionText}
-              className="text-base sm:text-lg text-muted font-sans leading-relaxed"
+              className="text-base sm:text-lg text-gray-soft font-sans leading-relaxed"
             />
           </div>
 
@@ -255,7 +255,7 @@ const Contact = () => {
         id="email-copy-toast"
         className="fixed bottom-8 right-8 z-[9998] pointer-events-none"
         style={{
-          background: '#0c6145',
+          background: '#6C3CE1',
           color: 'white',
           fontFamily: 'monospace',
           fontSize: '0.75rem',

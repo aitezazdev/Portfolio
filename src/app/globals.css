@@ -8,10 +8,10 @@
   /* ── Core palette ── */
   --color-cream: #e8e8e3;
   --color-ink: #080807;
-  --color-forest: #0c6145;
-  --color-forest-light: #0a7a56;
+  --color-forest: #6C3CE1;
+  --color-forest-light: #8B5CF6;
   --color-warm: #6b645c;
-  --color-muted: #a29e9a;
+  --color-muted: #b0ada8;
   --color-light: #d1d1c7;
   --color-elevated: #2a2a2a;
   --color-elevated-dark: #1a1a18;
@@ -80,7 +80,7 @@ body.menu-open {
 }
 
 ::selection {
-  background: #0c6145;
+  background: #6C3CE1;
   color: #ffffff;
 }
 
@@ -91,7 +91,7 @@ body.menu-open {
 }
 
 .bg-primary {
-  background-color: #83cf7b;
+  background-color: #8B5CF6;
 }
 .bg-foreground {
   background-color: #24231f;

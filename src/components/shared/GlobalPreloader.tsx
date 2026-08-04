@@ -57,14 +57,14 @@ export default function GlobalPreloader() {
 
     tl.to('.preloader-line', {
       scaleX: 1,
-      duration: 1.2,
+      duration: 0.9,
       ease: 'power2.inOut',
       transformOrigin: 'left',
     }, '-=0.4');
 
     tl.to(counterObj, {
       val: 100,
-      duration: 2.2,
+      duration: 1.4,
       ease: 'power3.inOut',
       onUpdate: () => setProgress(Math.round(counterObj.val)),
     }, 0);

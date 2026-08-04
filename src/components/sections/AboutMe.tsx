@@ -83,7 +83,7 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
             />
             <AnimateDescription
               text={descriptionText}
-              className="text-base sm:text-lg text-muted font-sans"
+              className="text-base sm:text-lg text-gray-soft font-sans"
             />
           </div>
 
@@ -117,7 +117,7 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
                 {aboutMeText.split('\n\n').map((p, i) => (
                   <p
                     key={i}
-                    className="about-bio-para text-muted text-base sm:text-lg md:text-lg leading-relaxed font-sans"
+                    className="about-bio-para text-light/70 text-base sm:text-lg md:text-lg leading-relaxed font-sans"
                   >
                     {p}
                   </p>

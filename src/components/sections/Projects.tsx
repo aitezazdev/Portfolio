@@ -281,7 +281,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   className="mc-num font-mono font-black leading-none"
                   style={{
                     fontSize: 'clamp(2.4rem,11vw,3.2rem)',
-                    color: '#0c6145',
+                    color: '#6C3CE1',
                     letterSpacing: '-0.03em',
                   }}
                 >
@@ -289,7 +289,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                 </span>
                 <span
                   className="mc-year font-mono text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(12, 97, 69, 0.13)', color: '#0c6145', border: '1px solid rgba(12, 97, 69, 0.28)' }}
+                  style={{ background: 'rgba(108, 60, 225, 0.13)', color: '#8B5CF6', border: '1px solid rgba(108, 60, 225, 0.28)' }}
                 >
                   {project.year}
                 </span>
@@ -328,7 +328,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   </span>
                   <span
                     className="flex items-center justify-center w-9 h-9 rounded-full text-white text-sm"
-                    style={{ background: '#0c6145', boxShadow: '0 0 16px rgba(12, 97, 69, 0.35)' }}
+                    style={{ background: '#6C3CE1', boxShadow: '0 0 16px rgba(108, 60, 225, 0.35)' }}
                   >
                     →
                   </span>
@@ -427,7 +427,7 @@ export default function ProjectsPage() {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });
-    gsap.to(row, { backgroundColor: 'rgba(16, 185, 129, 0.04)', duration: 0.15, ease: 'power2.out' });
+    gsap.to(row, { backgroundColor: 'rgba(108, 60, 225, 0.04)', duration: 0.15, ease: 'power2.out' });
     const scrollY = (window as any).__lenis
       ? Math.round((window as any).__lenis.scroll)
       : Math.round(window.scrollY);

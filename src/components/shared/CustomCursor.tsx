@@ -57,8 +57,8 @@ export default function CustomCursor() {
     // Guard against HMR double-registration
     const tickId = Symbol('cursor-tick');
     const tick = () => {
-      delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.1;
-      delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.1;
+      delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.15;
+      delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.15;
       gsap.set(cursorDot, { x: mouse.current.x, y: mouse.current.y });
       gsap.set([cursorOutline, cursorTextEl], {
         x: delayedMouse.current.x,
@@ -149,14 +149,14 @@ export default function CustomCursor() {
 
       <div
         ref={cursorOutlineRef}
-        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#615c56] rounded-full"
+        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#6C3CE1] rounded-full"
       />
 
       <div
         ref={cursorTextRef}
         className="pointer-events-none fixed top-0 left-0 z-[10001] opacity-0"
       >
-        <span className="text-[#615c56] text-[11px] font-bold tracking-[0.15em]">
+        <span className="text-[#8B5CF6] text-[11px] font-bold tracking-[0.15em]">
           {cursorText}
         </span>
       </div>

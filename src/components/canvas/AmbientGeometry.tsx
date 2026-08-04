@@ -134,7 +134,7 @@ export default function AmbientGeometry() {
         }
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(58, 58, 54, 0.4)';
+        ctx.fillStyle = 'rgba(108, 60, 225, 0.18)';
         ctx.fill();
       }
       for (let i = 0; i < nodes.length; i++) {
@@ -150,7 +150,7 @@ export default function AmbientGeometry() {
             ctx.beginPath();
             ctx.moveTo(n1.x, n1.y);
             ctx.lineTo(n2.x, n2.y);
-            ctx.strokeStyle = `rgba(58, 58, 54, ${alpha})`;
+            ctx.strokeStyle = `rgba(108, 60, 225, ${alpha * 0.7})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

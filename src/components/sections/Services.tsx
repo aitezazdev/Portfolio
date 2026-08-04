@@ -89,7 +89,7 @@ const Services = () => {
 
               <AnimateDescription
                 text={descriptionText}
-                className="max-w-2xl text-base sm:text-lg md:text-xl text-muted font-sans leading-relaxed"
+                className="max-w-2xl text-base sm:text-lg md:text-xl text-gray-soft font-sans leading-relaxed"
               />
             </div>
           </div>
@@ -114,7 +114,7 @@ const Services = () => {
 
               <div className="grid md:grid-cols-12 gap-4 md:gap-8 pt-4 md:pt-6">
                 <div className="md:col-span-7 md:col-start-6 space-y-4 md:space-y-6">
-                  <p className="text-muted text-base sm:text-base md:text-lg lg:text-lg leading-relaxed font-sans">
+                  <p className="text-light/60 text-base sm:text-base md:text-lg lg:text-lg leading-relaxed font-sans">
                     {service.description}
                   </p>
 
