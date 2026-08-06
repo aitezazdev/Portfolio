@@ -49,7 +49,7 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
     () => {
       gsap.fromTo(
         '.about-image-wrapper',
-        { x: 80, opacity: 0 },
+        { x: -80, opacity: 0 },
         {
           x: 0,
           opacity: 1,
