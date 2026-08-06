@@ -179,6 +179,23 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Safety fallback: Whenever pathname changes (new route has mounted), automatically collapse transition curtain
+  useEffect(() => {
+    if (overlayRef.current) {
+      gsap.to(overlayRef.current, {
+        scaleY: 0,
+        duration: 0.4,
+        ease: 'power3.inOut',
+        overwrite: 'auto',
+        onComplete: () => {
+          if (overlayRef.current) {
+            overlayRef.current.style.pointerEvents = 'none';
+          }
+        },
+      });
+    }
+  }, [pathname]);
+
   return (
     <TransitionRouter
       auto={true}
@@ -194,15 +211,34 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
         gsap.set(textRef.current, { y: 50, opacity: 0 });
 
-        const tl = gsap.timeline({ onComplete: next });
-        tl.to(overlayRef.current, { scaleY: 1, duration: 0.6, ease: 'power3.inOut' });
-        tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
+        // Hard safety timeout: Force navigate if network/chunks are slow (max 800ms)
+        const safetyTimer = setTimeout(() => {
+          next();
+          if (overlayRef.current) {
+            gsap.to(overlayRef.current, {
+              scaleY: 0, duration: 0.35, ease: 'power3.inOut',
+              onComplete: () => { if (overlayRef.current) overlayRef.current.style.pointerEvents = 'none'; },
+            });
+          }
+        }, 850);
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            clearTimeout(safetyTimer);
+            next();
+          },
+        });
+        tl.to(overlayRef.current, { scaleY: 1, duration: 0.5, ease: 'power3.inOut' });
+        tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.2');
         tl.add(() => {
           document.documentElement.scrollTop = scrollTargetRef.current;
           document.body.scrollTop = scrollTargetRef.current;
           if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
-        }, 0.5);
-        return () => tl.kill();
+        }, 0.4);
+        return () => {
+          clearTimeout(safetyTimer);
+          tl.kill();
+        };
       }}
       enter={(next: () => void) => {
         if (_isCurtainCovering) {
@@ -228,7 +264,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             document.body.scrollTop = target;
             setTimeout(() => {
               scrollLockActive = false;
-              gsap.set(overlayRef.current, { pointerEvents: 'none' });
+              if (overlayRef.current) {
+                gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
+              }
               restoreScroll(target, lenis);
             }, 16);
           },
@@ -251,11 +289,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           requestAnimationFrame(runScrollLock);
         }, 0);
 
-        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in' }, 0.1);
-        tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
+        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.2, ease: 'power3.in' }, 0.1);
+        tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.1');
         tl.call(() => {
           requestAnimationFrame(() => startTransition(next));
-        }, undefined, 0.3);
+        }, undefined, 0.25);
 
         return () => {
           scrollLockActive = false;
