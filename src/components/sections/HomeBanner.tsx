@@ -151,42 +151,52 @@ const HomeBanner = () => {
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady, reduced]);
 
-  const getActiveWrappers = (): HTMLElement[] => {
-    if (!nameRef.current) return [];
-    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
-    const parentContainer = isDesktop
-      ? nameRef.current.querySelector('.hidden.md\\:block')
-      : nameRef.current.querySelector('.block.md\\:hidden');
-
-    if (parentContainer) {
-      const found = Array.from(parentContainer.querySelectorAll<HTMLElement>('.letter-wrapper'));
-      if (found.length > 0) return found;
-    }
-    return Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
-  };
-
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
-    const wrappers = getActiveWrappers();
-    wrappers.forEach((wrapper, idx) => {
+    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+    letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, { y: '-100%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
-        gsap.to(duplicate, { y: '-100%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
+        gsap.to(original, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: (idx % 16) * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: (idx % 16) * 0.03,
+          overwrite: 'auto',
+        });
       }
     });
   };
 
   const handleMouseLeave = () => {
     if (reduced || !nameRef.current) return;
-    const wrappers = getActiveWrappers();
-    wrappers.forEach((wrapper, idx) => {
+    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+    letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, { y: '0%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
-        gsap.to(duplicate, { y: '0%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
+        gsap.to(original, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: (idx % 16) * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: (idx % 16) * 0.03,
+          overwrite: 'auto',
+        });
       }
     });
   };
