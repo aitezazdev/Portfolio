@@ -27,19 +27,44 @@ const getPageName = (path: string | null | undefined): string => {
 /**
  * Robustly restore scroll to `target` after page transition.
  */
-/**
- * Robustly restore scroll to `target` after page transition.
- */
 function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> | null | any) {
   const lenisObj = lenisInst?.current || window.__lenis;
-  document.documentElement.scrollTop = target;
-  document.body.scrollTop = target;
   if (lenisObj) {
     lenisObj.scrollTo(target, { immediate: true });
-    lenisObj.start();
   }
+  document.documentElement.scrollTop = target;
+  document.body.scrollTop = target;
+
+  let lockFrames = 12;
+  const lockLoop = () => {
+    document.documentElement.scrollTop = target;
+    document.body.scrollTop = target;
+    if (lenisObj) lenisObj.scrollTo(target, { immediate: true });
+    lockFrames--;
+    if (lockFrames > 0) requestAnimationFrame(lockLoop);
+  };
+  requestAnimationFrame(lockLoop);
+
+  if (lenisInst?.current) lenisInst.current.start();
+
   requestAnimationFrame(() => {
+    if (lenisObj) lenisObj.stop();
     ScrollTrigger.refresh();
+    document.documentElement.scrollTop = target;
+    document.body.scrollTop = target;
+    requestAnimationFrame(() => {
+      document.documentElement.scrollTop = target;
+      document.body.scrollTop = target;
+      if (lenisObj) {
+        lenisObj.scrollTo(target, { immediate: true });
+        lenisObj.start();
+      }
+      setTimeout(() => {
+        document.documentElement.scrollTop = target;
+        document.body.scrollTop = target;
+        if (lenisObj) lenisObj.scrollTo(target, { immediate: true });
+      }, 200);
+    });
   });
 }
 
@@ -93,20 +118,37 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       _isCurtainCovering = false;
       const lenisInst = lenisRef.current;
       if (lenisInst?.current) lenisInst.current.stop();
+      if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
+      document.documentElement.scrollTop = target;
+      document.body.scrollTop = target;
 
-      restoreScroll(target, lenisInst);
       gsap.set(overlayRef.current, { scaleY: 1, transformOrigin: 'top', pointerEvents: 'auto' });
       gsap.set(textRef.current, { y: 0, opacity: 1 });
 
+      let scrollLockActive = true;
+      const runScrollLock = () => {
+        if (!scrollLockActive) return;
+        document.documentElement.scrollTop = target;
+        document.body.scrollTop = target;
+        requestAnimationFrame(runScrollLock);
+      };
+      requestAnimationFrame(runScrollLock);
+
       const tl = gsap.timeline({
         onComplete: () => {
-          if (overlayRef.current) gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
-          restoreScroll(target, lenisInst);
+          gsap.set(overlayRef.current, { pointerEvents: 'none' });
+          if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
+          document.documentElement.scrollTop = target;
+          document.body.scrollTop = target;
+          setTimeout(() => {
+            scrollLockActive = false;
+            restoreScroll(target, lenisInst);
+          }, 16);
         },
       });
 
-      tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in', delay: 0.1 });
-      tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.15');
+      tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in', delay: 0.2 });
+      tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
     };
 
     const handlePopState = (event: PopStateEvent) => {
@@ -153,11 +195,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         gsap.set(textRef.current, { y: 50, opacity: 0 });
 
         const tl = gsap.timeline({ onComplete: next });
-        tl.to(overlayRef.current, { scaleY: 1, duration: 0.5, ease: 'power3.inOut' });
-        tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.2');
+        tl.to(overlayRef.current, { scaleY: 1, duration: 0.6, ease: 'power3.inOut' });
+        tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
         tl.add(() => {
-          restoreScroll(scrollTargetRef.current, lenis);
-        }, 0.4);
+          document.documentElement.scrollTop = scrollTargetRef.current;
+          document.body.scrollTop = scrollTargetRef.current;
+          if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
+        }, 0.5);
         return () => tl.kill();
       }}
       enter={(next: () => void) => {
@@ -166,37 +210,57 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           return () => {};
         }
 
-        gsap.set(overlayRef.current, { transformOrigin: 'top', scaleY: 1, pointerEvents: 'auto' });
-        const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
-        const savedScroll = safeSessionStorage.getItem('projects-scroll');
-        if (!isNavigatingToProject && savedScroll) {
-          scrollTargetRef.current = parseInt(savedScroll, 10);
-          safeSessionStorage.removeItem('projects-scroll');
-        } else {
-          scrollTargetRef.current = 0;
-        }
-        safeSessionStorage.removeItem('navigating-to-project');
-
-        // Immediately mount new page DOM and set target scroll while curtain covers screen
-        startTransition(() => {
-          next();
-          restoreScroll(scrollTargetRef.current, lenis);
-        });
+        gsap.set(overlayRef.current, { transformOrigin: 'top' });
+        let scrollLockActive = false;
+        const runScrollLock = () => {
+          if (!scrollLockActive) return;
+          const y = scrollTargetRef.current;
+          document.documentElement.scrollTop = y;
+          document.body.scrollTop = y;
+          requestAnimationFrame(runScrollLock);
+        };
 
         const tl = gsap.timeline({
-          delay: 0.05,
           onComplete: () => {
-            if (overlayRef.current) {
-              gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
-            }
-            restoreScroll(scrollTargetRef.current, lenis);
+            const target = scrollTargetRef.current;
+            if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
+            document.documentElement.scrollTop = target;
+            document.body.scrollTop = target;
+            setTimeout(() => {
+              scrollLockActive = false;
+              gsap.set(overlayRef.current, { pointerEvents: 'none' });
+              restoreScroll(target, lenis);
+            }, 16);
           },
         });
 
-        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.2, ease: 'power3.in' });
-        tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.1');
+        tl.add(() => {
+          const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
+          const savedScroll = safeSessionStorage.getItem('projects-scroll');
+          if (!isNavigatingToProject && savedScroll) {
+            scrollTargetRef.current = parseInt(savedScroll, 10);
+            safeSessionStorage.removeItem('projects-scroll');
+          } else {
+            scrollTargetRef.current = 0;
+          }
+          safeSessionStorage.removeItem('navigating-to-project');
+          document.documentElement.scrollTop = scrollTargetRef.current;
+          document.body.scrollTop = scrollTargetRef.current;
+          if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
+          scrollLockActive = true;
+          requestAnimationFrame(runScrollLock);
+        }, 0);
 
-        return () => tl.kill();
+        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in' }, 0.1);
+        tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
+        tl.call(() => {
+          requestAnimationFrame(() => startTransition(next));
+        }, undefined, 0.3);
+
+        return () => {
+          scrollLockActive = false;
+          tl.kill();
+        };
       }}
     >
       <main>{children}</main>
