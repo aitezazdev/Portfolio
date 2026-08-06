@@ -27,44 +27,19 @@ const getPageName = (path: string | null | undefined): string => {
 /**
  * Robustly restore scroll to `target` after page transition.
  */
+/**
+ * Robustly restore scroll to `target` after page transition.
+ */
 function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> | null | any) {
   const lenisObj = lenisInst?.current || window.__lenis;
-  if (lenisObj) {
-    lenisObj.scrollTo(target, { immediate: true });
-  }
   document.documentElement.scrollTop = target;
   document.body.scrollTop = target;
-
-  let lockFrames = 12;
-  const lockLoop = () => {
-    document.documentElement.scrollTop = target;
-    document.body.scrollTop = target;
-    if (lenisObj) lenisObj.scrollTo(target, { immediate: true });
-    lockFrames--;
-    if (lockFrames > 0) requestAnimationFrame(lockLoop);
-  };
-  requestAnimationFrame(lockLoop);
-
-  if (lenisInst?.current) lenisInst.current.start();
-
+  if (lenisObj) {
+    lenisObj.scrollTo(target, { immediate: true });
+    lenisObj.start();
+  }
   requestAnimationFrame(() => {
-    if (lenisObj) lenisObj.stop();
     ScrollTrigger.refresh();
-    document.documentElement.scrollTop = target;
-    document.body.scrollTop = target;
-    requestAnimationFrame(() => {
-      document.documentElement.scrollTop = target;
-      document.body.scrollTop = target;
-      if (lenisObj) {
-        lenisObj.scrollTo(target, { immediate: true });
-        lenisObj.start();
-      }
-      setTimeout(() => {
-        document.documentElement.scrollTop = target;
-        document.body.scrollTop = target;
-        if (lenisObj) lenisObj.scrollTo(target, { immediate: true });
-      }, 200);
-    });
   });
 }
 
@@ -118,37 +93,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       _isCurtainCovering = false;
       const lenisInst = lenisRef.current;
       if (lenisInst?.current) lenisInst.current.stop();
-      if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
-      document.documentElement.scrollTop = target;
-      document.body.scrollTop = target;
 
+      restoreScroll(target, lenisInst);
       gsap.set(overlayRef.current, { scaleY: 1, transformOrigin: 'top', pointerEvents: 'auto' });
       gsap.set(textRef.current, { y: 0, opacity: 1 });
 
-      let scrollLockActive = true;
-      const runScrollLock = () => {
-        if (!scrollLockActive) return;
-        document.documentElement.scrollTop = target;
-        document.body.scrollTop = target;
-        requestAnimationFrame(runScrollLock);
-      };
-      requestAnimationFrame(runScrollLock);
-
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.set(overlayRef.current, { pointerEvents: 'none' });
-          if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
-          document.documentElement.scrollTop = target;
-          document.body.scrollTop = target;
-          setTimeout(() => {
-            scrollLockActive = false;
-            restoreScroll(target, lenisInst);
-          }, 16);
+          if (overlayRef.current) gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
+          restoreScroll(target, lenisInst);
         },
       });
 
-      tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in', delay: 0.2 });
-      tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
+      tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in', delay: 0.1 });
+      tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.15');
     };
 
     const handlePopState = (event: PopStateEvent) => {
@@ -179,23 +137,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Safety fallback: Whenever pathname changes (new route has mounted), automatically collapse transition curtain
-  useEffect(() => {
-    if (overlayRef.current) {
-      gsap.to(overlayRef.current, {
-        scaleY: 0,
-        duration: 0.4,
-        ease: 'power3.inOut',
-        overwrite: 'auto',
-        onComplete: () => {
-          if (overlayRef.current) {
-            overlayRef.current.style.pointerEvents = 'none';
-          }
-        },
-      });
-    }
-  }, [pathname]);
-
   return (
     <TransitionRouter
       auto={true}
@@ -211,34 +152,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
         gsap.set(textRef.current, { y: 50, opacity: 0 });
 
-        // Hard safety timeout: Force navigate if network/chunks are slow (max 800ms)
-        const safetyTimer = setTimeout(() => {
-          next();
-          if (overlayRef.current) {
-            gsap.to(overlayRef.current, {
-              scaleY: 0, duration: 0.35, ease: 'power3.inOut',
-              onComplete: () => { if (overlayRef.current) overlayRef.current.style.pointerEvents = 'none'; },
-            });
-          }
-        }, 850);
-
-        const tl = gsap.timeline({
-          onComplete: () => {
-            clearTimeout(safetyTimer);
-            next();
-          },
-        });
+        const tl = gsap.timeline({ onComplete: next });
         tl.to(overlayRef.current, { scaleY: 1, duration: 0.5, ease: 'power3.inOut' });
         tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.2');
         tl.add(() => {
-          document.documentElement.scrollTop = scrollTargetRef.current;
-          document.body.scrollTop = scrollTargetRef.current;
-          if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
+          restoreScroll(scrollTargetRef.current, lenis);
         }, 0.4);
-        return () => {
-          clearTimeout(safetyTimer);
-          tl.kill();
-        };
+        return () => tl.kill();
       }}
       enter={(next: () => void) => {
         if (_isCurtainCovering) {
@@ -247,47 +167,26 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         }
 
         gsap.set(overlayRef.current, { transformOrigin: 'top' });
-        let scrollLockActive = false;
-        const runScrollLock = () => {
-          if (!scrollLockActive) return;
-          const y = scrollTargetRef.current;
-          document.documentElement.scrollTop = y;
-          document.body.scrollTop = y;
-          requestAnimationFrame(runScrollLock);
-        };
+        const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
+        const savedScroll = safeSessionStorage.getItem('projects-scroll');
+        if (!isNavigatingToProject && savedScroll) {
+          scrollTargetRef.current = parseInt(savedScroll, 10);
+          safeSessionStorage.removeItem('projects-scroll');
+        } else {
+          scrollTargetRef.current = 0;
+        }
+        safeSessionStorage.removeItem('navigating-to-project');
+
+        restoreScroll(scrollTargetRef.current, lenis);
 
         const tl = gsap.timeline({
           onComplete: () => {
-            const target = scrollTargetRef.current;
-            if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
-            document.documentElement.scrollTop = target;
-            document.body.scrollTop = target;
-            setTimeout(() => {
-              scrollLockActive = false;
-              if (overlayRef.current) {
-                gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
-              }
-              restoreScroll(target, lenis);
-            }, 16);
+            if (overlayRef.current) {
+              gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
+            }
+            restoreScroll(scrollTargetRef.current, lenis);
           },
         });
-
-        tl.add(() => {
-          const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
-          const savedScroll = safeSessionStorage.getItem('projects-scroll');
-          if (!isNavigatingToProject && savedScroll) {
-            scrollTargetRef.current = parseInt(savedScroll, 10);
-            safeSessionStorage.removeItem('projects-scroll');
-          } else {
-            scrollTargetRef.current = 0;
-          }
-          safeSessionStorage.removeItem('navigating-to-project');
-          document.documentElement.scrollTop = scrollTargetRef.current;
-          document.body.scrollTop = scrollTargetRef.current;
-          if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
-          scrollLockActive = true;
-          requestAnimationFrame(runScrollLock);
-        }, 0);
 
         tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.2, ease: 'power3.in' }, 0.1);
         tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.1');
@@ -295,10 +194,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           requestAnimationFrame(() => startTransition(next));
         }, undefined, 0.25);
 
-        return () => {
-          scrollLockActive = false;
-          tl.kill();
-        };
+        return () => tl.kill();
       }}
     >
       <main>{children}</main>
