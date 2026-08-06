@@ -153,10 +153,16 @@ const HomeBanner = () => {
 
   const getActiveWrappers = (): HTMLElement[] => {
     if (!nameRef.current) return [];
-    const allWrappers = Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
-    // Filter to only elements currently displayed on screen (non-hidden breakpoint)
-    const visibleWrappers = allWrappers.filter((el) => el.offsetParent !== null);
-    return visibleWrappers.length > 0 ? visibleWrappers : allWrappers;
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+    const parentContainer = isDesktop
+      ? nameRef.current.querySelector('.hidden.md\\:block')
+      : nameRef.current.querySelector('.block.md\\:hidden');
+
+    if (parentContainer) {
+      const found = Array.from(parentContainer.querySelectorAll<HTMLElement>('.letter-wrapper'));
+      if (found.length > 0) return found;
+    }
+    return Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
   };
 
   const handleMouseEnter = () => {
@@ -166,8 +172,8 @@ const HomeBanner = () => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, { y: '-100%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
-        gsap.to(duplicate, { y: '-100%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
+        gsap.to(original, { y: '-100%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
+        gsap.to(duplicate, { y: '-100%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
       }
     });
   };
@@ -179,8 +185,8 @@ const HomeBanner = () => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
-        gsap.to(original, { y: '0%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
-        gsap.to(duplicate, { y: '0%', duration: 0.45, ease: 'power2.out', delay: idx * 0.03, overwrite: 'auto' });
+        gsap.to(original, { y: '0%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
+        gsap.to(duplicate, { y: '0%', duration: 0.45, ease: 'power3.out', delay: idx * 0.035, overwrite: 'auto' });
       }
     });
   };
