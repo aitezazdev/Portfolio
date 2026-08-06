@@ -84,23 +84,12 @@ const HomeBanner = () => {
         className="letter-wrapper inline-block relative overflow-hidden"
         style={{ display: 'inline-block', ['--idx' as any]: idx }}
       >
-        <span className="letter-original block">{char === ' ' ? ' ' : char}</span>
+        <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
         <span aria-hidden="true" className="letter-duplicate block absolute top-full left-0 w-full select-none">
-          {char === ' ' ? ' ' : char}
+          {char === ' ' ? '\u00A0' : char}
         </span>
       </span>
     ));
-
-  const getLetterWrappers = (): HTMLElement[] => {
-    if (!nameRef.current) return [];
-    const wrappers = Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
-    const active = wrappers.filter((el) => {
-      const parent = el.closest('span[aria-hidden="true"]');
-      if (!parent) return true;
-      return window.getComputedStyle(parent).display !== 'none';
-    });
-    return active.length > 0 ? active : wrappers;
-  };
 
   useEffect(() => {
     if (reduced) {
@@ -161,68 +150,59 @@ const HomeBanner = () => {
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady, reduced]);
 
-  // Bind hover event listeners to name heading
-  useEffect(() => {
-    const nameEl = nameRef.current;
-    if (!nameEl) return;
+  const handleMouseEnter = () => {
+    if (reduced || !nameRef.current) return;
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
+    letters.forEach((wrapper, idx) => {
+      const original = wrapper.querySelector('.letter-original');
+      const duplicate = wrapper.querySelector('.letter-duplicate');
+      if (original && duplicate) {
+        gsap.to(original, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '-100%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+      }
+    });
+  };
 
-    const handleEnter = () => {
-      if (reduced) return;
-      const letters = getLetterWrappers();
-      letters.forEach((wrapper, idx) => {
-        const original = wrapper.querySelector('.letter-original');
-        const duplicate = wrapper.querySelector('.letter-duplicate');
-        if (original && duplicate) {
-          gsap.to(original, {
-            y: '-100%',
-            duration: 0.45,
-            ease: 'power2.out',
-            delay: idx * 0.03,
-            overwrite: 'auto',
-          });
-          gsap.to(duplicate, {
-            y: '-100%',
-            duration: 0.45,
-            ease: 'power2.out',
-            delay: idx * 0.03,
-            overwrite: 'auto',
-          });
-        }
-      });
-    };
-
-    const handleLeave = () => {
-      if (reduced) return;
-      const letters = getLetterWrappers();
-      letters.forEach((wrapper, idx) => {
-        const original = wrapper.querySelector('.letter-original');
-        const duplicate = wrapper.querySelector('.letter-duplicate');
-        if (original && duplicate) {
-          gsap.to(original, {
-            y: '0%',
-            duration: 0.45,
-            ease: 'power2.out',
-            delay: idx * 0.03,
-            overwrite: 'auto',
-          });
-          gsap.to(duplicate, {
-            y: '0%',
-            duration: 0.45,
-            ease: 'power2.out',
-            delay: idx * 0.03,
-            overwrite: 'auto',
-          });
-        }
-      });
-    };
-
-    nameEl.addEventListener('mouseenter', handleEnter);
-    nameEl.addEventListener('mouseleave', handleLeave);
-    return () => {
-      nameEl.removeEventListener('mouseenter', handleEnter);
-      nameEl.removeEventListener('mouseleave', handleLeave);
-    };
-  }, [reduced, preloaderComplete, isReady]);
+  const handleMouseLeave = () => {
+    if (reduced || !nameRef.current) return;
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
+    letters.forEach((wrapper, idx) => {
+      const original = wrapper.querySelector('.letter-original');
+      const duplicate = wrapper.querySelector('.letter-duplicate');
+      if (original && duplicate) {
+        gsap.to(original, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+        gsap.to(duplicate, {
+          y: '0%',
+          duration: 0.45,
+          ease: 'power2.out',
+          delay: idx * 0.03,
+          overwrite: 'auto',
+        });
+      }
+    });
+  };
 
   // Mouse spotlight
   useEffect(() => {
@@ -299,13 +279,15 @@ const HomeBanner = () => {
           <h1
             ref={nameRef}
             aria-label="Aitezaz Sikandar"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
-            <span aria-hidden="true" className="block md:hidden">
+            <span aria-hidden="true" data-hero-name="mobile" className="block md:hidden">
               <span className="block">{splitText('Aitezaz')}</span>
               <span className="block">{splitText('Sikandar')}</span>
             </span>
-            <span aria-hidden="true" className="hidden md:block">
+            <span aria-hidden="true" data-hero-name="desktop" className="hidden md:block">
               {splitText('Aitezaz Sikandar')}
             </span>
           </h1>
