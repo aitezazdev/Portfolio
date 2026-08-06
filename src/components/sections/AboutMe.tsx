@@ -49,12 +49,13 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
     () => {
       gsap.fromTo(
         '.about-image-wrapper',
-        { x: -60, opacity: 0 },
+        { x: 80, opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 1,
-          ease: 'power3.out',
+          duration: 1.2,
+          ease: 'power4.out',
+          force3D: true,
           scrollTrigger: {
             trigger: '.about-image-wrapper',
             start: 'top 85%',
@@ -102,7 +103,7 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
       <section
         ref={sectionRef}
         id="about"
-        className="min-h-screen bg-ink text-light py-24 md:py-32 rounded-t-4xl"
+        className="min-h-screen bg-ink text-light py-24 md:py-32 rounded-t-4xl overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
           <div className="mb-10 md:mb-20">
@@ -120,7 +121,7 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
             <div className="col-span-12 md:col-span-5 lg:col-span-5 flex items-center justify-center">
               <div
                 ref={containerRef}
-                className="about-image-wrapper relative group w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[480px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler shadow-2xl transition-transform duration-500 hover:scale-[1.02]"
+                className="about-image-wrapper relative group w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[480px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler shadow-2xl [will-change:transform,opacity]"
               >
                 <video
                   ref={videoRef}
