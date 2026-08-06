@@ -166,7 +166,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           return () => {};
         }
 
-        gsap.set(overlayRef.current, { transformOrigin: 'top' });
+        gsap.set(overlayRef.current, { transformOrigin: 'top', scaleY: 1, pointerEvents: 'auto' });
         const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
         const savedScroll = safeSessionStorage.getItem('projects-scroll');
         if (!isNavigatingToProject && savedScroll) {
@@ -177,9 +177,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         }
         safeSessionStorage.removeItem('navigating-to-project');
 
-        restoreScroll(scrollTargetRef.current, lenis);
+        // Immediately mount new page DOM and set target scroll while curtain covers screen
+        startTransition(() => {
+          next();
+          restoreScroll(scrollTargetRef.current, lenis);
+        });
 
         const tl = gsap.timeline({
+          delay: 0.05,
           onComplete: () => {
             if (overlayRef.current) {
               gsap.set(overlayRef.current, { pointerEvents: 'none', scaleY: 0 });
@@ -188,11 +193,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           },
         });
 
-        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.2, ease: 'power3.in' }, 0.1);
+        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.2, ease: 'power3.in' });
         tl.to(overlayRef.current, { scaleY: 0, duration: 0.45, ease: 'power3.inOut' }, '-=0.1');
-        tl.call(() => {
-          requestAnimationFrame(() => startTransition(next));
-        }, undefined, 0.25);
 
         return () => tl.kill();
       }}
