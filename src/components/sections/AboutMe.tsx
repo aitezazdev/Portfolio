@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
@@ -18,7 +18,6 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   // IntersectionObserver for lazy loading video & auto-pause off-screen
   useEffect(() => {
@@ -30,13 +29,9 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            video
-              .play()
-              .then(() => setIsPlaying(true))
-              .catch(() => setIsPlaying(false));
+            video.play().catch(() => {});
           } else {
             video.pause();
-            setIsPlaying(false);
           }
         });
       },
@@ -127,18 +122,6 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
                 ref={containerRef}
                 className="about-image-wrapper relative group w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[480px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler shadow-2xl transition-transform duration-500 hover:scale-[1.02]"
               >
-                {/* Ambient Status Badge */}
-                <div className="absolute top-4 left-4 z-10 flex items-center space-x-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-medium text-light/90 pointer-events-none">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-                    }`}
-                  />
-                  <span className="uppercase tracking-widest text-[10px]">
-                    {isPlaying ? 'Live Scenery' : 'Ambient'}
-                  </span>
-                </div>
-
                 <video
                   ref={videoRef}
                   loop
