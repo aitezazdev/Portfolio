@@ -91,7 +91,17 @@ const HomeBanner = () => {
       </span>
     ));
 
-  // Initial hidden states
+  const getLetterWrappers = (): HTMLElement[] => {
+    if (!nameRef.current) return [];
+    const wrappers = Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
+    const active = wrappers.filter((el) => {
+      const parent = el.closest('span[aria-hidden="true"]');
+      if (!parent) return true;
+      return window.getComputedStyle(parent).display !== 'none';
+    });
+    return active.length > 0 ? active : wrappers;
+  };
+
   useEffect(() => {
     if (reduced) {
       gsap.set(sectionRef.current, { opacity: 1 });
@@ -151,59 +161,68 @@ const HomeBanner = () => {
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady, reduced]);
 
-  const handleMouseEnter = () => {
-    if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.to(original, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-      }
-    });
-  };
+  // Bind hover event listeners to name heading
+  useEffect(() => {
+    const nameEl = nameRef.current;
+    if (!nameEl) return;
 
-  const handleMouseLeave = () => {
-    if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.to(original, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-      }
-    });
-  };
+    const handleEnter = () => {
+      if (reduced) return;
+      const letters = getLetterWrappers();
+      letters.forEach((wrapper, idx) => {
+        const original = wrapper.querySelector('.letter-original');
+        const duplicate = wrapper.querySelector('.letter-duplicate');
+        if (original && duplicate) {
+          gsap.to(original, {
+            y: '-100%',
+            duration: 0.45,
+            ease: 'power2.out',
+            delay: idx * 0.03,
+            overwrite: 'auto',
+          });
+          gsap.to(duplicate, {
+            y: '-100%',
+            duration: 0.45,
+            ease: 'power2.out',
+            delay: idx * 0.03,
+            overwrite: 'auto',
+          });
+        }
+      });
+    };
+
+    const handleLeave = () => {
+      if (reduced) return;
+      const letters = getLetterWrappers();
+      letters.forEach((wrapper, idx) => {
+        const original = wrapper.querySelector('.letter-original');
+        const duplicate = wrapper.querySelector('.letter-duplicate');
+        if (original && duplicate) {
+          gsap.to(original, {
+            y: '0%',
+            duration: 0.45,
+            ease: 'power2.out',
+            delay: idx * 0.03,
+            overwrite: 'auto',
+          });
+          gsap.to(duplicate, {
+            y: '0%',
+            duration: 0.45,
+            ease: 'power2.out',
+            delay: idx * 0.03,
+            overwrite: 'auto',
+          });
+        }
+      });
+    };
+
+    nameEl.addEventListener('mouseenter', handleEnter);
+    nameEl.addEventListener('mouseleave', handleLeave);
+    return () => {
+      nameEl.removeEventListener('mouseenter', handleEnter);
+      nameEl.removeEventListener('mouseleave', handleLeave);
+    };
+  }, [reduced, preloaderComplete, isReady]);
 
   // Mouse spotlight
   useEffect(() => {
@@ -280,8 +299,6 @@ const HomeBanner = () => {
           <h1
             ref={nameRef}
             aria-label="Aitezaz Sikandar"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
             className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
           >
             <span aria-hidden="true" className="block md:hidden">
