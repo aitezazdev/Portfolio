@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
@@ -14,7 +14,41 @@ const About = () => {
 My tech journey started out of a pure curiosity to understand how software ticks under the hood. Today, that curiosity has translated into a love for clean code, optimistic UI updates, and building user journeys that feel alive and intuitive.
 
 Outside of the editor, I enjoy collaborating on team-focused development, discussing code architecture, and learning new tools. My goal is to build impactful, scalable applications that make a meaningful difference.`;
+  
   const sectionRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // IntersectionObserver for lazy loading video & auto-pause off-screen
+  useEffect(() => {
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video
+              .play()
+              .then(() => setIsPlaying(true))
+              .catch(() => setIsPlaying(false));
+          } else {
+            video.pause();
+            setIsPlaying(false);
+          }
+        });
+      },
+      { rootMargin: '100px', threshold: 0.15 },
+    );
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useGSAP(
     () => {
@@ -89,23 +123,44 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
 
           <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20 items-center">
             <div className="col-span-12 md:col-span-5 lg:col-span-5 flex items-center justify-center">
-              <div className="about-image-wrapper w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[450px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler">
+              <div
+                ref={containerRef}
+                className="about-image-wrapper relative group w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[480px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler shadow-2xl transition-transform duration-500 hover:scale-[1.02]"
+              >
+                {/* Ambient Status Badge */}
+                <div className="absolute top-4 left-4 z-10 flex items-center space-x-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-medium text-light/90 pointer-events-none">
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                    }`}
+                  />
+                  <span className="uppercase tracking-widest text-[10px]">
+                    {isPlaying ? 'Live Scenery' : 'Ambient'}
+                  </span>
+                </div>
+
                 <video
-                  autoPlay
+                  ref={videoRef}
                   loop
                   muted
                   playsInline
-                  aria-label="Profile animation"
-                  className="w-full h-full object-cover"
+                  preload="metadata"
+                  poster="/nature-poster.webp"
+                  aria-label="Ambient nature scenery"
+                  className="w-full h-full object-cover transition-opacity duration-700"
                 >
-                  <source src="/zaz-anim.mp4" type="video/mp4" />
+                  <source src="/nature-live.webm" type="video/webm" />
+                  <source src="/nature-live.mp4" type="video/mp4" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/zaz-anim.webp"
-                    alt="Profile animation"
+                    src="/nature-poster.webp"
+                    alt="Ambient nature scenery"
                     className="w-full h-full object-cover"
                   />
                 </video>
+
+                {/* Subtle gradient overlay to match site aesthetic */}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent pointer-events-none" />
               </div>
             </div>
 
@@ -132,3 +187,4 @@ Outside of the editor, I enjoy collaborating on team-focused development, discus
 };
 
 export default About;
+
