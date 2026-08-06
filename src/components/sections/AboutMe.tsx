@@ -8,12 +8,12 @@ import AnimatedHeading from '@/components/ui/AnimateHeading';
 const About = () => {
   const headingText = 'Who Am I';
   const descriptionText =
-    "I'm a software engineer driven by a passion for turning ideas into clean, intuitive digital experiences.";
-  const aboutMeText = `I am a Software Engineer who specializes in building end-to-end web applications. I love bridges—bridging the gap between front-end aesthetics (using GSAP and Tailwind CSS to create fluid, premium interfaces) and robust back-end systems (orchestrating REST APIs, database schemas, and real-time Socket.io channels).
+    "I am a software engineer driven by a passion for building clean, intuitive, and reliable digital experiences.";
+  const aboutMeText = `I build web applications that bridge thoughtful frontend interfaces with robust backend systems. To me, software is more than code on a screen; it is about making technology feel effortless and genuinely useful to real people.
 
-My tech journey started out of a pure curiosity to understand how software ticks under the hood. Today, that curiosity has translated into a love for clean code, optimistic UI updates, and building user journeys that feel alive and intuitive.
+My journey began with a simple curiosity for how things work under the hood. Over time, that curiosity evolved into a genuine passion for fluid interface animations, reliable backend architecture, and building user journeys that feel effortless and alive.
 
-Outside of the editor, I enjoy collaborating on team-focused development, discussing code architecture, and learning new tools. My goal is to build impactful, scalable applications that make a meaningful difference.`;
+Whether I am polishing micro-interactions or engineering full-stack systems, my core focus remains unchanged: creating software that brings people joy, solves real problems, and leaves a lasting positive impact.`;
   
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
