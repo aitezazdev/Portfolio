@@ -100,6 +100,7 @@ const HomeBanner = () => {
     if (sectionRef.current) gsap.set(sectionRef.current, { opacity: 0 });
     if (nameRef.current) {
       gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
+      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
     }
     [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
       if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
@@ -126,6 +127,9 @@ const HomeBanner = () => {
 
     const timer = setTimeout(() => {
       gsap.to(sectionRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+      if (nameRef.current) {
+        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      }
       const letters = nameRef.current?.querySelectorAll('.letter-wrapper');
       if (letters?.length) {
         gsap.to(letters, {
@@ -147,11 +151,18 @@ const HomeBanner = () => {
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady, reduced]);
 
+  const getActiveWrappers = (): HTMLElement[] => {
+    if (!nameRef.current) return [];
+    const allWrappers = Array.from(nameRef.current.querySelectorAll<HTMLElement>('.letter-wrapper'));
+    // Filter to only elements currently displayed on screen (non-hidden breakpoint)
+    const visibleWrappers = allWrappers.filter((el) => el.offsetParent !== null);
+    return visibleWrappers.length > 0 ? visibleWrappers : allWrappers;
+  };
+
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    nameRef.current.querySelectorAll(selector).forEach((wrapper, idx) => {
+    const wrappers = getActiveWrappers();
+    wrappers.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
@@ -163,9 +174,8 @@ const HomeBanner = () => {
 
   const handleMouseLeave = () => {
     if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '.hidden.md\\:block .letter-wrapper' : '.block.md\\:hidden .letter-wrapper';
-    nameRef.current.querySelectorAll(selector).forEach((wrapper, idx) => {
+    const wrappers = getActiveWrappers();
+    wrappers.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
       if (original && duplicate) {
