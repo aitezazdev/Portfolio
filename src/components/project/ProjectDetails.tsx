@@ -1,84 +1,15 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Link } from 'next-transition-router';
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import { Project } from '@/lib/projects';
 
 export default function ProjectDetails({ project }: { project: Project }) {
-  const detailsRef = useRef<HTMLDivElement>(null);
-  const revealedRef = useRef<Set<number>>(new Set());
-
-  useEffect(() => {
-    if (!detailsRef.current) return;
-    const allContainers = detailsRef.current.querySelectorAll('.image-reveal-container');
-    const allImgs = detailsRef.current.querySelectorAll('.image-reveal-container img');
-    gsap.set(allContainers, { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' });
-    gsap.set(allImgs, { scale: 1.15 });
-    ScrollTrigger.getAll().forEach((st) => {
-      if (st.vars?.id?.startsWith?.('img-reveal-')) st.kill();
-    });
-    const currentRevealed = revealedRef.current;
-    return () => currentRevealed.clear();
-  }, [project.slug]);
-
-  useGSAP(
-    () => {
-      if (!detailsRef.current) return;
-
-      gsap.fromTo(
-        detailsRef.current.querySelectorAll('.fade-up-item'),
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out' },
-      );
-
-      const containers = detailsRef.current.querySelectorAll('.image-reveal-container');
-      containers.forEach((container, idx) => {
-        const img = container.querySelector('img');
-        const rect = container.getBoundingClientRect();
-        const alreadyVisible = rect.top < window.innerHeight * 0.9;
-
-        if (alreadyVisible) {
-          const tl = gsap.timeline();
-          tl.to(container, { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', duration: 1.2, ease: 'power4.inOut' });
-          if (img) tl.to(img, { scale: 1, duration: 1.6, ease: 'power3.out' }, '<');
-          revealedRef.current.add(idx);
-        } else {
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              id: `img-reveal-${idx}`,
-              trigger: container,
-              start: 'top 85%',
-              once: true,
-              onEnter: () => revealedRef.current.add(idx),
-            },
-          });
-          tl.fromTo(container, { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' }, { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', duration: 1.2, ease: 'power4.inOut' });
-          if (img) tl.fromTo(img, { scale: 1.15 }, { scale: 1, duration: 1.6, ease: 'power3.out' }, '<');
-        }
-      });
-
-      const fallbackTimer = setTimeout(() => {
-        if (!detailsRef.current) return;
-        detailsRef.current.querySelectorAll('.image-reveal-container').forEach((c, idx) => {
-          if (!revealedRef.current.has(idx)) {
-            gsap.to(c, { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', duration: 0.6, ease: 'power2.out' });
-            const i = c.querySelector('img');
-            if (i) gsap.to(i, { scale: 1, duration: 0.8, ease: 'power2.out' });
-            revealedRef.current.add(idx);
-          }
-        });
-      }, 2000);
-
-      setTimeout(() => ScrollTrigger.refresh(), 200);
-      return () => clearTimeout(fallbackTimer);
-    },
-    { scope: detailsRef, dependencies: [project.slug] },
-  );
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
   const scrollToTop = () => {
     const lenis = window.__lenis;
@@ -89,19 +20,14 @@ export default function ProjectDetails({ project }: { project: Project }) {
     }
   };
 
-  const handleImageEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const img = e.currentTarget.querySelector('img');
-    if (img) gsap.to(img, { scale: 1.03, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-  };
-
-  const handleImageLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const img = e.currentTarget.querySelector('img');
-    if (img) gsap.to(img, { scale: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+  const handleImageLoad = (index: number) => {
+    setLoadedImages((prev) => ({ ...prev, [index]: true }));
   };
 
   return (
-    <section ref={detailsRef} className="min-h-screen bg-ink text-white px-6 md:px-48 py-10">
-      <div className="fade-up-item">
+    <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10 relative">
+      {/* Back Button */}
+      <div>
         <Link
           href="/"
           className="inline-flex items-center gap-3 text-muted hover:text-white transition-all duration-300 group mb-12"
@@ -113,11 +39,12 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </Link>
       </div>
 
-      <div className="mb-6 fade-up-item">
+      {/* Header & External Links */}
+      <div className="mb-6">
         <div className="flex items-start justify-between gap-6 mb-6 md:mb-0">
           <AnimatedHeading
             text={project.title}
-            className="text-[clamp(1.8rem,7vw,3rem)] md:text-7xl font-extrabold flex-1"
+            className="text-[clamp(1.8rem,7vw,3rem)] md:text-7xl font-extrabold flex-1 text-white"
           />
           <div className="hidden md:flex gap-4 pt-2">
             {project.github && (
@@ -145,6 +72,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
           </div>
         </div>
 
+        {/* Mobile External Links */}
         <div className="flex md:hidden gap-4 mt-4">
           {project.github && (
             <a
@@ -171,7 +99,8 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </div>
       </div>
 
-      <div className="mb-6 mt-4 fade-up-item">
+      {/* Tech Stack */}
+      <div className="mb-6 mt-4">
         <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Tech Stack</strong>
         <AnimateDescription
           text={project.tech?.join(', ')}
@@ -179,7 +108,8 @@ export default function ProjectDetails({ project }: { project: Project }) {
         />
       </div>
 
-      <div className="mb-6 fade-up-item">
+      {/* Description */}
+      <div className="mb-6">
         <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Description</strong>
         <AnimateDescription
           text={project.description}
@@ -187,68 +117,67 @@ export default function ProjectDetails({ project }: { project: Project }) {
         />
       </div>
 
+      {/* My Role */}
       {project.myRole?.length > 0 && (
-        <div className="mb-10 fade-up-item">
+        <div className="mb-10">
           <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">My Role</strong>
           <ul className="list-disc list-inside text-muted font-sans mt-2 space-y-2">
             {project.myRole.map((role, i) => (
-              <li key={i} className="text-sm sm:text-base md:text-lg">{role}</li>
+              <li key={i} className="text-sm sm:text-base md:text-lg">
+                {role}
+              </li>
             ))}
           </ul>
         </div>
       )}
 
+      {/* Project Image Showcase with Skeleton + Progressive Fade-In */}
       <div className="flex flex-col gap-12 mb-16">
-        {project.images?.map((img, i) => (
-          <div
-            key={`${project.slug}-img-${i}`}
-            className="image-reveal-container overflow-hidden rounded-xl bg-elevated-dark relative aspect-[16/10] max-h-[750px] w-full"
-            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' }}
-          >
-            <a
-              href={img}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full h-full relative"
-              onMouseEnter={handleImageEnter}
-              onMouseLeave={handleImageLeave}
-            >
-              <Image
-                src={img}
-                alt={`${project.title} screenshot ${i + 1}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 1200px"
-                priority={i === 0}
-                className="object-contain w-full h-full"
-                style={{ willChange: 'transform, clip-path' }}
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFhMTkxNyIvPjwvc3ZnPg=="
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement | null;
-                  if (target) {
-                    const container = target.closest('.image-reveal-container');
-                    if (container) {
-                      gsap.set(container, { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' });
-                    }
-                    target.style.opacity = '0';
-                  }
-                }}
-              />
-            </a>
+        {project.images?.map((img, i) => {
+          const isLoaded = loadedImages[i];
+          return (
             <div
-              className="absolute inset-0 flex items-center justify-center bg-[#111110] pointer-events-none"
-              aria-hidden="true"
-              style={{ zIndex: -1 }}
+              key={`${project.slug}-img-${i}`}
+              className="overflow-hidden rounded-xl bg-[#121211] border border-[#1f1f1d] relative aspect-[16/10] max-h-[750px] w-full"
             >
-              <span className="text-[#2a2a28] font-mono text-xs tracking-widest uppercase">
-                Image unavailable
-              </span>
+              {/* Skeleton Placeholder while Image Loads */}
+              {!isLoaded && (
+                <div className="absolute inset-0 bg-[#121211] flex flex-col items-center justify-center gap-3 z-0 animate-pulse">
+                  <div className="w-3 h-3 rounded-full bg-[#6C3CE1] shadow-[0_0_12px_rgba(108,60,225,0.6)]" />
+                  <span className="font-mono text-xs uppercase tracking-widest text-white/30">
+                    Loading Media...
+                  </span>
+                </div>
+              )}
+
+              {/* High Resolution Project Screenshot */}
+              <a
+                href={img}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full h-full relative z-10"
+              >
+                <Image
+                  src={img}
+                  alt={`${project.title} screenshot ${i + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  priority={i === 0}
+                  onLoad={() => handleImageLoad(i)}
+                  className={`object-contain w-full h-full transition-opacity duration-500 ease-out ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  placeholder="blur"
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFhMTkxNyIvPjwvc3ZnPg=="
+                />
+              </a>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="relative flex justify-center py-8 fade-up-item">
+      {/* Footer Contact CTA & Scroll to Top */}
+      <div className="relative flex justify-center py-8">
         <div className="text-center">
           <p className="text-muted text-lg">Have a project in mind?</p>
           <a
