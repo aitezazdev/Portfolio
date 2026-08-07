@@ -9,32 +9,38 @@ export default function CustomCursor() {
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const cursorOutlineRef = useRef<HTMLDivElement>(null);
   const cursorTextRef = useRef<HTMLDivElement>(null);
-  const [cursorText, setCursorText] = useState<string>('');
+  const textSpanRef = useRef<HTMLSpanElement>(null);
   const [enabled, setEnabled] = useState<boolean>(false);
   const pathname = usePathname();
   const reduced = useReducedMotion();
-  const mouse = useRef({ x: 0, y: 0 });
-  const delayedMouse = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: -100, y: -100 });
+  const delayedMouse = useRef({ x: -100, y: -100 });
 
-  // Disable entirely on touch devices or when user prefers reduced motion
+  // Disable on touch devices or when user prefers reduced motion
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch || reduced) return;
     setEnabled(true);
   }, [reduced]);
 
-  // Restore native cursor on path change
   useEffect(() => {
     if (!enabled) return;
-    document.body.classList.remove('cursor-disabled');
-    // (cursor-none is still served via CSS body:not(.cursor-disabled) *)
+    document.body.classList.add('custom-cursor-active');
 
+    return () => {
+      document.body.classList.remove('custom-cursor-active');
+    };
+  }, [enabled]);
+
+  // Restore native cursor / reset cursor state on path change
+  useEffect(() => {
+    if (!enabled) return;
     const cursorDot = cursorDotRef.current;
     const cursorOutline = cursorOutlineRef.current;
     const cursorTextEl = cursorTextRef.current;
     if (!cursorDot || !cursorOutline || !cursorTextEl) return;
 
-    setCursorText('');
+    if (textSpanRef.current) textSpanRef.current.textContent = '';
     gsap.to(cursorDot, { scale: 1, duration: 0.3 });
     gsap.to(cursorOutline, { scale: 1, backgroundColor: 'transparent', duration: 0.4 });
     gsap.to(cursorTextEl, { opacity: 0, duration: 0.2 });
@@ -53,17 +59,25 @@ export default function CustomCursor() {
       yPercent: -50,
     });
 
-    // Use gsap.ticker instead of a separate RAF loop
-    // Guard against HMR double-registration
-    const tickId = Symbol('cursor-tick');
+    const setDotX = gsap.quickSetter(cursorDot, 'x', 'px');
+    const setDotY = gsap.quickSetter(cursorDot, 'y', 'px');
+    const setOutlineX = gsap.quickSetter(cursorOutline, 'x', 'px');
+    const setOutlineY = gsap.quickSetter(cursorOutline, 'y', 'px');
+    const setTextX = gsap.quickSetter(cursorTextEl, 'x', 'px');
+    const setTextY = gsap.quickSetter(cursorTextEl, 'y', 'px');
+
     const tick = () => {
-      delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.15;
-      delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.15;
-      gsap.set(cursorDot, { x: mouse.current.x, y: mouse.current.y });
-      gsap.set([cursorOutline, cursorTextEl], {
-        x: delayedMouse.current.x,
-        y: delayedMouse.current.y,
-      });
+      delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.18;
+      delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.18;
+
+      setDotX(mouse.current.x);
+      setDotY(mouse.current.y);
+
+      setOutlineX(delayedMouse.current.x);
+      setOutlineY(delayedMouse.current.y);
+
+      setTextX(delayedMouse.current.x);
+      setTextY(delayedMouse.current.y);
     };
 
     gsap.ticker.add(tick);
@@ -71,13 +85,12 @@ export default function CustomCursor() {
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current = { x: e.clientX, y: e.clientY };
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // Interactive element hover states
     let currentHoveredEl: HTMLElement | null = null;
 
     const cursorLeave = () => {
-      setCursorText('');
+      if (textSpanRef.current) textSpanRef.current.textContent = '';
       gsap.to(cursorDot, { scale: 1, duration: 0.3 });
       gsap.to(cursorOutline, { scale: 1, backgroundColor: 'transparent', duration: 0.4 });
       gsap.to(cursorTextEl, { opacity: 0, duration: 0.2 });
@@ -85,19 +98,22 @@ export default function CustomCursor() {
 
     const cursorEnter = (target: HTMLElement) => {
       const type = target.getAttribute('data-cursor');
-
-      setCursorText('');
+      if (textSpanRef.current) textSpanRef.current.textContent = '';
 
       if (type === 'view' || type === 'drag' || type === 'copy') {
-        setCursorText(type.toUpperCase());
+        if (textSpanRef.current) textSpanRef.current.textContent = type.toUpperCase();
         gsap.to(cursorOutline, {
           scale: type === 'drag' ? 4 : type === 'copy' ? 3 : 2,
-          backgroundColor: 'rgba(97,92,86,0.1)',
+          backgroundColor: 'rgba(124, 58, 237, 0.12)',
           duration: 0.4,
         });
         gsap.to(cursorTextEl, { opacity: 1, duration: 0.2 });
       } else {
-        gsap.to(cursorOutline, { scale: 2, backgroundColor: 'rgba(97,92,86,0.15)', duration: 0.4 });
+        gsap.to(cursorOutline, {
+          scale: 2,
+          backgroundColor: 'rgba(124, 58, 237, 0.18)',
+          duration: 0.4,
+        });
       }
 
       gsap.to(cursorDot, { scale: 0, duration: 0.3 });
@@ -105,7 +121,7 @@ export default function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = (e.target as HTMLElement | null)?.closest<HTMLElement>(
-        'a, button, [data-cursor], [role="button"]'
+        'a, button, [data-cursor], [role="button"]',
       );
       if (target && target !== currentHoveredEl) {
         if (currentHoveredEl) cursorLeave();
@@ -149,16 +165,17 @@ export default function CustomCursor() {
 
       <div
         ref={cursorOutlineRef}
-        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#6C3CE1] rounded-full"
+        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-forest rounded-full"
       />
 
       <div
         ref={cursorTextRef}
         className="pointer-events-none fixed top-0 left-0 z-[10001] opacity-0"
       >
-        <span className="text-[#8B5CF6] text-[11px] font-bold tracking-[0.15em]">
-          {cursorText}
-        </span>
+        <span
+          ref={textSpanRef}
+          className="text-forest-light text-[11px] font-bold tracking-[0.15em]"
+        />
       </div>
     </>
   );

@@ -45,8 +45,16 @@ const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen }) => {
 
   return (
     <div className="relative w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
-      <span ref={line1Ref} className="absolute w-full h-[2px] bg-white rounded-full" style={{ transformOrigin: 'center' }} />
-      <span ref={line2Ref} className="absolute w-full h-[2px] bg-white rounded-full" style={{ transformOrigin: 'center' }} />
+      <span
+        ref={line1Ref}
+        className="absolute w-full h-[2px] bg-white rounded-full"
+        style={{ transformOrigin: 'center' }}
+      />
+      <span
+        ref={line2Ref}
+        className="absolute w-full h-[2px] bg-white rounded-full"
+        style={{ transformOrigin: 'center' }}
+      />
     </div>
   );
 };
@@ -65,7 +73,13 @@ interface FullscreenMenuProps {
   links: LinkItem[];
 }
 
-const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning, onClose, handleLinkClick, links }) => {
+const FullscreenMenu: React.FC<FullscreenMenuProps> = ({
+  isOpen,
+  isTransitioning,
+  onClose,
+  handleLinkClick,
+  links,
+}) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -87,22 +101,47 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
       const tl = gsap.timeline();
       tlRef.current = tl;
 
-      tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
-      tl.fromTo(panelRef.current, { x: '100%' }, { x: '0%', duration: 0.38, ease: 'power4.out' }, '-=0.2');
-      tl.fromTo(lineTopRef.current, { scaleX: 0, transformOrigin: 'left' }, { scaleX: 1, duration: 0.3, ease: 'power3.out' }, '-=0.2');
-      tl.fromTo(lineBotRef.current, { scaleX: 0, transformOrigin: 'right' }, { scaleX: 1, duration: 0.3, ease: 'power3.out' }, '-=0.25');
+      tl.fromTo(
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' },
+      );
+      tl.fromTo(
+        panelRef.current,
+        { x: '100%' },
+        { x: '0%', duration: 0.38, ease: 'power4.out' },
+        '-=0.2',
+      );
+      tl.fromTo(
+        lineTopRef.current,
+        { scaleX: 0, transformOrigin: 'left' },
+        { scaleX: 1, duration: 0.3, ease: 'power3.out' },
+        '-=0.2',
+      );
+      tl.fromTo(
+        lineBotRef.current,
+        { scaleX: 0, transformOrigin: 'right' },
+        { scaleX: 1, duration: 0.3, ease: 'power3.out' },
+        '-=0.25',
+      );
 
       linksRef.current.forEach((link, i) => {
         if (!link) return;
         const chars = link.querySelectorAll('.char');
         tl.fromTo(
-          chars, { y: '120%', opacity: 0 },
+          chars,
+          { y: '120%', opacity: 0 },
           { y: '0%', opacity: 1, duration: 0.35, stagger: 0.015, ease: 'power4.out' },
           `-=${i === 0 ? 0.1 : 0.3}`,
         );
       });
 
-      tl.fromTo(metaRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.22');
+      tl.fromTo(
+        metaRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' },
+        '-=0.22',
+      );
     } else if (!isOpen) {
       if (tlRef.current) tlRef.current.kill();
 
@@ -119,10 +158,18 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
       linksRef.current.forEach((link, i) => {
         if (!link) return;
         const chars = link.querySelectorAll('.char');
-        tl.to(chars, { y: '-120%', opacity: 0, duration: 0.18, stagger: 0.01, ease: 'power3.in' }, i === 0 ? '-=0.05' : '-=0.15');
+        tl.to(
+          chars,
+          { y: '-120%', opacity: 0, duration: 0.18, stagger: 0.01, ease: 'power3.in' },
+          i === 0 ? '-=0.05' : '-=0.15',
+        );
       });
 
-      tl.to([lineTopRef.current, lineBotRef.current], { scaleX: 0, duration: 0.18, ease: 'power2.in' }, '-=0.1');
+      tl.to(
+        [lineTopRef.current, lineBotRef.current],
+        { scaleX: 0, duration: 0.18, ease: 'power2.in' },
+        '-=0.1',
+      );
       tl.to(panelRef.current, { x: '100%', duration: 0.28, ease: 'power4.in' }, '-=0.12');
       tl.to(overlayRef.current, { opacity: 0, duration: 0.18 }, '-=0.18');
     }
@@ -137,6 +184,15 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     gsap.to(el, { x: dx, y: dy, duration: 0.4, ease: 'power2.out' });
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleMagneticMouseLeave = (index: number) => {
     const el = magnetRefs.current[index];
     if (!el) return;
@@ -147,13 +203,23 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     <div ref={menuRef}>
       <div
         ref={overlayRef}
+        role="button"
+        tabIndex={0}
+        aria-label="Close navigation menu"
         className="fixed inset-0 z-[9980] bg-black/60 backdrop-blur-sm"
         style={{ display: 'none' }}
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') onClose();
+        }}
       />
 
       <div
         ref={panelRef}
+        id="fullscreen-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation Menu"
         className="fixed top-0 right-0 h-full w-full md:w-[55%] z-[9981] bg-surface flex flex-col overflow-hidden"
         style={{ display: 'none', transform: 'translateX(100%)' }}
         onClick={(e) => e.stopPropagation()}
@@ -170,41 +236,57 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
         />
 
         <div className="flex justify-between items-center px-10 h-20 border-b border-elevated-dark">
-          <span className="text-gray-mid font-mono text-xs tracking-widest uppercase">Navigation</span>
+          <span className="text-gray-soft font-mono text-xs tracking-widest uppercase">
+            Navigation
+          </span>
         </div>
 
-        <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2">
+        <nav
+          aria-label="Fullscreen Navigation Links"
+          className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2"
+        >
           {links.map((link, i) => (
             <div
               key={link.href}
-              ref={(el) => { linksRef.current[i] = el; }}
+              ref={(el) => {
+                linksRef.current[i] = el;
+              }}
               className="overflow-hidden py-2"
             >
               <div
-                ref={(el) => { magnetRefs.current[i] = el; }}
+                ref={(el) => {
+                  magnetRefs.current[i] = el;
+                }}
                 onMouseMove={(e) => handleMagneticMouseMove(e, i)}
                 onMouseLeave={() => handleMagneticMouseLeave(i)}
                 className="inline-block"
               >
                 <button
                   onClick={() => handleLinkClick(link.href)}
-                  className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
+                  aria-label={`Navigate to ${link.name}`}
+                  className="group flex items-center gap-4 md:gap-6 text-left animate-link-row focus:outline-none focus-visible:ring-2 focus-visible:ring-forest rounded-lg"
                 >
-                  <span className="text-gray-mid font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-forest">
+                  <span className="text-forest-light font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-forest">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-cream hover:text-forest transition-colors duration-300 flex overflow-hidden">
-                    {link.name.split('').map((char, ci) => (
-                      <span
-                        key={ci}
-                        className="char inline-block"
-                        style={{ transform: 'translateY(120%)', opacity: 0 }}
-                      >
-                        {char === ' ' ? ' ' : char}
-                      </span>
-                    ))}
+                    <span className="sr-only">{link.name}</span>
+                    <span aria-hidden="true" className="flex">
+                      {link.name.split('').map((char, ci) => (
+                        <span
+                          key={ci}
+                          className="char inline-block"
+                          style={{ transform: 'translateY(120%)', opacity: 0 }}
+                        >
+                          {char === ' ' ? ' ' : char}
+                        </span>
+                      ))}
+                    </span>
                   </span>
-                  <span className="text-forest text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                  <span
+                    aria-hidden="true"
+                    className="text-forest text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0"
+                  >
                     →
                   </span>
                 </button>
@@ -219,7 +301,9 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
           style={{ opacity: 0 }}
         >
           <div className="space-y-1 text-left">
-            <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
+            <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">
+              Get in Touch
+            </p>
             <a
               href="mailto:aitezazsikandar@gmail.com"
               className="text-muted hover:text-white text-sm transition-colors duration-200"
@@ -250,7 +334,6 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     </div>
   );
 };
-
 
 interface NavbarProps {
   hamburgerOnly?: boolean;
@@ -359,7 +442,14 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       }
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.to(links, { y: 0, opacity: 1, duration: 1, stagger: 0.3, ease: 'power2.out', delay: 0.5 });
+        gsap.to(links, {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.3,
+          ease: 'power2.out',
+          delay: 0.5,
+        });
       }
       setHasAnimated(true);
     }, 100);
@@ -456,29 +546,28 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-cream z-50"
           style={navStyle}
         >
-          <strong
-            ref={logoRef}
-            className="text-warm text-lg font-sans tracking-wide font-medium"
-          >
+          <strong ref={logoRef} className="text-warm text-lg font-sans tracking-wide font-medium">
             Aitezaz.
           </strong>
           <ul
             ref={linksContainerRef}
             className="flex gap-5 text-warm text-base font-sans font-medium uppercase tracking-wide"
           >
-            {links.filter((l) => !l.menuOnly).map((link) => (
-              <AnimatedLink key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(link.href);
-                  }}
-                >
-                  {link.name}
-                </a>
-              </AnimatedLink>
-            ))}
+            {links
+              .filter((l) => !l.menuOnly)
+              .map((link) => (
+                <AnimatedLink key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </a>
+                </AnimatedLink>
+              ))}
           </ul>
         </nav>
       )}
@@ -514,7 +603,9 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
                 transition: 'opacity 0.5s ease-in-out',
               }
         }
-        aria-label="Toggle menu"
+        aria-label="Toggle navigation menu"
+        aria-expanded={isMenuOpen}
+        aria-controls="fullscreen-menu"
       >
         <AnimatedHamburger isOpen={isMenuOpen} />
       </button>

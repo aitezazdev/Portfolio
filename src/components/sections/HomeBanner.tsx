@@ -3,10 +3,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { useTransitionState } from 'next-transition-router';
+import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import AmbientGeometry from '@/components/canvas/AmbientGeometry';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { safeSessionStorage } from '@/utils/storage';
+
+const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
+  ssr: false,
+});
 
 const RoleTicker = () => {
   const roles = [
@@ -85,7 +89,10 @@ const HomeBanner = () => {
         style={{ display: 'inline-block', ['--idx' as any]: idx }}
       >
         <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
-        <span aria-hidden="true" className="letter-duplicate block absolute top-full left-0 w-full select-none">
+        <span
+          aria-hidden="true"
+          className="letter-duplicate block absolute top-full left-0 w-full select-none"
+        >
           {char === ' ' ? '\u00A0' : char}
         </span>
       </span>
@@ -99,7 +106,9 @@ const HomeBanner = () => {
     if (sectionRef.current) gsap.set(sectionRef.current, { opacity: 0 });
     if (nameRef.current) {
       gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
-      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), {
+        y: '0%',
+      });
     }
     [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
       if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
@@ -127,7 +136,9 @@ const HomeBanner = () => {
     const timer = setTimeout(() => {
       gsap.to(sectionRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
       if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), {
+          y: '0%',
+        });
       }
       const letters = nameRef.current?.querySelectorAll('.letter-wrapper');
       if (letters?.length) {
@@ -153,7 +164,9 @@ const HomeBanner = () => {
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
     const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const selector = isDesktop
+      ? '[data-hero-name="desktop"] .letter-wrapper'
+      : '[data-hero-name="mobile"] .letter-wrapper';
     const letters = nameRef.current.querySelectorAll(selector);
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
@@ -180,7 +193,9 @@ const HomeBanner = () => {
   const handleMouseLeave = () => {
     if (reduced || !nameRef.current) return;
     const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const selector = isDesktop
+      ? '[data-hero-name="desktop"] .letter-wrapper'
+      : '[data-hero-name="mobile"] .letter-wrapper';
     const letters = nameRef.current.querySelectorAll(selector);
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
@@ -268,7 +283,8 @@ const HomeBanner = () => {
           ref={spotlightRef}
           className="absolute inset-0 pointer-events-none z-[1] opacity-0"
           style={{
-            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(108, 60, 225, 0.07), transparent 85%)',
+            background:
+              'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(108, 60, 225, 0.07), transparent 85%)',
             willChange: 'opacity',
           }}
         />
@@ -307,7 +323,10 @@ const HomeBanner = () => {
               <RoleTicker />
             </div>
 
-            <div ref={buttonsRef} className="flex flex-row justify-center items-center gap-2 sm:gap-4 flex-wrap max-w-full px-2">
+            <div
+              ref={buttonsRef}
+              className="flex flex-row justify-center items-center gap-2 sm:gap-4 flex-wrap max-w-full px-2"
+            >
               <AnimatedButton
                 onClick={() => handleScroll('projects')}
                 topText="PROJECTS"

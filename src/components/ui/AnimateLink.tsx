@@ -8,7 +8,15 @@ interface AnimatedLinkProps {
 
 const AnimatedLink: React.FC<AnimatedLinkProps> = ({ children, onClick, className = '' }) => {
   if (React.isValidElement(children) && children.type === 'a') {
-    const { href, children: text, onClick: childOnClick, target, rel, className: childClassName, ...rest } = children.props as any;
+    const {
+      href,
+      children: text,
+      onClick: childOnClick,
+      target,
+      rel,
+      className: childClassName,
+      ...rest
+    } = children.props as any;
 
     return (
       <li className={`${className} list-none`}>

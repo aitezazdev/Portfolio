@@ -13,7 +13,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     console.log(
       '%c Creative Portfolio Blueprint %c by Aitezaz Sikandar (https://aitezaz.xyz) ',
       'background: #080807; color: #e8e8e3; padding: 4px 8px; border-radius: 4px 0 0 4px; font-family: monospace; font-weight: bold;',
-      'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
+      'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;',
     );
 
     const alreadyLoaded = safeSessionStorage.getItem('preloader-shown');
@@ -35,10 +35,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {showCursor && <CustomCursor />}
       <GlobalPreloader />
       <div className="page-overlay"></div>
-      <Providers>
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
-      </Providers>
+      <SmoothScrollProvider>
+        <Providers>{children}</Providers>
+      </SmoothScrollProvider>
     </>
   );
 }
-

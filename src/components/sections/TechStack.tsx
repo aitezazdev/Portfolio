@@ -69,7 +69,9 @@ const TechStack = () => {
           title,
           { opacity: 0, y: 50 },
           {
-            opacity: 1, y: 0, ease: 'power2.out',
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
             scrollTrigger: { trigger: section, start: 'top 90%', end: 'top 70%', scrub: true },
           },
         );
@@ -77,7 +79,10 @@ const TechStack = () => {
           items,
           { opacity: 0, y: 50 },
           {
-            opacity: 1, y: 0, stagger: 0.2, ease: 'power2.out',
+            opacity: 1,
+            y: 0,
+            stagger: 0.2,
+            ease: 'power2.out',
             scrollTrigger: { trigger: section, start: 'top 90%', end: 'top 70%', scrub: true },
           },
         );
@@ -127,11 +132,15 @@ const TechStack = () => {
           {STACK_SECTIONS.map((stack, index) => (
             <div
               key={stack.id}
-              ref={(el) => { sectionRefs.current[index] = el; }}
+              ref={(el) => {
+                sectionRefs.current[index] = el;
+              }}
               className="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
             >
               <h3
-                ref={(el) => { titleRefs.current[index] = el; }}
+                ref={(el) => {
+                  titleRefs.current[index] = el;
+                }}
                 className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-forest-light tracking-tight font-display uppercase"
               >
                 {stack.title}

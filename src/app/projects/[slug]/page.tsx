@@ -49,4 +49,3 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!project) notFound();
   return <ProjectDetails key={project.slug} project={project} />;
 }
-

@@ -14,7 +14,7 @@ import { Project } from '@/lib/projects';
 ───────────────────────────────────────────── */
 const useHoverPreview = (
   containerRef: React.RefObject<HTMLDivElement | null>,
-  onScrollLeave: () => void
+  onScrollLeave: () => void,
 ) => {
   const floatingRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
@@ -37,8 +37,13 @@ const useHoverPreview = (
     floatingRef.current = el;
     if (!el) return;
     gsap.set(el, {
-      xPercent: -50, yPercent: -50, scale: 0.6, opacity: 0, rotation: 0,
-      transformOrigin: 'center center', clipPath: 'circle(0% at 50% 50%)',
+      xPercent: -50,
+      yPercent: -50,
+      scale: 0.6,
+      opacity: 0,
+      rotation: 0,
+      transformOrigin: 'center center',
+      clipPath: 'circle(0% at 50% 50%)',
     });
     rotateTo.current = gsap.quickTo(el, 'rotation', { duration: 0.4, ease: 'power3' });
   }, []);
@@ -126,8 +131,12 @@ const useHoverPreview = (
     dynamics.current.targetRotation = 0;
     if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
-      clipPath: 'circle(75% at 50% 50%)', opacity: 1, scale: 1,
-      duration: 0.6, ease: 'power4.out', overwrite: 'auto',
+      clipPath: 'circle(75% at 50% 50%)',
+      opacity: 1,
+      scale: 1,
+      duration: 0.6,
+      ease: 'power4.out',
+      overwrite: 'auto',
     });
   }, []);
 
@@ -135,8 +144,12 @@ const useHoverPreview = (
     isHovering.current = false;
     if (!floatingRef.current) return;
     gsap.to(floatingRef.current, {
-      clipPath: 'circle(0% at 50% 50%)', opacity: 0, scale: 0.6,
-      duration: 0.4, ease: 'power3.in', overwrite: 'auto',
+      clipPath: 'circle(0% at 50% 50%)',
+      opacity: 0,
+      scale: 0.6,
+      duration: 0.4,
+      ease: 'power3.in',
+      overwrite: 'auto',
     });
   }, []);
 
@@ -202,9 +215,15 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
 
           tl.to(card, { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, 0);
           if (imgWrap) {
-            tl.to(imgWrap, {
-              clipPath: 'inset(0% 0 0 0 round 14px)', duration: 0.9, ease: 'power4.inOut',
-            }, 0.1);
+            tl.to(
+              imgWrap,
+              {
+                clipPath: 'inset(0% 0 0 0 round 14px)',
+                duration: 0.9,
+                ease: 'power4.inOut',
+              },
+              0.1,
+            );
           }
           if (img) {
             tl.to(img, { scale: 1, duration: 1.1, ease: 'power3.out' }, 0.1);
@@ -213,7 +232,11 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
             tl.to(metaEls, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.42);
           }
           if (tags.length) {
-            tl.to(tags, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.07 }, 0.55);
+            tl.to(
+              tags,
+              { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.07 },
+              0.55,
+            );
           }
           if (title) {
             tl.to(title, { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out' }, 0.62);
@@ -251,7 +274,9 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
               sessionStorage.setItem('projects-scroll', scrollY.toString());
               sessionStorage.setItem('previous-project-url', window.location.pathname);
             }}
-            ref={(el) => { cardRefs.current[index] = el; }}
+            ref={(el) => {
+              cardRefs.current[index] = el;
+            }}
             className="overflow-hidden rounded-3xl block no-underline text-inherit"
             style={{ background: '#111110', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
           >
@@ -270,7 +295,10 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                 />
                 <div
                   className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.12) 100%)' }}
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.12) 100%)',
+                  }}
                 />
               </div>
             </div>
@@ -289,7 +317,11 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                 </span>
                 <span
                   className="mc-year font-mono text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(108, 60, 225, 0.13)', color: '#8B5CF6', border: '1px solid rgba(108, 60, 225, 0.28)' }}
+                  style={{
+                    background: 'rgba(108, 60, 225, 0.13)',
+                    color: '#8B5CF6',
+                    border: '1px solid rgba(108, 60, 225, 0.28)',
+                  }}
                 >
                   {project.year}
                 </span>
@@ -301,7 +333,9 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                     key={t}
                     className="mc-tag font-mono uppercase tracking-widest px-2.5 py-1 rounded-full"
                     style={{
-                      fontSize: 9, background: 'rgba(255,255,255,0.055)', color: 'rgba(255,255,255,0.42)',
+                      fontSize: 9,
+                      background: 'rgba(255,255,255,0.055)',
+                      color: 'rgba(255,255,255,0.42)',
                       border: '1px solid rgba(255,255,255,0.08)',
                     }}
                   >
@@ -318,7 +352,10 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
               </h3>
 
               <div className="mc-cta" style={{ opacity: 0 }}>
-                <div className="h-px w-full mb-4" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                <div
+                  className="h-px w-full mb-4"
+                  style={{ background: 'rgba(255,255,255,0.07)' }}
+                />
                 <div className="flex items-center justify-between">
                   <span
                     className="font-mono text-[11px] uppercase tracking-widest"
@@ -328,7 +365,10 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   </span>
                   <span
                     className="flex items-center justify-center w-9 h-9 rounded-full text-white text-sm"
-                    style={{ background: '#6C3CE1', boxShadow: '0 0 16px rgba(108, 60, 225, 0.35)' }}
+                    style={{
+                      background: '#6C3CE1',
+                      boxShadow: '0 0 16px rgba(108, 60, 225, 0.35)',
+                    }}
                   >
                     →
                   </span>
@@ -358,7 +398,9 @@ export default function ProjectsPage() {
     const lines = containerRef.current.querySelectorAll('.hover-line-ref');
     lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out' }));
     const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
-    overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
+    overlays.forEach((ov) => {
+      (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
+    });
     lastHoveredImgRef.current = '';
   }, []);
 
@@ -366,10 +408,12 @@ export default function ProjectsPage() {
     useHoverPreview(containerRef, handleScrollLeave);
 
   useEffect(() => {
-    getAllProjects().slice(0, 4).forEach((project) => {
-      const img = new window.Image();
-      img.src = project.hoverImage || project.images[0];
-    });
+    getAllProjects()
+      .slice(0, 4)
+      .forEach((project) => {
+        const img = new window.Image();
+        img.src = project.hoverImage || project.images[0];
+      });
   }, []);
 
   useGSAP(
@@ -381,20 +425,40 @@ export default function ProjectsPage() {
         const rect = row.getBoundingClientRect();
         const alreadyVisible = rect.top < window.innerHeight * 0.95;
         if (alreadyVisible) {
-          gsap.fromTo(row, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: index * 0.08, ease: 'power3.out' });
+          gsap.fromTo(
+            row,
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, delay: index * 0.08, ease: 'power3.out' },
+          );
         } else {
-          gsap.fromTo(row, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: row, start: 'top 92%', once: true } });
+          gsap.fromTo(
+            row,
+            { y: 40, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: 'power3.out',
+              scrollTrigger: { trigger: row, start: 'top 92%', once: true },
+            },
+          );
         }
       });
     },
     { scope: containerRef, dependencies: [isLoading, projects] },
   );
 
-  const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, imageUrl: string, index: number) => {
+  const handleRowMouseEnter = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    imageUrl: string,
+    index: number,
+  ) => {
     router.prefetch(`/projects/${projects[index]?.slug || ''}`);
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
+    const titleOverlay = e.currentTarget.querySelector(
+      '.title-reveal-overlay',
+    ) as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 0% 0 0)';
     const isNewImage = lastHoveredImgRef.current !== imageUrl;
     lastHoveredImgRef.current = imageUrl;
@@ -402,10 +466,18 @@ export default function ProjectsPage() {
       const floatingEl = document.querySelector('.floating-preview-ref');
       if (floatingEl) {
         gsap.to(floatingEl, {
-          scale: 0.92, clipPath: 'circle(40% at 50% 50%)', duration: 0.15, ease: 'power2.in',
+          scale: 0.92,
+          clipPath: 'circle(40% at 50% 50%)',
+          duration: 0.15,
+          ease: 'power2.in',
           onComplete: () => {
             setHoveredImage(imageUrl);
-            gsap.to(floatingEl, { scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.35, ease: 'power3.out' });
+            gsap.to(floatingEl, {
+              scale: 1,
+              clipPath: 'circle(75% at 50% 50%)',
+              duration: 0.35,
+              ease: 'power3.out',
+            });
           },
         });
       }
@@ -418,7 +490,9 @@ export default function ProjectsPage() {
   const handleRowMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '0%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
+    const titleOverlay = e.currentTarget.querySelector(
+      '.title-reveal-overlay',
+    ) as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 100% 0 0)';
     hide();
   };
@@ -427,7 +501,11 @@ export default function ProjectsPage() {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });
-    gsap.to(row, { backgroundColor: 'rgba(108, 60, 225, 0.04)', duration: 0.15, ease: 'power2.out' });
+    gsap.to(row, {
+      backgroundColor: 'rgba(108, 60, 225, 0.04)',
+      duration: 0.15,
+      ease: 'power2.out',
+    });
     const scrollY = (window as any).__lenis
       ? Math.round((window as any).__lenis.scroll)
       : Math.round(window.scrollY);
@@ -438,7 +516,10 @@ export default function ProjectsPage() {
   /* ── Loading skeleton ── */
   if (isLoading) {
     return (
-      <section id="projects" className="relative min-h-screen w-full bg-cream text-charcoal overflow-hidden px-12 py-20">
+      <section
+        id="projects"
+        className="relative min-h-screen w-full bg-cream text-charcoal overflow-hidden px-12 py-20"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="h-20 bg-gray-300 rounded animate-pulse w-1/3 mb-10" />
           <div className="space-y-8">
@@ -481,7 +562,9 @@ export default function ProjectsPage() {
               key={project.id}
               href={`/projects/${project.slug}`}
               className="project-row-desktop relative flex items-stretch border-b border-border py-8 min-h-[120px] group cursor-pointer no-underline"
-              onMouseEnter={(e) => handleRowMouseEnter(e, project.hoverImage || project.images[0], index)}
+              onMouseEnter={(e) =>
+                handleRowMouseEnter(e, project.hoverImage || project.images[0], index)
+              }
               onMouseLeave={handleRowMouseLeave}
               data-cursor="view"
               onClick={handleRowClick}
@@ -511,7 +594,10 @@ export default function ProjectsPage() {
 
                 <div className="mt-3 flex flex-wrap gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
                   {project.tech.map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full bg-transparent border border-gray-300 text-warm text-xs font-medium">
+                    <span
+                      key={t}
+                      className="px-3 py-1 rounded-full bg-transparent border border-gray-300 text-warm text-xs font-medium"
+                    >
                       {t}
                     </span>
                   ))}
@@ -539,7 +625,9 @@ export default function ProjectsPage() {
           ref={setFloatingRef}
           className="floating-preview-ref fixed pointer-events-none z-[100] opacity-0"
           style={{
-            top: 0, left: 0, willChange: 'transform, clip-path, opacity',
+            top: 0,
+            left: 0,
+            willChange: 'transform, clip-path, opacity',
             clipPath: 'circle(0% at 50% 50%)',
           }}
         >
@@ -547,8 +635,10 @@ export default function ProjectsPage() {
             ref={setInnerRef}
             className="w-[500px] rounded-2xl overflow-hidden"
             style={{
-              aspectRatio: '1919 / 923', willChange: 'transform',
-              boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 8px 20px -8px rgba(0, 0, 0, 0.2)',
+              aspectRatio: '1919 / 923',
+              willChange: 'transform',
+              boxShadow:
+                '0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 8px 20px -8px rgba(0, 0, 0, 0.2)',
             }}
           >
             <div
@@ -558,7 +648,10 @@ export default function ProjectsPage() {
             >
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.15) 100%)' }}
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.15) 100%)',
+                }}
               />
               {projects.map((project) => {
                 const imgUrl = project.hoverImage || project.images[0];

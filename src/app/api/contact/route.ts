@@ -10,6 +10,23 @@ interface ContactRequestBody {
   message?: string;
 }
 
+// Memory-backed IP rate limiter (5 requests per 15 minutes)
+const ipCache = new Map<string, { count: number; expires: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const record = ipCache.get(ip);
+  if (!record || now > record.expires) {
+    ipCache.set(ip, { count: 1, expires: now + 15 * 60 * 1000 });
+    return false;
+  }
+  if (record.count >= 5) {
+    return true;
+  }
+  record.count += 1;
+  return false;
+}
+
 function escapeHtml(unsafe: string): string {
   return unsafe
     .replace(/&/g, '&amp;')
@@ -19,7 +36,23 @@ function escapeHtml(unsafe: string): string {
     .replace(/'/g, '&#039;');
 }
 
+function cleanHeader(input: string): string {
+  return input.replace(/[\r\n]/g, '').trim();
+}
+
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Too many requests. Please try again later.',
+      },
+      { status: 429 },
+    );
+  }
+
   let name = '';
   let email = '';
   let message = '';
@@ -86,7 +119,13 @@ export async function POST(request: Request) {
       'spam4.me',
       'emailondeck.com',
     ];
-    const domain = email.split('@')[1].toLowerCase();
+
+    const parts = email.split('@');
+    if (parts.length < 2) {
+      return NextResponse.json({ success: false, error: 'Invalid email format' }, { status: 400 });
+    }
+
+    const domain = parts[1].toLowerCase();
     if (disposableDomains.includes(domain))
       return NextResponse.json(
         {
@@ -98,7 +137,7 @@ export async function POST(request: Request) {
         },
       );
 
-    const username = email.split('@')[0];
+    const username = parts[0];
     if (username.length < 1 || username.length > 64)
       return NextResponse.json(
         {
@@ -115,74 +154,35 @@ export async function POST(request: Request) {
     if (trimmedName.length < 2) {
       return NextResponse.json(
         { success: false, error: 'Name must be at least 2 characters long' },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!/[a-zA-Z]/.test(trimmedName)) {
       return NextResponse.json(
         { success: false, error: 'Name must contain at least one letter' },
-        { status: 400 }
-      );
-    }
-    const fakeNames = ['test', 'abc', 'xyz', 'asdf', 'qwerty', 'john doe', 'test user'];
-    if (fakeNames.includes(trimmedName.toLowerCase())) {
-      return NextResponse.json(
-        { success: false, error: 'Please enter a valid name' },
-        { status: 400 }
-      );
-    }
-    if (/^\d+$/.test(trimmedName)) {
-      return NextResponse.json(
-        { success: false, error: 'Name cannot be only numbers' },
-        { status: 400 }
-      );
-    }
-    if (/(.)\1{4,}/.test(trimmedName)) {
-      return NextResponse.json(
-        { success: false, error: 'Please avoid repeating characters in your name' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Message validations
     const trimmedMessage = message.trim();
-    if (trimmedMessage.length < 30) {
+    if (trimmedMessage.length < 20) {
       return NextResponse.json(
-        { success: false, error: 'Please enter a meaningful message (at least 30 characters)' },
-        { status: 400 }
-      );
-    }
-    const words = trimmedMessage.split(/\s+/);
-    if (words.length < 5) {
-      return NextResponse.json(
-        { success: false, error: 'Please enter a meaningful message (at least 5 words)' },
-        { status: 400 }
-      );
-    }
-    const spamPhrases = ['test message', 'testing', 'asdf', 'qwerty'];
-    if (spamPhrases.some((p) => trimmedMessage.toLowerCase().includes(p))) {
-      return NextResponse.json(
-        { success: false, error: 'Please avoid test/spam phrases in your message' },
-        { status: 400 }
-      );
-    }
-    if (/(.)\1{10,}/.test(trimmedMessage)) {
-      return NextResponse.json(
-        { success: false, error: 'Please avoid repeating characters in your message' },
-        { status: 400 }
+        { success: false, error: 'Please enter a meaningful message (at least 20 characters)' },
+        { status: 400 },
       );
     }
 
     const escapedName = escapeHtml(trimmedName);
-    const escapedEmail = escapeHtml(email.trim());
+    const cleanReplyEmail = cleanHeader(email.trim());
     const escapedMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br>');
 
     if (!process.env.GMAIL_APP_PASSWORD) {
-      console.error('SMTP Error: GMAIL_APP_PASSWORD env variable is not configured in this environment!');
+      console.error('SMTP Error: GMAIL_APP_PASSWORD env variable is not configured!');
       return NextResponse.json(
         {
           success: false,
-          error: 'Email configuration error. GMAIL_APP_PASSWORD is not set.',
+          error: 'Server email configuration error.',
         },
         {
           status: 500,
@@ -198,11 +198,10 @@ export async function POST(request: Request) {
         user: 'aitezazsikandar@gmail.com',
         pass: process.env.GMAIL_APP_PASSWORD,
       },
-      // Force IPv4 lookup to prevent timeouts in serverless/hosting environments
       lookup: (
         hostname: string,
         options: dns.LookupOneOptions,
-        callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void
+        callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void,
       ) => {
         dns.lookup(hostname, { family: 4 }, callback);
       },
@@ -211,10 +210,11 @@ export async function POST(request: Request) {
     await transporter.sendMail({
       from: `"Portfolio Contact" <aitezazsikandar@gmail.com>`,
       to: 'aitezazsikandar@gmail.com',
-      replyTo: escapedEmail,
-      subject: `New message from ${escapedName}`,
-      html: `<p><strong>Name:</strong> ${escapedName}</p><p><strong>Email:</strong> ${escapedEmail}</p><p><strong>Message:</strong></p><p>${escapedMessage}</p>`,
+      replyTo: cleanReplyEmail,
+      subject: `New message from ${cleanHeader(trimmedName)}`,
+      html: `<p><strong>Name:</strong> ${escapedName}</p><p><strong>Email:</strong> ${escapeHtml(cleanReplyEmail)}</p><p><strong>Message:</strong></p><p>${escapedMessage}</p>`,
     });
+
     return NextResponse.json({
       success: true,
       message: 'Message sent successfully!',
@@ -222,7 +222,6 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Contact form SMTP error:', error);
 
-    // Save message to messages.txt locally as a backup/fallback (only in local development)
     if (process.env.NODE_ENV === 'development') {
       try {
         const logDir = process.cwd();
@@ -234,7 +233,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
           success: true,
-          message: 'Message saved locally (SMTP connection timed out, check messages.txt)!',
+          message: 'Message saved locally!',
         });
       } catch (fsError) {
         console.error('Failed to write message to fallback file:', fsError);
@@ -244,7 +243,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to send message',
+        error: 'Failed to send message. Please try again later.',
       },
       {
         status: 500,

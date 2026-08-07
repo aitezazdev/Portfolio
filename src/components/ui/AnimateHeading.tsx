@@ -89,7 +89,10 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' 
   return (
     <div className="mb-8">
       <div className="overflow-hidden">
-        <h2 ref={headingRef} className={`font-display font-bold uppercase tracking-tighter ${className}`}>
+        <h2
+          ref={headingRef}
+          className={`font-display font-bold uppercase tracking-tighter ${className}`}
+        >
           {/* Visually hidden — real text for screen readers */}
           <span className="sr-only">{text}</span>
           {/* Visible span — gets scrambled */}
