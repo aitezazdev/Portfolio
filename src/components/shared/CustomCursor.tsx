@@ -23,6 +23,14 @@ export default function CustomCursor() {
     setEnabled(true);
   }, [reduced]);
 
+  useEffect(() => {
+    if (!enabled) return;
+    document.body.classList.add('custom-cursor-active');
+    return () => {
+      document.body.classList.remove('custom-cursor-active');
+    };
+  }, [enabled]);
+
   // Restore native cursor on path change
   useEffect(() => {
     if (!enabled) return;
