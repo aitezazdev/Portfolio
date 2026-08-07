@@ -26,6 +26,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
 
   return (
     <section className="min-h-screen bg-[#080807] text-white px-6 sm:px-8 md:px-12 lg:px-16 py-12 md:py-20 relative">
+      <div className="max-w-6xl mx-auto">
       {/* Back Button */}
       <div>
         <Link
@@ -195,6 +196,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
           <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
         </button>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }
