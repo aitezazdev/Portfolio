@@ -154,7 +154,7 @@ const TechStack = () => {
                         className="w-full h-full object-contain"
                       />
                     </div>
-                    <p className="text-sm sm:text-base md:text-base lg:text-lg font-mono font-medium text-light">
+                    <p className="text-sm sm:text-base font-mono font-bold text-cream">
                       {tech.name}
                     </p>
                   </div>

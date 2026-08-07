@@ -249,7 +249,7 @@ const Contact = () => {
                 }}
                 className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-forest transition-colors duration-300 max-w-full whitespace-nowrap"
                 style={{
-                  fontSize: 'clamp(0.65rem, 3.4vw, 4.5rem)',
+                  fontSize: 'clamp(1.1rem, 3.4vw, 4.5rem)',
                   whiteSpace: 'nowrap',
                 }}
               >

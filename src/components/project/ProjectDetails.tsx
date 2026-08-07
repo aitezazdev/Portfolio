@@ -25,7 +25,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
   };
 
   return (
-    <section className="min-h-screen bg-[#080807] text-white px-6 md:px-48 py-10 relative">
+    <section className="min-h-screen bg-[#080807] text-white px-6 sm:px-8 md:px-12 lg:px-16 py-12 md:py-20 relative">
       {/* Back Button */}
       <div>
         <Link
@@ -44,7 +44,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
         <div className="flex items-start justify-between gap-6 mb-6 md:mb-0">
           <AnimatedHeading
             text={project.title}
-            className="text-[clamp(1.8rem,7vw,3rem)] md:text-7xl font-extrabold flex-1 text-white"
+            className="text-[clamp(2.2rem,6vw,4.5rem)] font-black tracking-tight leading-none uppercase flex-1 text-white"
           />
           <div className="hidden md:flex gap-4 pt-2">
             {project.github && (

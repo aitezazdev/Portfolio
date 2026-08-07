@@ -301,8 +301,10 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                     key={t}
                     className="mc-tag font-mono uppercase tracking-widest px-2.5 py-1 rounded-full"
                     style={{
-                      fontSize: 9, background: 'rgba(255,255,255,0.055)', color: 'rgba(255,255,255,0.42)',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      fontSize: 9,
+                      background: 'rgba(255,255,255,0.08)',
+                      color: 'rgba(255,255,255,0.85)',
+                      border: '1px solid rgba(255,255,255,0.15)',
                     }}
                   >
                     {t}
