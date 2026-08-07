@@ -465,7 +465,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           className="hidden md:block fixed w-full py-6 z-50 bg-cream"
           style={navStyle}
         >
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
+          <div className="w-full px-6 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
             <strong
               ref={logoRef}
               className="text-warm text-lg font-sans tracking-wide font-medium"
@@ -500,7 +500,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           className="mobile-navbar md:hidden fixed w-full z-50 bg-cream/90 backdrop-blur-md border-b border-warm/10"
           style={navStyle}
         >
-          <div className="flex justify-between items-center px-6 sm:px-8 h-20 max-w-7xl mx-auto">
+          <div className="flex justify-between items-center px-6 sm:px-8 h-20 w-full">
             <strong className="text-warm text-lg font-sans tracking-wide font-medium">
               Aitezaz.
             </strong>
