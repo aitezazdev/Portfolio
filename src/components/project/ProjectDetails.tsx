@@ -110,9 +110,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
 
       {/* Description */}
       <div className="mb-6">
-        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">
-          Description
-        </strong>
+        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Description</strong>
         <AnimateDescription
           text={project.description}
           className="text-sm sm:text-base md:text-lg text-muted font-sans"

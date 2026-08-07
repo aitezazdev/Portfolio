@@ -7,7 +7,7 @@ import Lenis from '@studio-freight/lenis';
 export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) => {
   const router = useRouter();
   const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
-
+  
   const scrollToHash = (hash: string) => {
     const lenis = lenisRef?.current;
     // Special case: 'top' scrolls to the very top of the page
@@ -62,3 +62,4 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
     window.history.pushState(null, '', `#${hash}`);
   };
 };
+

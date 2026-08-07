@@ -2,20 +2,19 @@
 
 import React, { useRef, useEffect } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
-import Image from 'next/image';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 
 const About = () => {
   const headingText = 'Who Am I';
   const descriptionText =
-    'I am a software engineer driven by a passion for building clean, intuitive, and reliable digital experiences.';
+    "I am a software engineer driven by a passion for building clean, intuitive, and reliable digital experiences.";
   const aboutMeText = `I build web applications that bridge thoughtful frontend interfaces with robust backend systems. To me, software is more than code on a screen; it is about making technology feel effortless and genuinely useful to real people.
 
 My journey began with a simple curiosity for how things work under the hood. Over time, that curiosity evolved into a genuine passion for fluid interface animations, reliable backend architecture, and building user journeys that feel effortless and alive.
 
 Whether I am polishing micro-interactions or engineering full-stack systems, my core focus remains unchanged: creating software that brings people joy, solves real problems, and leaves a lasting positive impact.`;
-
+  
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -136,12 +135,11 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
                 >
                   <source src="/nature-live.webm" type="video/webm" />
                   <source src="/nature-live.mp4" type="video/mp4" />
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src="/nature-poster.webp"
-                    alt="Ambient nature scenery fallback"
-                    fill
-                    sizes="(max-width: 768px) 350px, 380px"
-                    className="object-cover"
+                    alt="Ambient nature scenery"
+                    className="w-full h-full object-cover"
                   />
                 </video>
 
@@ -151,14 +149,14 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
             </div>
 
             <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
-              <span className="about-label text-sm sm:text-base md:text-base text-forest-light font-bold uppercase tracking-[0.3em] text-center md:text-left inline-block">
+              <span className="about-label text-sm sm:text-base md:text-base text-warm uppercase tracking-[0.3em] font-medium text-center md:text-left inline-block">
                 (About Me)
               </span>
               <div className="space-y-6">
                 {aboutMeText.split('\n\n').map((p, i) => (
                   <p
                     key={i}
-                    className="about-bio-para text-gray-soft font-normal text-base sm:text-lg md:text-lg leading-relaxed font-sans"
+                    className="about-bio-para text-light/70 text-base sm:text-lg md:text-lg leading-relaxed font-sans"
                   >
                     {p}
                   </p>
@@ -173,3 +171,4 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
 };
 
 export default About;
+

@@ -8,12 +8,15 @@
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "npx prettier --write ."
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@next/third-parties": "^16.2.10",
     "@studio-freight/lenis": "^1.0.42",
+    "@tsparticles/engine": "^3.9.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
     "@vercel/analytics": "^2.0.1",
     "gsap": "^3.13.0",
     "lucide-react": "^0.548.0",

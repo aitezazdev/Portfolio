@@ -25,9 +25,6 @@ export const siteMetadata: Metadata = {
   ],
   creator: 'Aitezaz Sikandar',
   metadataBase: new URL('https://aitezaz.xyz'),
-  alternates: {
-    canonical: './',
-  },
   icons: {
     icon: '/logo.webp',
   },
@@ -59,3 +56,4 @@ export const siteMetadata: Metadata = {
     follow: true,
   },
 };
+

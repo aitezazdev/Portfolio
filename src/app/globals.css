@@ -5,48 +5,28 @@
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
-  /* ── Core God-Level Palette ── */
+  /* ── Core palette ── */
   --color-cream: #e8e8e3;
-  --color-ink: #060608;
-  --color-forest: #7c3aed;
-  --color-forest-light: #06b6d4;
-  --color-warm: #787872;
-  --color-muted: #94a3b8;
+  --color-ink: #080807;
+  --color-forest: #6C3CE1;
+  --color-forest-light: #8B5CF6;
+  --color-warm: #6b645c;
+  --color-muted: #b0ada8;
   --color-light: #d1d1c7;
-  --color-elevated: #161622;
-  --color-elevated-dark: #0f0f18;
-  --color-surface: #0a0a0f;
-  --color-surface-mid: #12121a;
-  --color-border: #334155;
-  --color-border-dark: #1e293b;
-  --color-border-subtle: #1e1b4b;
-  --color-border-subtler: #111827;
-  --color-charcoal: #12121a;
-  --color-gray-soft: #94a3b8;
-  --color-gray-mid: #64748b;
-  --color-gray-btn: #334155;
+  --color-elevated: #2a2a2a;
+  --color-elevated-dark: #1a1a18;
+  --color-surface: #0d0d0c;
+  --color-surface-mid: #161615;
+  --color-border: #d0d0c8;
+  --color-border-dark: #c8c8c0;
+  --color-border-subtle: #393632;
+  --color-border-subtler: #2a2a28;
+  --color-charcoal: #1a1a1a;
+  --color-gray-soft: #9a9a90;
+  --color-gray-mid: #4a4a48;
+  --color-gray-btn: #524f4c;
   --color-footer-bg: #dfdfd9;
   --color-footer-border: #cfcfc8;
-
-  /* Accent Tokens */
-  --color-accent-violet: #7c3aed;
-  --color-accent-cyan: #06b6d4;
-}
-
-/* ── Glassmorphism Utilities ── */
-.glass-panel {
-  background: rgba(18, 18, 26, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-card {
-  background: rgba(15, 17, 26, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* ── Reduced motion ── */
@@ -83,12 +63,8 @@ body.menu-open {
   height: 100vh;
 }
 
-html {
+.html {
   scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-html::-webkit-scrollbar {
-  display: none;
 }
 
 .preloader-active {
@@ -104,7 +80,7 @@ html::-webkit-scrollbar {
 }
 
 ::selection {
-  background: #7c3aed;
+  background: #6C3CE1;
   color: #ffffff;
 }
 
@@ -115,22 +91,38 @@ html::-webkit-scrollbar {
 }
 
 .bg-primary {
-  background-color: #7c3aed;
+  background-color: #8B5CF6;
 }
 .bg-foreground {
-  background-color: #12121a;
+  background-color: #24231f;
 }
 
-/* ── Optimized Film Grain Overlay ── */
 .film-grain {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.035;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.04;
   pointer-events: none;
   z-index: 9990;
+  animation: grain 0.8s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  20% { transform: translate(3%, 2%); }
+  30% { transform: translate(-3%, 3%); }
+  40% { transform: translate(2%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  60% { transform: translate(3%, -3%); }
+  70% { transform: translate(-2%, 1%); }
+  80% { transform: translate(1%, -2%); }
+  90% { transform: translate(-3%, -2%); }
 }
 
 /* ── Marquee ── */
@@ -144,21 +136,18 @@ html::-webkit-scrollbar {
   overflow: hidden;
   width: 100%;
   white-space: nowrap;
-  position: relative;
 }
 
 .marquee-content-left {
   display: inline-flex;
   white-space: nowrap;
   animation: marquee-left 30s linear infinite;
-  will-change: transform;
 }
 
 .marquee-content-right {
   display: inline-flex;
   white-space: nowrap;
   animation: marquee-right 30s linear infinite;
-  will-change: transform;
 }
 
 .marquee-row:hover .marquee-content-left,
@@ -167,40 +156,33 @@ html::-webkit-scrollbar {
 }
 
 @keyframes marquee-left {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes marquee-right {
-  0% {
-    transform: translate3d(-50%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }
 
 .scroll-progress-bar {
   will-change: transform;
 }
+.film-grain {
+  will-change: transform;
+}
 
 @keyframes arrowPulse {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(6px);
-  }
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
 }
 .arrow-pulse {
   animation: arrowPulse 1.5s ease-in-out infinite;
 }
 
+.marquee-row {
+  position: relative;
+}
 .marquee-row::before,
 .marquee-row::after {
   content: '';
@@ -223,22 +205,34 @@ html::-webkit-scrollbar {
 
 .marquee-row-dark::before {
   left: 0;
-  background: linear-gradient(to right, #060608, transparent);
+  background: linear-gradient(to right, #080807, transparent);
 }
 .marquee-row-dark::after {
   right: 0;
-  background: linear-gradient(to left, #060608, transparent);
+  background: linear-gradient(to left, #080807, transparent);
 }
 
-/* ── Targeted Custom Cursor ── */
-body.custom-cursor-active a,
-body.custom-cursor-active button,
-body.custom-cursor-active [role='button'],
-body.custom-cursor-active [data-cursor] {
-  cursor: none !important;
+/* ── Custom cursor — only when JS is active ── */
+body:not(.cursor-disabled) * {
+  cursor: none;
 }
-
+body:not(.cursor-disabled) a,
+body:not(.cursor-disabled) button,
+body:not(.cursor-disabled) [role='button'],
+body:not(.cursor-disabled) [data-cursor] {
+  cursor: none;
+}
+body.cursor-disabled * {
+  cursor: auto;
+}
 body.cursor-disabled a,
 body.cursor-disabled button {
   cursor: pointer;
+}
+
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
 }

@@ -55,31 +55,21 @@ export default function GlobalPreloader() {
       ease: 'power3.out',
     });
 
-    tl.to(
-      '.preloader-line',
-      {
-        scaleX: 1,
-        duration: 0.9,
-        ease: 'power2.inOut',
-        transformOrigin: 'left',
-      },
-      '-=0.4',
-    );
+    tl.to('.preloader-line', {
+      scaleX: 1,
+      duration: 0.9,
+      ease: 'power2.inOut',
+      transformOrigin: 'left',
+    }, '-=0.4');
 
-    tl.to(
-      counterObj,
-      {
-        val: 100,
-        duration: 1.4,
-        ease: 'power3.inOut',
-        onUpdate: () => setProgress(Math.round(counterObj.val)),
-      },
-      0,
-    );
+    tl.to(counterObj, {
+      val: 100,
+      duration: 1.4,
+      ease: 'power3.inOut',
+      onUpdate: () => setProgress(Math.round(counterObj.val)),
+    }, 0);
 
-    return () => {
-      tl.kill();
-    };
+    return () => { tl.kill(); };
   }, [reduced]);
 
   if (!isLoading) return null;

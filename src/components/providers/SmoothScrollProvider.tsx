@@ -30,16 +30,14 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     window.__lenis = lenis;
     aliveRef.current = true;
 
-    // Connect Lenis scroll event to ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
     function raf(time: number) {
-      if (!aliveRef.current) return;
+      if (!aliveRef.current) return;  // ← protects against HMR stale callback
       lenis.raf(time * 1000);
+      ScrollTrigger.update();
     }
 
     gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(500, 33);
+    gsap.ticker.lagSmoothing(0);
 
     const refreshTimer = setTimeout(() => {
       if (aliveRef.current) ScrollTrigger.refresh();
@@ -47,7 +45,6 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
 
     return () => {
       aliveRef.current = false;
-      lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(raf);
       delete window.__lenis;
       lenis.destroy();

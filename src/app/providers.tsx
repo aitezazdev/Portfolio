@@ -108,9 +108,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       gsap.set(textRef.current, { y: 50, opacity: 0 });
 
       const tl = gsap.timeline({
-        onComplete: () => {
-          history.back();
-        },
+        onComplete: () => { history.back(); },
       });
       tl.to(overlayRef.current, { scaleY: 1, duration: 0.6, ease: 'power3.inOut' });
       tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
@@ -193,11 +191,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         if (isGoingToProject) safeSessionStorage.setItem('navigating-to-project', 'true');
         scrollTargetRef.current = isReturningHome ? parseInt(savedScroll, 10) : 0;
 
-        gsap.set(overlayRef.current, {
-          scaleY: 0,
-          transformOrigin: 'bottom',
-          pointerEvents: 'auto',
-        });
+        gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
         gsap.set(textRef.current, { y: 50, opacity: 0 });
 
         const tl = gsap.timeline({ onComplete: next });
@@ -241,8 +235,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         });
 
         tl.add(() => {
-          const isNavigatingToProject =
-            safeSessionStorage.getItem('navigating-to-project') === 'true';
+          const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
           const savedScroll = safeSessionStorage.getItem('projects-scroll');
           if (!isNavigatingToProject && savedScroll) {
             scrollTargetRef.current = parseInt(savedScroll, 10);
@@ -260,13 +253,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
         tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in' }, 0.1);
         tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
-        tl.call(
-          () => {
-            requestAnimationFrame(() => startTransition(next));
-          },
-          undefined,
-          0.3,
-        );
+        tl.call(() => {
+          requestAnimationFrame(() => startTransition(next));
+        }, undefined, 0.3);
 
         return () => {
           scrollLockActive = false;

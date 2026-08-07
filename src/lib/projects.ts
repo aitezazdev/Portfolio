@@ -18,15 +18,7 @@ const projects: Project[] = [
     slug: 'c-study',
     title: 'Collaborative Study Platform',
     year: '2026',
-    tech: [
-      'React',
-      'Node.js',
-      'Express',
-      'Socket.io',
-      'MongoDB',
-      'Study Assistant',
-      'Tailwind CSS',
-    ],
+    tech: ['React', 'Node.js', 'Express', 'Socket.io', 'MongoDB', 'Study Assistant', 'Tailwind CSS'],
     description:
       'A real-time collaborative study platform featuring interactive classrooms, document rendering, and integrated study tools. Students can join virtual study rooms to collaborate on files, utilize text-to-speech learning aids, and query an automated assistant for summaries. Teachers can upload resource materials and participate in peer-to-peer discussions.',
     myRole: [
@@ -53,15 +45,7 @@ const projects: Project[] = [
     slug: 'hms',
     title: 'Hospital Management System',
     year: '2025',
-    tech: [
-      'React',
-      'Express',
-      'Node.js',
-      'MongoDB',
-      'Clinical Assessment',
-      'Redux Toolkit',
-      'Tailwind CSS',
-    ],
+    tech: ['React', 'Express', 'Node.js', 'MongoDB', 'Clinical Assessment', 'Redux Toolkit', 'Tailwind CSS'],
     description:
       'A full stack hospital management system featuring dedicated, role based dashboards for patients, doctors, and system administrators. The platform integrates an automated clinical summary system to assist both patients and medical staff through an interactive symptom checker, pre appointment medical history summaries, and suggested prescription generators. Patients can find doctors by specialization, book consultation slots, and track booking statuses, while doctors can manage schedules, record clinical notes, and edit prescriptions. Administrators oversee doctor registrations, verify credentials, and manage patient records with a global search interface.',
     myRole: [
@@ -91,15 +75,7 @@ const projects: Project[] = [
     slug: 'ecommerce',
     title: 'Ecommerce-Next.js',
     year: '2026',
-    tech: [
-      'Next.js 16',
-      'React 19',
-      'TypeScript',
-      'Redux Toolkit',
-      'Stripe',
-      'MongoDB',
-      'Tailwind CSS',
-    ],
+    tech: ['Next.js 16', 'React 19', 'TypeScript', 'Redux Toolkit', 'Stripe', 'MongoDB', 'Tailwind CSS'],
     description:
       'A high performance e-commerce platform built using the Next.js App Router and React 19 to provide a smooth, dark themed shopping experience. The storefront integrates server side rendering for catalog queries, category filters, and sorting parameters, allowing for fast initial loads and search optimization. A key feature is the database persisted shopping cart which uses React 19 transition states and optimistic updates to reflect quantity changes instantly, automatically rolling back to the cached Redux store if backend updates fail. Transactions are completed through a secure Stripe checkout session that collects delivery details, logs orders, and flushes cart states upon redirect confirmation. The backend includes database safeguards such as connection caching, a failure cooldown guard, and an offline mock dataset fallback to maintain stability.',
     myRole: [
@@ -187,3 +163,4 @@ export function getAllProjects(): Project[] {
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
+

@@ -21,10 +21,7 @@ const Footer = () => {
     const updateTime = () => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'Asia/Karachi',
+        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Karachi',
       });
       setCurrentTime(timeString);
     };
@@ -36,10 +33,7 @@ const Footer = () => {
           updateTime();
           interval = setInterval(updateTime, 30000);
         } else {
-          if (interval) {
-            clearInterval(interval);
-            interval = undefined;
-          }
+          if (interval) { clearInterval(interval); interval = undefined; }
         }
       },
       { threshold: 0 },
@@ -99,11 +93,7 @@ const Footer = () => {
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               <AnimatedLink>
-                <a
-                  href="https://linkedin.com/in/aitezaz-sikandar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://linkedin.com/in/aitezaz-sikandar" target="_blank" rel="noopener noreferrer">
                   Linkedin
                 </a>
               </AnimatedLink>
@@ -118,11 +108,7 @@ const Footer = () => {
                 </a>
               </AnimatedLink>
               <AnimatedLink>
-                <a
-                  href="https://github.com/aitezazdev/Portfolio"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://github.com/aitezazdev/Portfolio" target="_blank" rel="noopener noreferrer">
                   Source Code
                 </a>
               </AnimatedLink>
