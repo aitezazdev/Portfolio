@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
+import Image from 'next/image';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 
@@ -135,11 +136,12 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
                 >
                   <source src="/nature-live.webm" type="video/webm" />
                   <source src="/nature-live.mp4" type="video/mp4" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src="/nature-poster.webp"
-                    alt="Ambient nature scenery"
-                    className="w-full h-full object-cover"
+                    alt="Ambient nature scenery fallback"
+                    fill
+                    sizes="(max-width: 768px) 350px, 380px"
+                    className="object-cover"
                   />
                 </video>
 

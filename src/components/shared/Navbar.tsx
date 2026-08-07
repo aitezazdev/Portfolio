@@ -137,6 +137,15 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     gsap.to(el, { x: dx, y: dy, duration: 0.4, ease: 'power2.out' });
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleMagneticMouseLeave = (index: number) => {
     const el = magnetRefs.current[index];
     if (!el) return;
@@ -515,6 +524,8 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
               }
         }
         aria-label="Toggle menu"
+        aria-expanded={isMenuOpen}
+        aria-controls="fullscreen-menu"
       >
         <AnimatedHamburger isOpen={isMenuOpen} />
       </button>

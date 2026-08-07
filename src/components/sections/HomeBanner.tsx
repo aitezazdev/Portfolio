@@ -3,10 +3,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { useTransitionState } from 'next-transition-router';
+import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import AmbientGeometry from '@/components/canvas/AmbientGeometry';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { safeSessionStorage } from '@/utils/storage';
+
+const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
+  ssr: false,
+});
 
 const RoleTicker = () => {
   const roles = [
