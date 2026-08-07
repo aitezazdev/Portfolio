@@ -462,33 +462,35 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       {!hamburgerOnly && (
         <nav
           ref={navRef}
-          className="hidden md:flex fixed w-full justify-between items-center px-12 py-4 mb-16 bg-cream z-50"
+          className="hidden md:block fixed w-full py-6 z-50 bg-cream"
           style={navStyle}
         >
-          <strong
-            ref={logoRef}
-            className="text-warm text-lg font-sans tracking-wide font-medium"
-          >
-            Aitezaz.
-          </strong>
-          <ul
-            ref={linksContainerRef}
-            className="flex gap-5 text-warm text-base font-sans font-medium uppercase tracking-wide"
-          >
-            {links.filter((l) => !l.menuOnly).map((link) => (
-              <AnimatedLink key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(link.href);
-                  }}
-                >
-                  {link.name}
-                </a>
-              </AnimatedLink>
-            ))}
-          </ul>
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
+            <strong
+              ref={logoRef}
+              className="text-warm text-lg font-sans tracking-wide font-medium"
+            >
+              Aitezaz.
+            </strong>
+            <ul
+              ref={linksContainerRef}
+              className="flex gap-6 text-warm text-base font-sans font-medium uppercase tracking-wider"
+            >
+              {links.filter((l) => !l.menuOnly).map((link) => (
+                <AnimatedLink key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </a>
+                </AnimatedLink>
+              ))}
+            </ul>
+          </div>
         </nav>
       )}
 
@@ -498,7 +500,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           className="mobile-navbar md:hidden fixed w-full z-50 bg-cream/90 backdrop-blur-md border-b border-warm/10"
           style={navStyle}
         >
-          <div className="flex justify-between items-center px-6 h-20">
+          <div className="flex justify-between items-center px-6 sm:px-8 h-20 max-w-7xl mx-auto">
             <strong className="text-warm text-lg font-sans tracking-wide font-medium">
               Aitezaz.
             </strong>
