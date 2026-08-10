@@ -128,6 +128,9 @@ const HomeBanner = () => {
       return;
     }
 
+    // When returning from another page, wait for curtain transition to open (500ms) before animating entrance
+    const startDelay = safeSessionStorage.getItem('preloader-shown') ? 500 : 100;
+
     const timer = setTimeout(() => {
       gsap.to(sectionRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
       if (nameRef.current) {
@@ -141,22 +144,24 @@ const HomeBanner = () => {
           duration: 0.8,
           stagger: 0.05,
           ease: 'power3.out',
-          delay: 0.3,
+          delay: 0.2,
         });
       }
-      const tl = gsap.timeline({ delay: 1.1, ease: 'power3.out' });
+      const tl = gsap.timeline({ delay: 1.0, ease: 'power3.out' });
       [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
         if (ref.current) {
           tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
         }
       });
-    }, 100);
+    }, startDelay);
     return () => clearTimeout(timer);
   }, [preloaderComplete, isReady, reduced]);
 
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
-    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
@@ -165,14 +170,14 @@ const HomeBanner = () => {
           y: '-100%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: (idx % 16) * 0.03,
+          delay: idx * 0.03,
           overwrite: 'auto',
         });
         gsap.to(duplicate, {
           y: '-100%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: (idx % 16) * 0.03,
+          delay: idx * 0.03,
           overwrite: 'auto',
         });
       }
@@ -181,7 +186,9 @@ const HomeBanner = () => {
 
   const handleMouseLeave = () => {
     if (reduced || !nameRef.current) return;
-    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+    const isDesktop = window.innerWidth >= 768;
+    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+    const letters = nameRef.current.querySelectorAll(selector);
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
@@ -190,14 +197,14 @@ const HomeBanner = () => {
           y: '0%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: (idx % 16) * 0.03,
+          delay: idx * 0.03,
           overwrite: 'auto',
         });
         gsap.to(duplicate, {
           y: '0%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: (idx % 16) * 0.03,
+          delay: idx * 0.03,
           overwrite: 'auto',
         });
       }
