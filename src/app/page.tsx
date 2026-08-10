@@ -30,7 +30,6 @@ export default function Home() {
     if (!home || !reunite || !techStack || !projects) return;
 
     const ctx = gsap.context(() => {
-
       gsap.set(reunite, {
         zIndex: 2,
       });
@@ -40,6 +39,15 @@ export default function Home() {
         opacity: 1,
         pointerEvents: 'auto',
       });
+
+      const updatePointerEvents = (self: ScrollTrigger) => {
+        if (self.progress >= 0.85) {
+          home.style.pointerEvents = 'none';
+        } else {
+          home.style.pointerEvents = 'auto';
+        }
+      };
+
       gsap
         .timeline({
           scrollTrigger: {
@@ -47,19 +55,20 @@ export default function Home() {
             start: 'top bottom',
             end: 'top 10%',
             scrub: 1.2,
+            onUpdate: updatePointerEvents,
             onLeave: () => {
               home.style.pointerEvents = 'none';
             },
             onEnterBack: () => {
               home.style.pointerEvents = 'auto';
             },
+            onRefresh: updatePointerEvents,
           },
         })
         .to(home, {
           opacity: 0,
           y: 50,
           scale: 0.95,
-          pointerEvents: 'none',
           ease: 'power2.out',
         });
     });

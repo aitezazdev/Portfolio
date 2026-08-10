@@ -156,9 +156,7 @@ const HomeBanner = () => {
 
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
+    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
@@ -167,14 +165,14 @@ const HomeBanner = () => {
           y: '-100%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: idx * 0.03,
+          delay: (idx % 16) * 0.03,
           overwrite: 'auto',
         });
         gsap.to(duplicate, {
           y: '-100%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: idx * 0.03,
+          delay: (idx % 16) * 0.03,
           overwrite: 'auto',
         });
       }
@@ -183,9 +181,7 @@ const HomeBanner = () => {
 
   const handleMouseLeave = () => {
     if (reduced || !nameRef.current) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
+    const letters = nameRef.current.querySelectorAll('.letter-wrapper');
     letters.forEach((wrapper, idx) => {
       const original = wrapper.querySelector('.letter-original');
       const duplicate = wrapper.querySelector('.letter-duplicate');
@@ -194,14 +190,14 @@ const HomeBanner = () => {
           y: '0%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: idx * 0.03,
+          delay: (idx % 16) * 0.03,
           overwrite: 'auto',
         });
         gsap.to(duplicate, {
           y: '0%',
           duration: 0.45,
           ease: 'power2.out',
-          delay: idx * 0.03,
+          delay: (idx % 16) * 0.03,
           overwrite: 'auto',
         });
       }
