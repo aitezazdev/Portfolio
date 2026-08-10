@@ -6,10 +6,11 @@
   --font-mono: var(--font-geist-mono), monospace;
 
   /* ── Core palette ── */
-  --color-cream: #e8e8e3;
-  --color-ink: #080807;
-  --color-forest: #6C3CE1;
-  --color-forest-light: #8B5CF6;
+  --color-cream: #E8E4DE;
+  --color-ink: #0F0E0C;
+  --color-accent: #C45D3E;
+  --color-accent-light: #E07A5F;
+  --color-accent-muted: #D4956B;
   --color-warm: #6b645c;
   --color-muted: #b0ada8;
   --color-light: #d1d1c7;
@@ -80,7 +81,7 @@ body.menu-open {
 }
 
 ::selection {
-  background: #6C3CE1;
+  background: #C45D3E;
   color: #ffffff;
 }
 
@@ -91,7 +92,7 @@ body.menu-open {
 }
 
 .bg-primary {
-  background-color: #8B5CF6;
+  background-color: #E07A5F;
 }
 .bg-foreground {
   background-color: #24231f;
@@ -179,20 +180,20 @@ body.menu-open {
 
 .marquee-row-light::before {
   left: 0;
-  background: linear-gradient(to right, #e8e8e3, transparent);
+  background: linear-gradient(to right, #E8E4DE, transparent);
 }
 .marquee-row-light::after {
   right: 0;
-  background: linear-gradient(to left, #e8e8e3, transparent);
+  background: linear-gradient(to left, #E8E4DE, transparent);
 }
 
 .marquee-row-dark::before {
   left: 0;
-  background: linear-gradient(to right, #080807, transparent);
+  background: linear-gradient(to right, #0F0E0C, transparent);
 }
 .marquee-row-dark::after {
   right: 0;
-  background: linear-gradient(to left, #080807, transparent);
+  background: linear-gradient(to left, #0F0E0C, transparent);
 }
 
 /* ── Targeted Custom cursor ── */

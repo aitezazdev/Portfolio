@@ -83,7 +83,7 @@ const Services = () => {
 
           <div className="grid md:grid-cols-12 gap-4 md:gap-8">
             <div className="md:col-start-6 md:col-span-7 flex flex-col md:flex-row gap-3 md:gap-10">
-              <span className="text-forest-light uppercase text-sm md:text-base font-bold tracking-[0.2em] whitespace-nowrap">
+              <span className="text-accent-light uppercase text-sm md:text-base font-bold tracking-[0.2em] whitespace-nowrap">
                 (Services)
               </span>
 
@@ -123,7 +123,7 @@ const Services = () => {
                   <div className="divide-y divide-border-subtle">
                     {service.items.map((item, i) => (
                       <div key={i} className="py-3 flex items-center gap-3 md:gap-4">
-                        <span className="text-forest-light text-xs md:text-sm font-mono font-bold">
+                        <span className="text-accent-light text-xs md:text-sm font-mono font-bold">
                           0{i + 1}
                         </span>
                         <span className="text-base sm:text-base md:text-lg font-bold font-sans text-light">

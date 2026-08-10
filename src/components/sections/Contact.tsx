@@ -143,7 +143,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Your Name"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-forest focus:ring-1 focus:ring-forest/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.name ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -163,7 +163,7 @@ const Contact = () => {
                 onChange={handleChange}
                 autoComplete="email"
                 placeholder="you@example.com"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-forest focus:ring-1 focus:ring-forest/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.email ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -182,7 +182,7 @@ const Contact = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Write your message here..."
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-forest focus:ring-1 focus:ring-forest/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.message ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -247,14 +247,14 @@ const Contact = () => {
                     }, 2000);
                   }
                 }}
-                className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-forest transition-colors duration-300 max-w-full whitespace-nowrap"
+                className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-accent transition-colors duration-300 max-w-full whitespace-nowrap"
                 style={{
                   fontSize: 'clamp(1.1rem, 3.4vw, 4.5rem)',
                   whiteSpace: 'nowrap',
                 }}
               >
                 aitezazsikandar@gmail.com
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-forest origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
               </button>
             </div>
           </div>
@@ -267,7 +267,7 @@ const Contact = () => {
         aria-live="polite"
         className="fixed bottom-8 right-8 z-[9998] pointer-events-none"
         style={{
-          background: '#6C3CE1',
+          background: '#C45D3E',
           color: 'white',
           fontFamily: 'monospace',
           fontSize: '0.75rem',

@@ -132,7 +132,7 @@ const TechStack = () => {
             >
               <h3
                 ref={(el) => { titleRefs.current[index] = el; }}
-                className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-forest-light tracking-tight font-display uppercase"
+                className="md:w-1/3 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-accent-light tracking-tight font-display uppercase"
               >
                 {stack.title}
               </h3>

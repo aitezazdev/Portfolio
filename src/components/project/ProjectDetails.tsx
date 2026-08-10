@@ -144,7 +144,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
               {/* Skeleton Placeholder while Image Loads */}
               {!isLoaded && (
                 <div className="absolute inset-0 bg-[#121211] flex flex-col items-center justify-center gap-3 z-0 animate-pulse">
-                  <div className="w-3 h-3 rounded-full bg-[#6C3CE1] shadow-[0_0_12px_rgba(108,60,225,0.6)]" />
+                  <div className="w-3 h-3 rounded-full bg-[#C45D3E] shadow-[0_0_12px_rgba(196,93,62,0.6)]" />
                   <span className="font-mono text-xs uppercase tracking-widest text-white/30">
                     Loading Media...
                   </span>
@@ -190,7 +190,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </div>
         <button
           onClick={scrollToTop}
-          className="absolute right-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-forest hover:border-forest hover:bg-forest/10 transition-all duration-300 group focus:outline-none"
+          className="absolute right-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-accent hover:border-accent hover:bg-accent/10 transition-all duration-300 group focus:outline-none"
           aria-label="Scroll to top"
         >
           <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />

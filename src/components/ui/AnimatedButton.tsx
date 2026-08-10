@@ -41,12 +41,12 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       originalBgColor = 'transparent';
       break;
     case 'primary':
-      bgColor = 'bg-forest';
+      bgColor = 'bg-accent';
       textColor = 'text-white';
       borderColor = '';
       rippleColor = 'rgba(255,255,255,0.2)';
-      hoverBgColor = '#5a2ec7';
-      originalBgColor = '#6C3CE1';
+      hoverBgColor = '#A84B30';
+      originalBgColor = '#C45D3E';
       break;
     case 'outline':
       bgColor = 'bg-transparent';

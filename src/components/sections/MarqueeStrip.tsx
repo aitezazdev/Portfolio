@@ -67,7 +67,7 @@ export default function MarqueeStrip() {
                   <span className="font-mono text-[13px] uppercase tracking-[0.15em] text-warm font-medium">
                     {item}
                   </span>
-                  <span className="text-forest text-[10px]">◆</span>
+                  <span className="text-accent text-[10px]">◆</span>
                 </React.Fragment>
               ))}
             </span>

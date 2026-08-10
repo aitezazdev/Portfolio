@@ -98,7 +98,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' 
           </span>
         </h2>
       </div>
-      <div className="h-1 w-24 bg-gradient-to-r from-forest to-transparent mt-1" />
+      <div className="h-1 w-24 bg-gradient-to-r from-accent to-transparent mt-1" />
     </div>
   );
 };

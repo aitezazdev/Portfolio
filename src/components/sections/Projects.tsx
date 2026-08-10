@@ -281,7 +281,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   className="mc-num font-mono font-black leading-none"
                   style={{
                     fontSize: 'clamp(2.4rem,11vw,3.2rem)',
-                    color: '#6C3CE1',
+                    color: '#C45D3E',
                     letterSpacing: '-0.03em',
                   }}
                 >
@@ -289,7 +289,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                 </span>
                 <span
                   className="mc-year font-mono text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(108, 60, 225, 0.13)', color: '#8B5CF6', border: '1px solid rgba(108, 60, 225, 0.28)' }}
+                  style={{ background: 'rgba(196, 93, 62, 0.13)', color: '#E07A5F', border: '1px solid rgba(196, 93, 62, 0.28)' }}
                 >
                   {project.year}
                 </span>
@@ -330,7 +330,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   </span>
                   <span
                     className="flex items-center justify-center w-9 h-9 rounded-full text-white text-sm"
-                    style={{ background: '#6C3CE1', boxShadow: '0 0 16px rgba(108, 60, 225, 0.35)' }}
+                    style={{ background: '#C45D3E', boxShadow: '0 0 16px rgba(196, 93, 62, 0.35)' }}
                   >
                     →
                   </span>
@@ -429,7 +429,7 @@ export default function ProjectsPage() {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });
-    gsap.to(row, { backgroundColor: 'rgba(108, 60, 225, 0.04)', duration: 0.15, ease: 'power2.out' });
+    gsap.to(row, { backgroundColor: 'rgba(196, 93, 62, 0.04)', duration: 0.15, ease: 'power2.out' });
     const scrollY = (window as any).__lenis
       ? Math.round((window as any).__lenis.scroll)
       : Math.round(window.scrollY);
@@ -492,7 +492,7 @@ export default function ProjectsPage() {
                 <span className="block absolute transition-all duration-300 ease-out group-hover:-translate-y-full group-hover:opacity-0">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className="block absolute translate-y-full opacity-0 text-forest transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="block absolute translate-y-full opacity-0 text-accent transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
                   →
                 </span>
               </div>
@@ -501,7 +501,7 @@ export default function ProjectsPage() {
                 <h3 className="relative text-[clamp(2rem,4vw,3.5rem)] font-extrabold uppercase leading-none tracking-tight overflow-hidden">
                   <span className="block text-charcoal select-none">{project.title}</span>
                   <span
-                    className="title-reveal-overlay block text-forest absolute inset-0 select-none"
+                    className="title-reveal-overlay block text-accent absolute inset-0 select-none"
                     style={{
                       clipPath: 'inset(0 100% 0 0)',
                       transition: 'clip-path 0.5s cubic-bezier(0.76,0,0.24,1)',
@@ -523,7 +523,7 @@ export default function ProjectsPage() {
               </div>
 
               <div className="flex-[0_0_200px] text-right flex flex-col justify-end items-end pb-2">
-                <span className="font-mono text-xs uppercase tracking-widest text-charcoal group-hover:text-forest transition-colors duration-250 flex items-center gap-1">
+                <span className="font-mono text-xs uppercase tracking-widest text-charcoal group-hover:text-accent transition-colors duration-250 flex items-center gap-1">
                   <span>View Project</span>
                   <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5">
                     →
@@ -531,7 +531,7 @@ export default function ProjectsPage() {
                 </span>
               </div>
 
-              <div className="absolute bottom-0 left-0 h-[2px] bg-forest w-0 hover-line-ref pointer-events-none" />
+              <div className="absolute bottom-0 left-0 h-[2px] bg-accent w-0 hover-line-ref pointer-events-none" />
             </Link>
           ))}
         </div>

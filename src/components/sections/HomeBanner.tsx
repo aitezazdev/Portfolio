@@ -56,7 +56,7 @@ const RoleTicker = () => {
     <div className="h-6 overflow-hidden mb-8 flex justify-center items-center select-none">
       <div
         ref={containerRef}
-        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-forest"
+        className="relative h-6 w-80 text-center font-mono text-sm uppercase tracking-widest text-accent"
       >
         <div className="ticker-word-current absolute inset-0 flex items-center justify-center">
           {roles[currentIdx]}
@@ -272,7 +272,7 @@ const HomeBanner = () => {
           ref={spotlightRef}
           className="absolute inset-0 pointer-events-none z-[1] opacity-0"
           style={{
-            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(108, 60, 225, 0.07), transparent 85%)',
+            background: 'radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(196, 93, 62, 0.07), transparent 85%)',
             willChange: 'opacity',
           }}
         />

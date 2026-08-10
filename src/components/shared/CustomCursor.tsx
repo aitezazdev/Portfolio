@@ -157,14 +157,14 @@ export default function CustomCursor() {
 
       <div
         ref={cursorOutlineRef}
-        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#6C3CE1] rounded-full"
+        className="pointer-events-none fixed top-0 left-0 z-[10000] w-12 h-12 border-2 border-[#C45D3E] rounded-full"
       />
 
       <div
         ref={cursorTextRef}
         className="pointer-events-none fixed top-0 left-0 z-[10001] opacity-0"
       >
-        <span className="text-[#8B5CF6] text-[11px] font-bold tracking-[0.15em]">
+        <span className="text-[#E07A5F] text-[11px] font-bold tracking-[0.15em]">
           {cursorText}
         </span>
       </div>

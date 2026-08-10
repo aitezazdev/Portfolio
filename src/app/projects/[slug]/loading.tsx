@@ -27,7 +27,7 @@ export default function ProjectLoading() {
             90deg,
             transparent 0%,
             rgba(255, 255, 255, 0.04) 30%,
-            rgba(108, 60, 225, 0.08) 50%,
+            rgba(196, 93, 62, 0.08) 50%,
             rgba(255, 255, 255, 0.04) 70%,
             transparent 100%
           );
@@ -77,7 +77,7 @@ export default function ProjectLoading() {
       {/* Main Image Showcase Card Skeleton */}
       <div className="flex flex-col gap-12 mb-16">
         <div className="shimmer-box w-full aspect-[16/10] max-h-[750px] rounded-2xl flex flex-col items-center justify-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-[#6C3CE1] pulse-subtle shadow-[0_0_12px_rgba(108,60,225,0.6)]" />
+          <div className="w-3 h-3 rounded-full bg-[#C45D3E] pulse-subtle shadow-[0_0_12px_rgba(196,93,62,0.6)]" />
           <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/40">
             Loading Project Media
           </span>

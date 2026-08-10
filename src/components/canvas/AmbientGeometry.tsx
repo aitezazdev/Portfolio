@@ -119,7 +119,7 @@ export default function AmbientGeometry() {
       const mouse = mouseRef.current;
 
       ctx.beginPath();
-      ctx.fillStyle = 'rgba(108, 60, 225, 0.18)';
+      ctx.fillStyle = 'rgba(196, 93, 62, 0.18)';
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         if (!isMobile && mouse.x > -9000) {
@@ -176,7 +176,7 @@ export default function AmbientGeometry() {
 
       // Batch line drawing
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(108, 60, 225, 0.08)';
+      ctx.strokeStyle = 'rgba(196, 93, 62, 0.08)';
       ctx.lineWidth = 0.5;
 
       for (let i = 0; i < nodes.length; i++) {
