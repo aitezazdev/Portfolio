@@ -18,7 +18,17 @@ const GREETINGS = [
 ];
 
 export default function GlobalPreloader() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const shown = safeSessionStorage.getItem('preloader-shown');
+      if (shown) {
+        document.body.classList.remove('preloader-active');
+        document.body.classList.add('preloader-complete');
+        return false;
+      }
+    }
+    return true;
+  });
   const [progress, setProgress] = useState(0);
   const [greetingIdx, setGreetingIdx] = useState(0);
   const pathRef = useRef<SVGPathElement>(null);
@@ -29,8 +39,9 @@ export default function GlobalPreloader() {
   useEffect(() => {
     const shown = safeSessionStorage.getItem('preloader-shown');
     if (shown) {
-      setIsLoading(false);
+      document.body.classList.remove('preloader-active');
       document.body.classList.add('preloader-complete');
+      setIsLoading(false);
       return;
     }
 
