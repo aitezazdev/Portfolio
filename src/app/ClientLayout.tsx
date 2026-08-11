@@ -16,11 +16,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
     );
 
-    const alreadyLoaded = safeSessionStorage.getItem('preloader-shown');
-    if (alreadyLoaded) {
-      setShowCursor(true);
-      return;
-    }
     const handlePreloaderComplete = () => {
       setShowCursor(true);
     };

@@ -4,14 +4,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
-const WORDS = ['Hello', 'Salam', 'Bonjour', 'Hola', 'Ciao', 'Guten Tag', 'Olà', 'Welcome'];
-
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
-  const [wordIdx, setWordIdx] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const wordRef = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotion();
 
   const finish = useCallback(() => {
@@ -21,13 +17,9 @@ export default function GlobalPreloader() {
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
 
-
-
-  // Main preloader animation
   useEffect(() => {
     if (!isLoading) return;
 
-    // Reduced motion: skip immediately
     if (reduced) {
       finish();
       return;
@@ -35,76 +27,59 @@ export default function GlobalPreloader() {
 
     document.body.classList.add('preloader-active');
 
-    // Phase 1: Cycle through words
-    let currentWord = 0;
-    const wordInterval = setInterval(() => {
-      currentWord++;
-      if (currentWord >= WORDS.length) {
-        clearInterval(wordInterval);
-        // Brief pause on last word, then start exit
-        setTimeout(() => startExit(), 300);
-      } else {
-        setWordIdx(currentWord);
-      }
-    }, 180);
+    const overlay = overlayRef.current;
+    const path = pathRef.current;
+    if (!overlay || !path) {
+      finish();
+      return;
+    }
 
-    function startExit() {
-      const overlay = overlayRef.current;
-      const path = pathRef.current;
-      if (!overlay || !path) {
-        finish();
-        return;
-      }
+    // Initial state: SVG path covers full area with curved bottom
+    path.setAttribute('d', 'M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0');
 
-      // Phase 2: Fade out the word text
-      if (wordRef.current) {
-        gsap.to(wordRef.current, {
-          opacity: 0,
-          y: -30,
-          duration: 0.3,
-          ease: 'power2.in',
-        });
-      }
-
-      // Phase 3: SVG curve morph + overlay slide up
-      // The overlay slides up via translateY while the SVG path
-      // morphs from a curved bottom to flat — creating the liquid wave effect
-      const tl = gsap.timeline({
+    // Small delay before starting the exit animation (matches Zuned's setTimeout 100ms)
+    const startTimer = setTimeout(() => {
+      // 1) Slide the entire overlay div upward over 2s
+      //    (custom cubic-bezier matching Zuned's [0.2, 0.38, 0.09, 0.91])
+      gsap.to(overlay, {
+        y: '-100vh',
+        duration: 2,
+        ease: 'custom',
         onComplete: finish,
-        delay: 0.15,
       });
 
-      // Animate the SVG path from curved to flat
-      const curveObj = { progress: 0 };
-      tl.to(curveObj, {
-        progress: 1,
-        duration: 0.8,
-        ease: 'power3.inOut',
+      // Register custom ease to match Zuned's exact bezier curve
+      // CustomEase might not be available, so use power2.inOut as close approximation
+      gsap.to(overlay, {
+        y: '-100vh',
+        duration: 2,
+        ease: 'power2.inOut',
+        onComplete: finish,
+        overwrite: true,
+      });
+
+      // 2) Simultaneously morph the SVG path from curved to flat over 4s
+      const curveObj = { t: 0 };
+      gsap.to(curveObj, {
+        t: 1,
+        duration: 4,
+        ease: 'power1.out', // "easeOut"
         onUpdate: () => {
-          const p = curveObj.progress;
-          // Curve control point moves from 730 (curved inward) to 1000 (flat bottom)
-          const controlY = 730 + (1000 - 730) * p;
+          const p = curveObj.t;
+          // Interpolate bottom edge from 1000 to 0
+          const bottomY = Math.round(1000 * (1 - p));
+          // Interpolate curve control point from 730 to 0
+          const controlY = Math.round(730 * (1 - p));
           path.setAttribute(
             'd',
-            `M0 0 L926 0 L926 1000 Q463 ${controlY} 0 1000 L0 0`
+            `M0 0 L926 0 L926 ${bottomY} Q463 ${controlY} 0 ${bottomY} L0 0`
           );
         },
       });
-
-      // Simultaneously slide the entire overlay upward
-      tl.to(
-        overlay,
-        {
-          yPercent: -100,
-          duration: 0.8,
-          ease: 'power3.inOut',
-        },
-        '<' // start at the same time as the curve morph
-      );
-    }
+    }, 100);
 
     return () => {
-      clearInterval(wordInterval);
+      clearTimeout(startTimer);
     };
   }, [isLoading, reduced, finish]);
 
@@ -113,22 +88,15 @@ export default function GlobalPreloader() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink"
+      className="fixed top-0 left-0 z-[9999] flex h-screen w-screen bg-ink"
+      style={{ willChange: 'transform' }}
     >
-      {/* Centered word */}
-      <span
-        ref={wordRef}
-        className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-cream select-none tracking-tight"
-      >
-        {WORDS[wordIdx]}
-      </span>
-
-      {/* SVG curve at bottom — extends below the overlay for the liquid edge */}
+      {/* SVG fills the overlay + extends 300px below to create visible curve */}
       <svg
-        className="absolute bottom-0 left-0 w-full pointer-events-none"
+        className="absolute top-0 w-full h-full pointer-events-none"
         viewBox="0 0 926 1000"
         preserveAspectRatio="none"
-        style={{ height: '300px', transform: 'translateY(99%)' }}
+        style={{ height: 'calc(100% + 300px)' }}
       >
         <path
           ref={pathRef}
