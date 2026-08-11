@@ -5,23 +5,29 @@ import { motion, useAnimationControls } from 'framer-motion';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 /**
- * SVG Curve Overlay — the actual visual element.
- * A full-screen div that slides upward while an SVG path inside it
- * morphs from a curved bottom edge to flat.
+ * SVG Curve Overlay — exact replica of zunedaalim.com preloader.
  *
- * Architecture extracted from zunedaalim.com (chunk 1966, deobfuscated).
+ * A full-screen div that slides upward (y: 0vh → -100vh) while
+ * an SVG path morphs from a curved bottom edge to flat.
+ * The SVG is taller than the viewport (calc(100% + 300px)) so
+ * the curve visually hangs below creating the liquid wave effect.
  */
 function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void }) {
   const controls = useAnimationControls();
 
   useEffect(() => {
-    controls.start({
-      y: ['0vh', '-100vh'],
-      transition: {
-        duration: 2,
-        ease: [0.2, 0.38, 0.09, 0.91],
-      },
-    });
+    // Brief pause (0.3s) so the dark screen "breathes" before sweeping up.
+    // On production sites this pause happens naturally from network latency.
+    const timer = setTimeout(() => {
+      controls.start({
+        y: ['0vh', '-100vh'],
+        transition: {
+          duration: 2,
+          ease: [0.2, 0.38, 0.09, 0.91],
+        },
+      });
+    }, 300);
+    return () => clearTimeout(timer);
   }, [controls]);
 
   return (
@@ -30,7 +36,6 @@ function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void
       initial={{ y: '0vh' }}
       animate={controls}
       onAnimationComplete={onAnimationComplete}
-      style={{ willChange: 'transform' }}
     >
       <svg
         className="absolute top-0 w-full h-full"
@@ -50,6 +55,7 @@ function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void
           transition={{
             duration: 4,
             ease: 'easeOut',
+            delay: 0.3,
           }}
         />
       </svg>
@@ -57,12 +63,6 @@ function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void
   );
 }
 
-/**
- * GlobalPreloader — wrapper that manages show/hide state.
- *
- * Shows the CurveOverlay on mount, then removes it after
- * animation completes + a safety timeout.
- */
 export default function GlobalPreloader() {
   const [show, setShow] = useState(true);
   const reduced = useReducedMotion();
@@ -77,19 +77,14 @@ export default function GlobalPreloader() {
     }
   }, [reduced, show]);
 
-  // Safety timeout — matches Zuned's architecture:
-  // setTimeout(100ms) then setTimeout(2500ms) as fallback
+  // Safety fallback: remove after 3s no matter what
   useEffect(() => {
     if (!show || reduced) return;
-
-    const t1 = setTimeout(() => {
-      const t2 = setTimeout(() => setShow(false), 2500);
-      return () => clearTimeout(t2);
-    }, 100);
-    return () => clearTimeout(t1);
+    const fallback = setTimeout(() => setShow(false), 3000);
+    return () => clearTimeout(fallback);
   }, [show, reduced]);
 
-  // When show becomes false, fire completion events
+  // Fire completion events when preloader hides
   useEffect(() => {
     if (!show) {
       document.body.classList.remove('preloader-active');
@@ -100,9 +95,5 @@ export default function GlobalPreloader() {
 
   if (!show || reduced) return null;
 
-  return (
-    <CurveOverlay
-      onAnimationComplete={() => setShow(false)}
-    />
-  );
+  return <CurveOverlay onAnimationComplete={() => setShow(false)} />;
 }
