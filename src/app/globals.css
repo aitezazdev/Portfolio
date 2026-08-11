@@ -76,6 +76,15 @@ body.menu-open {
   visibility: hidden;
 }
 
+/* When the inline head script detects sessionStorage flag,
+   override preloader-active so content shows instantly (no flash) */
+.preloader-skip .preloader-active main {
+  visibility: visible !important;
+}
+.preloader-skip .preloader-active {
+  overflow: visible;
+}
+
 .preloader-complete main {
   visibility: visible;
 }
