@@ -36,15 +36,6 @@ export const metadata = siteMetadata;
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {/* Inline script runs before first paint to remove preloader-active
-            if the user has already seen the preloader in this session */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{if(sessionStorage.getItem("preloader-shown")){document.documentElement.classList.add("preloader-skip")}}catch(e){}`,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased bg-cream preloader-active`}
       >

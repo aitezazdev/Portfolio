@@ -3,17 +3,11 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
-import { safeSessionStorage } from '@/utils/storage';
 
 const WORDS = ['Hello', 'Salam', 'Bonjour', 'Hola', 'Ciao', 'Guten Tag', 'Olà', 'Welcome'];
 
 export default function GlobalPreloader() {
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !safeSessionStorage.getItem('preloader-shown');
-    }
-    return true;
-  });
+  const [isLoading, setIsLoading] = useState(true);
   const [wordIdx, setWordIdx] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -21,21 +15,13 @@ export default function GlobalPreloader() {
   const reduced = useReducedMotion();
 
   const finish = useCallback(() => {
-    safeSessionStorage.setItem('preloader-shown', 'true');
     setIsLoading(false);
     document.body.classList.remove('preloader-active');
     document.body.classList.add('preloader-complete');
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
 
-  // On mount: if already shown, immediately clean up classes
-  useEffect(() => {
-    if (!isLoading) {
-      document.body.classList.remove('preloader-active');
-      document.body.classList.add('preloader-complete');
-      window.dispatchEvent(new CustomEvent('preloaderComplete'));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   // Main preloader animation
   useEffect(() => {
