@@ -1,13 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { safeSessionStorage } from '@/utils/storage';
 
+const GREETINGS = [
+  'Hello',
+  'Salam',
+  'Bonjour',
+  'Hola',
+  'Ciao',
+  'Guten Tag',
+  'Olà',
+  'Welcome',
+  'Aitezaz Sikandar',
+];
+
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [greetingIdx, setGreetingIdx] = useState(0);
+  const pathRef = useRef<SVGPathElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -18,7 +34,6 @@ export default function GlobalPreloader() {
       return;
     }
 
-    // Skip animation if user prefers reduced motion
     if (reduced) {
       safeSessionStorage.setItem('preloader-shown', 'true');
       setIsLoading(false);
@@ -28,74 +43,134 @@ export default function GlobalPreloader() {
     }
 
     document.body.classList.add('preloader-active');
-    const counterObj = { val: 0 };
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const getPath = (p: number) => {
+      // p goes from 0 (covered) to 1 (revealed at top y=0)
+      const currentH = height * (1 - p);
+      // Curve tension bulges downward during exit pull
+      const curveHeight = Math.sin(p * Math.PI) * 350;
+      const controlY = currentH + curveHeight;
+      return `M 0 0 L ${width} 0 L ${width} ${currentH} Q ${width / 2} ${controlY} 0 ${currentH} Z`;
+    };
+
+    if (pathRef.current) {
+      pathRef.current.setAttribute('d', getPath(0));
+    }
+
+    const counterObj = { val: 0, greeting: 0, curve: 0 };
 
     const tl = gsap.timeline({
       onComplete: () => {
-        gsap.to('.preloader-overlay', {
-          clipPath: 'inset(0 0 100% 0)',
-          duration: 0.8,
-          ease: 'power3.inOut',
-          onComplete: () => {
-            safeSessionStorage.setItem('preloader-shown', 'true');
-            setIsLoading(false);
-            document.body.classList.remove('preloader-active');
-            document.body.classList.add('preloader-complete');
-            window.dispatchEvent(new CustomEvent('preloaderComplete'));
-          },
-        });
+        safeSessionStorage.setItem('preloader-shown', 'true');
+        setIsLoading(false);
+        document.body.classList.remove('preloader-active');
+        document.body.classList.add('preloader-complete');
       },
     });
 
-    tl.to('.preloader-letter', {
-      y: 0,
-      opacity: 1,
-      duration: 0.8,
-      stagger: 0.04,
-      ease: 'power3.out',
-    });
-
-    tl.to('.preloader-line', {
-      scaleX: 1,
-      duration: 0.9,
-      ease: 'power2.inOut',
-      transformOrigin: 'left',
-    }, '-=0.4');
-
+    // Step 1: Counter & Greeting Cycling (0% -> 100%)
     tl.to(counterObj, {
       val: 100,
-      duration: 1.4,
-      ease: 'power3.inOut',
-      onUpdate: () => setProgress(Math.round(counterObj.val)),
-    }, 0);
+      duration: 1.6,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        const val = Math.round(counterObj.val);
+        setProgress(val);
+        const idx = Math.min(
+          Math.floor((val / 100) * (GREETINGS.length - 1)),
+          GREETINGS.length - 1
+        );
+        setGreetingIdx(idx);
+      },
+    });
 
-    return () => { tl.kill(); };
+    // Step 2: Content Fade Out & Dispatch preloaderComplete
+    tl.to(
+      contentRef.current,
+      {
+        y: -40,
+        opacity: 0,
+        duration: 0.4,
+        ease: 'power3.in',
+        onComplete: () => {
+          window.dispatchEvent(new CustomEvent('preloaderComplete'));
+        },
+      },
+      '+=0.1'
+    );
+
+    // Step 3: SVG Liquid Wave Curve Pull Up (0 -> 1)
+    tl.to(counterObj, {
+      curve: 1,
+      duration: 0.9,
+      ease: 'power4.inOut',
+      onUpdate: () => {
+        if (pathRef.current) {
+          pathRef.current.setAttribute('d', getPath(counterObj.curve));
+        }
+      },
+    }, '-=0.1');
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      tl.kill();
+    };
   }, [reduced]);
 
   if (!isLoading) return null;
 
   return (
     <div
-      className="preloader-overlay fixed inset-0 z-[9999] bg-ink flex flex-col items-center justify-center"
-      style={{ clipPath: 'inset(0 0 0% 0)' }}
+      ref={containerRef}
+      className="fixed inset-0 z-[9999] pointer-events-none flex flex-col justify-between overflow-hidden"
     >
-      <div className="flex flex-col items-center">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-bold uppercase tracking-wider text-cream flex flex-wrap justify-center mb-4">
-          {'AITEZAZ SIKANDAR'.split('').map((char, index) => (
-            <span
-              key={index}
-              className="preloader-letter inline-block opacity-0"
-              style={{ transform: 'translateY(60px)' }}
-            >
-              {char === ' ' ? ' ' : char}
-            </span>
-          ))}
+      {/* SVG Liquid Curve Background Overlay */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none fill-ink z-10">
+        <path ref={pathRef} d="" />
+      </svg>
+
+      {/* Preloader Center Content */}
+      <div
+        ref={contentRef}
+        className="relative z-20 flex-1 flex flex-col items-center justify-center pointer-events-auto px-4"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
+          <span className="font-mono text-xs tracking-widest text-warm uppercase">
+            Portfolio Loading
+          </span>
+        </div>
+
+        {/* Dynamic Multilingual Greeting */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-cream tracking-tight text-center min-h-[1.2em] flex items-center justify-center select-none">
+          <span className="inline-block transition-all duration-200">
+            {GREETINGS[greetingIdx]}
+          </span>
         </h1>
-        <div className="preloader-line w-64 sm:w-80 md:w-[450px] h-[1px] bg-border-subtle origin-left scale-x-0" />
-        <div className="mt-8 font-mono text-warm text-sm tracking-widest">
-          {String(progress).padStart(2, '0')}%
+
+        {/* Dynamic Percentage Counter */}
+        <div className="mt-8 flex flex-col items-center">
+          <div className="w-48 sm:w-64 h-[2px] bg-border-subtler overflow-hidden rounded-full relative">
+            <div
+              className="h-full bg-accent transition-all duration-100 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="mt-4 font-mono text-warm text-sm tracking-widest">
+            {String(progress).padStart(3, '0')} / 100
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
