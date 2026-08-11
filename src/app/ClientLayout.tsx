@@ -5,7 +5,6 @@ import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import GlobalPreloader from '@/components/shared/GlobalPreloader';
 import CustomCursor from '@/components/shared/CustomCursor';
 import Providers from './providers';
-import { safeSessionStorage } from '@/utils/storage';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [showCursor, setShowCursor] = useState(false);

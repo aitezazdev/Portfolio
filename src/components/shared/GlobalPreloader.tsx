@@ -1,109 +1,108 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { gsap } from '@/lib/gsap';
+import { useEffect, useState } from 'react';
+import { motion, useAnimationControls } from 'framer-motion';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
-export default function GlobalPreloader() {
-  const [isLoading, setIsLoading] = useState(true);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const reduced = useReducedMotion();
-
-  const finish = useCallback(() => {
-    setIsLoading(false);
-    document.body.classList.remove('preloader-active');
-    document.body.classList.add('preloader-complete');
-    window.dispatchEvent(new CustomEvent('preloaderComplete'));
-  }, []);
+/**
+ * SVG Curve Overlay — the actual visual element.
+ * A full-screen div that slides upward while an SVG path inside it
+ * morphs from a curved bottom edge to flat.
+ *
+ * Architecture extracted from zunedaalim.com (chunk 1966, deobfuscated).
+ */
+function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void }) {
+  const controls = useAnimationControls();
 
   useEffect(() => {
-    if (!isLoading) return;
-
-    if (reduced) {
-      finish();
-      return;
-    }
-
-    document.body.classList.add('preloader-active');
-
-    const overlay = overlayRef.current;
-    const path = pathRef.current;
-    if (!overlay || !path) {
-      finish();
-      return;
-    }
-
-    // Initial state: SVG path covers full area with curved bottom
-    path.setAttribute('d', 'M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0');
-
-    // Small delay before starting the exit animation (matches Zuned's setTimeout 100ms)
-    const startTimer = setTimeout(() => {
-      // 1) Slide the entire overlay div upward over 2s
-      //    (custom cubic-bezier matching Zuned's [0.2, 0.38, 0.09, 0.91])
-      gsap.to(overlay, {
-        y: '-100vh',
+    controls.start({
+      y: ['0vh', '-100vh'],
+      transition: {
         duration: 2,
-        ease: 'custom',
-        onComplete: finish,
-      });
-
-      // Register custom ease to match Zuned's exact bezier curve
-      // CustomEase might not be available, so use power2.inOut as close approximation
-      gsap.to(overlay, {
-        y: '-100vh',
-        duration: 2,
-        ease: 'power2.inOut',
-        onComplete: finish,
-        overwrite: true,
-      });
-
-      // 2) Simultaneously morph the SVG path from curved to flat over 4s
-      const curveObj = { t: 0 };
-      gsap.to(curveObj, {
-        t: 1,
-        duration: 4,
-        ease: 'power1.out', // "easeOut"
-        onUpdate: () => {
-          const p = curveObj.t;
-          // Interpolate bottom edge from 1000 to 0
-          const bottomY = Math.round(1000 * (1 - p));
-          // Interpolate curve control point from 730 to 0
-          const controlY = Math.round(730 * (1 - p));
-          path.setAttribute(
-            'd',
-            `M0 0 L926 0 L926 ${bottomY} Q463 ${controlY} 0 ${bottomY} L0 0`
-          );
-        },
-      });
-    }, 100);
-
-    return () => {
-      clearTimeout(startTimer);
-    };
-  }, [isLoading, reduced, finish]);
-
-  if (!isLoading) return null;
+        ease: [0.2, 0.38, 0.09, 0.91],
+      },
+    });
+  }, [controls]);
 
   return (
-    <div
-      ref={overlayRef}
+    <motion.div
       className="fixed top-0 left-0 z-[9999] flex h-screen w-screen bg-ink"
+      initial={{ y: '0vh' }}
+      animate={controls}
+      onAnimationComplete={onAnimationComplete}
       style={{ willChange: 'transform' }}
     >
-      {/* SVG fills the overlay + extends 300px below to create visible curve */}
       <svg
-        className="absolute top-0 w-full h-full pointer-events-none"
+        className="absolute top-0 w-full h-full"
         viewBox="0 0 926 1000"
         preserveAspectRatio="none"
         style={{ height: 'calc(100% + 300px)' }}
       >
-        <path
-          ref={pathRef}
+        <motion.path
           className="fill-ink"
           d="M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0"
+          animate={{
+            d: [
+              'M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0',
+              'M0 0 L926 0 L926 0 Q463 0 0 0 L0 0',
+            ],
+          }}
+          transition={{
+            duration: 4,
+            ease: 'easeOut',
+          }}
         />
       </svg>
-    </div>
+    </motion.div>
+  );
+}
+
+/**
+ * GlobalPreloader — wrapper that manages show/hide state.
+ *
+ * Shows the CurveOverlay on mount, then removes it after
+ * animation completes + a safety timeout.
+ */
+export default function GlobalPreloader() {
+  const [show, setShow] = useState(true);
+  const reduced = useReducedMotion();
+
+  // Reduced motion: skip immediately
+  useEffect(() => {
+    if (reduced && show) {
+      setShow(false);
+      document.body.classList.remove('preloader-active');
+      document.body.classList.add('preloader-complete');
+      window.dispatchEvent(new CustomEvent('preloaderComplete'));
+    }
+  }, [reduced, show]);
+
+  // Safety timeout — matches Zuned's architecture:
+  // setTimeout(100ms) then setTimeout(2500ms) as fallback
+  useEffect(() => {
+    if (!show || reduced) return;
+
+    const t1 = setTimeout(() => {
+      const t2 = setTimeout(() => setShow(false), 2500);
+      return () => clearTimeout(t2);
+    }, 100);
+    return () => clearTimeout(t1);
+  }, [show, reduced]);
+
+  // When show becomes false, fire completion events
+  useEffect(() => {
+    if (!show) {
+      document.body.classList.remove('preloader-active');
+      document.body.classList.add('preloader-complete');
+      window.dispatchEvent(new CustomEvent('preloaderComplete'));
+    }
+  }, [show]);
+
+  if (!show || reduced) return null;
+
+  return (
+    <CurveOverlay
+      onAnimationComplete={() => setShow(false)}
+    />
   );
 }
