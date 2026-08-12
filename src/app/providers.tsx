@@ -266,14 +266,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-[9995] bg-ink flex items-center justify-center pointer-events-none scale-y-0"
+        className="fixed inset-0 z-[9995] bg-ink border-t-2 border-accent/40 flex items-center justify-center pointer-events-none scale-y-0"
         style={{ transformOrigin: 'bottom', willChange: 'transform' }}
       >
         <div
           ref={textRef}
-          className="text-cream font-display text-4xl sm:text-6xl md:text-7xl font-bold uppercase tracking-widest opacity-0"
+          className="text-cream font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-widest opacity-0 flex items-center select-none"
         >
-          {pageName}
+          <span className="block w-2.5 h-2.5 sm:w-3 sm:h-3 bg-accent rounded-full mr-4 sm:mr-6" />
+          <span>{pageName}</span>
         </div>
       </div>
     </TransitionRouter>
