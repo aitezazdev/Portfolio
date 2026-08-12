@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
+import { safeSessionStorage } from '@/utils/storage';
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
   ssr: false,
@@ -92,28 +93,56 @@ const HomeBanner = () => {
       </span>
     ));
 
-  // Set initial hidden positions for hero text elements
+  // Set initial hidden positions or immediate visible positions on route return
   useEffect(() => {
     if (reduced) return;
-    if (nameRef.current) {
-      gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
-      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
+    if (hasShownPreloader) {
+      if (nameRef.current) {
+        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
+        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      }
+      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+        if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
+      });
+      setPreloaderComplete(true);
+    } else {
+      if (nameRef.current) {
+        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
+        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      }
+      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+        if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
+      });
     }
-    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-      if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
-    });
   }, [reduced]);
 
   // Listen for preloader completion
   useEffect(() => {
-    const handler = () => setPreloaderComplete(true);
-    window.addEventListener('preloaderComplete', handler);
-    return () => window.removeEventListener('preloaderComplete', handler);
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
+    if (hasShownPreloader) {
+      setPreloaderComplete(true);
+    } else {
+      const handler = () => setPreloaderComplete(true);
+      window.addEventListener('preloaderComplete', handler);
+      return () => window.removeEventListener('preloaderComplete', handler);
+    }
   }, []);
 
   // Animate home screen elements after preloader finishes
   useEffect(() => {
     if (!preloaderComplete || reduced) return;
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
+    if (hasShownPreloader) {
+      if (nameRef.current) {
+        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
+        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      }
+      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+        if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
+      });
+      return;
+    }
 
     if (nameRef.current) {
       gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });

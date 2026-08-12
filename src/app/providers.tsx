@@ -85,6 +85,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       const timer = setTimeout(() => {
         const tl = gsap.timeline({
           onComplete: () => {
+            safeSessionStorage.setItem('preloader-shown', 'true');
             window.dispatchEvent(new CustomEvent('preloaderComplete'));
           },
         });
