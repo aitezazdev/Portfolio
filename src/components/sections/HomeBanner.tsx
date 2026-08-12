@@ -111,7 +111,7 @@ const HomeBanner = () => {
     return () => window.removeEventListener('preloaderComplete', handler);
   }, []);
 
-  // Animate home screen elements ONLY AFTER preloader has fully finished exiting
+  // Animate home screen elements after preloader finishes
   useEffect(() => {
     if (!preloaderComplete || reduced) return;
 
