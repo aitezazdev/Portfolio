@@ -18,21 +18,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
     );
 
-    // Keep preloader active on body initially
-    document.body.classList.add('preloader-active');
-
-    // Wait ~1.8s for word cycling, then set isLoading to false to trigger AnimatePresence exit
     const timer = setTimeout(() => {
       setIsLoading(false);
       window.scrollTo(0, 0);
-    }, 1800);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
   const handleExitComplete = useCallback(() => {
-    document.body.classList.remove('preloader-active');
-    document.body.classList.add('preloader-complete');
     setShowCursor(true);
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
@@ -42,7 +36,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="film-grain pointer-events-none" />
       {showCursor && <CustomCursor />}
 
-      {/* AnimatePresence mode="wait" handles the unmounting exit curve animation */}
       <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
         {isLoading && <GlobalPreloader key="preloader" />}
       </AnimatePresence>
