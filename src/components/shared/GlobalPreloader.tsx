@@ -1,99 +1,118 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useAnimationControls } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 /**
- * SVG Curve Overlay — exact replica of zunedaalim.com preloader.
- *
- * A full-screen div that slides upward (y: 0vh → -100vh) while
- * an SVG path morphs from a curved bottom edge to flat.
- * The SVG is taller than the viewport (calc(100% + 300px)) so
- * the curve visually hangs below creating the liquid wave effect.
+ * Hook to track window dimensions for responsive SVG paths.
  */
-function CurveOverlay({ onAnimationComplete }: { onAnimationComplete: () => void }) {
-  const controls = useAnimationControls();
+function useDimensions() {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    // Brief pause (0.3s) so the dark screen "breathes" before sweeping up.
-    // On production sites this pause happens naturally from network latency.
-    const timer = setTimeout(() => {
-      controls.start({
-        y: ['0vh', '-100vh'],
-        transition: {
-          duration: 2,
-          ease: [0.2, 0.38, 0.09, 0.91],
-        },
-      });
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [controls]);
+    function update() {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    }
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
-  return (
-    <motion.div
-      className="fixed top-0 left-0 z-[9999] flex h-screen w-screen bg-ink"
-      initial={{ y: '0vh' }}
-      animate={controls}
-      onAnimationComplete={onAnimationComplete}
-    >
-      <svg
-        className="absolute top-0 w-full h-full"
-        viewBox="0 0 926 1000"
-        preserveAspectRatio="none"
-        style={{ height: 'calc(100% + 300px)' }}
-      >
-        <motion.path
-          className="fill-ink"
-          d="M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0"
-          animate={{
-            d: [
-              'M0 0 L926 0 L926 1000 Q463 730 0 1000 L0 0',
-              'M0 0 L926 0 L926 0 Q463 0 0 0 L0 0',
-            ],
-          }}
-          transition={{
-            duration: 4,
-            ease: 'easeOut',
-            delay: 0.3,
-          }}
-        />
-      </svg>
-    </motion.div>
-  );
+  return dimensions;
 }
 
+/**
+ * Variants for the main overlay container — slides up off screen.
+ * Ease [0.76, 0, 0.24, 1] is Oliver Larose's signature snappy-smooth curve.
+ */
+const slideUp = {
+  initial: {
+    top: 0,
+  },
+  exit: {
+    top: '-100vh',
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const, delay: 0.2 },
+  },
+};
+
+/**
+ * GlobalPreloader — Awwwards-style curved SVG preloader.
+ *
+ * Architecture from Denis Snellenberg / Oliver Larose:
+ * - Full-screen overlay slides upward via `top: -100vh`
+ * - SVG (calc(100%+300px) tall) has a path that morphs from
+ *   curved bottom (control point at height+300) to flat (height)
+ * - Both use [0.76, 0, 0.24, 1] ease for snappy, buttery feel
+ * - Uses AnimatePresence for clean exit animations
+ */
 export default function GlobalPreloader() {
-  const [show, setShow] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const { width, height } = useDimensions();
   const reduced = useReducedMotion();
+
+  const finish = useCallback(() => {
+    setIsLoading(false);
+    document.body.classList.remove('preloader-active');
+    document.body.classList.add('preloader-complete');
+    window.dispatchEvent(new CustomEvent('preloaderComplete'));
+  }, []);
 
   // Reduced motion: skip immediately
   useEffect(() => {
-    if (reduced && show) {
-      setShow(false);
-      document.body.classList.remove('preloader-active');
-      document.body.classList.add('preloader-complete');
-      window.dispatchEvent(new CustomEvent('preloaderComplete'));
+    if (reduced) {
+      finish();
     }
-  }, [reduced, show]);
+  }, [reduced, finish]);
 
-  // Safety fallback: remove after 3s no matter what
+  // Auto-finish after the slide-up animation completes (~1.2s total)
   useEffect(() => {
-    if (!show || reduced) return;
-    const fallback = setTimeout(() => setShow(false), 3000);
-    return () => clearTimeout(fallback);
-  }, [show, reduced]);
+    if (!isLoading || reduced) return;
+    const timer = setTimeout(() => finish(), 1200);
+    return () => clearTimeout(timer);
+  }, [isLoading, reduced, finish]);
 
-  // Fire completion events when preloader hides
-  useEffect(() => {
-    if (!show) {
-      document.body.classList.remove('preloader-active');
-      document.body.classList.add('preloader-complete');
-      window.dispatchEvent(new CustomEvent('preloaderComplete'));
-    }
-  }, [show]);
+  // SVG paths using actual window dimensions for pixel-perfect curves
+  const initialPath = `M0 0 L${width} 0 L${width} ${height} Q${width / 2} ${
+    height + 300
+  } 0 ${height} L0 0`;
+  const targetPath = `M0 0 L${width} 0 L${width} ${height} Q${
+    width / 2
+  } ${height} 0 ${height} L0 0`;
 
-  if (!show || reduced) return null;
+  // Curve variants for the SVG path morphing
+  const curve = {
+    initial: {
+      d: initialPath,
+      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] as const },
+    },
+    exit: {
+      d: targetPath,
+      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] as const, delay: 0.3 },
+    },
+  };
 
-  return <CurveOverlay onAnimationComplete={() => setShow(false)} />;
+  return (
+    <AnimatePresence mode="wait">
+      {isLoading && !reduced && width > 0 && (
+        <motion.div
+          key="preloader"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink"
+          variants={slideUp}
+          initial="initial"
+          exit="exit"
+        >
+          {/* SVG extends 300px below viewport to create the visible curve */}
+          <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] -z-10">
+            <motion.path
+              className="fill-ink"
+              variants={curve}
+              initial="initial"
+              exit="exit"
+            />
+          </svg>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
