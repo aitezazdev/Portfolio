@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, startTransition, useState, useEffect } from 'react';
+import React, { useRef, startTransition, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { TransitionRouter } from 'next-transition-router';
@@ -16,13 +16,6 @@ declare global {
 
 // Module-level flag — persists across React re-renders / effect cleanups
 let _isCurtainCovering = false;
-
-const getPageName = (path: string | null | undefined): string => {
-  if (!path || path === '/') return 'HOME';
-  if (path.startsWith('/projects/')) return 'PROJECT';
-  const segment = path.split('/').filter(Boolean).pop();
-  return segment ? segment.toUpperCase().replace(/-/g, ' ') : 'PORTFOLIO';
-};
 
 /**
  * Robustly restore scroll to `target` after page transition.
@@ -69,10 +62,9 @@ function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> 
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const firstLayer = useRef<HTMLDivElement | null>(null);
+  const secondLayer = useRef<HTMLDivElement | null>(null);
   const scrollTargetRef = useRef<number>(0);
-  const [pageName, setPageName] = useState<string>('');
   const lenis = useLenis() as React.RefObject<Lenis | null> | null;
   const pathname = usePathname();
 
@@ -80,8 +72,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     lenisRef.current = lenis;
   }, [lenis]);
-
-  const setPageNameRef = useRef(setPageName);
 
   useEffect(() => {
     if ('scrollRestoration' in history) {
@@ -103,15 +93,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       const lenisInst = lenisRef.current;
       if (lenisInst?.current) lenisInst.current.stop();
 
-      setPageNameRef.current('HOME');
-      gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
-      gsap.set(textRef.current, { y: 50, opacity: 0 });
-
       const tl = gsap.timeline({
         onComplete: () => { history.back(); },
       });
-      tl.to(overlayRef.current, { scaleY: 1, duration: 0.6, ease: 'power3.inOut' });
-      tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
+      tl.fromTo(firstLayer.current, { y: '100%' }, { y: '0%', duration: 0.45, ease: 'circ.inOut' })
+        .fromTo(secondLayer.current, { y: '100%' }, { y: '0%', duration: 0.45, ease: 'circ.inOut' }, '<50%');
     };
 
     const playCurtainOut = (target: number) => {
@@ -121,9 +107,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
       document.documentElement.scrollTop = target;
       document.body.scrollTop = target;
-
-      gsap.set(overlayRef.current, { scaleY: 1, transformOrigin: 'top', pointerEvents: 'auto' });
-      gsap.set(textRef.current, { y: 0, opacity: 1 });
 
       let scrollLockActive = true;
       const runScrollLock = () => {
@@ -136,7 +119,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.set(overlayRef.current, { pointerEvents: 'none' });
           if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
           document.documentElement.scrollTop = target;
           document.body.scrollTop = target;
@@ -147,8 +129,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         },
       });
 
-      tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in', delay: 0.2 });
-      tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
+      tl.fromTo(secondLayer.current, { y: '0%' }, { y: '-100%', duration: 0.45, ease: 'circ.inOut' })
+        .fromTo(firstLayer.current, { y: '0%' }, { y: '-100%', duration: 0.45, ease: 'circ.inOut' }, '<50%');
     };
 
     const handlePopState = (event: PopStateEvent) => {
@@ -182,27 +164,37 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <TransitionRouter
       auto={true}
-      leave={(next: () => void, from: string, to: string) => {
+      leave={(next: () => void, _from: string, to: string) => {
         if (lenis?.current) lenis.current.stop();
-        setPageName(getPageName(to));
         const isGoingToProject = to.startsWith('/projects/');
         const savedScroll = safeSessionStorage.getItem('projects-scroll');
         const isReturningHome = (to === '/' || to === '') && savedScroll && !isGoingToProject;
         if (isGoingToProject) safeSessionStorage.setItem('navigating-to-project', 'true');
         scrollTargetRef.current = isReturningHome ? parseInt(savedScroll, 10) : 0;
 
-        gsap.set(overlayRef.current, { scaleY: 0, transformOrigin: 'bottom', pointerEvents: 'auto' });
-        gsap.set(textRef.current, { y: 50, opacity: 0 });
+        const tl = gsap
+          .timeline({ onComplete: next })
+          .fromTo(
+            firstLayer.current,
+            { y: '100%' },
+            { y: '0%', duration: 0.5, ease: 'circ.inOut' }
+          )
+          .fromTo(
+            secondLayer.current,
+            { y: '100%' },
+            { y: '0%', duration: 0.5, ease: 'circ.inOut' },
+            '<50%'
+          );
 
-        const tl = gsap.timeline({ onComplete: next });
-        tl.to(overlayRef.current, { scaleY: 1, duration: 0.6, ease: 'power3.inOut' });
-        tl.to(textRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
         tl.add(() => {
           document.documentElement.scrollTop = scrollTargetRef.current;
           document.body.scrollTop = scrollTargetRef.current;
           if (window.__lenis) window.__lenis.scrollTo(scrollTargetRef.current, { immediate: true });
         }, 0.5);
-        return () => tl.kill();
+
+        return () => {
+          tl.kill();
+        };
       }}
       enter={(next: () => void) => {
         if (_isCurtainCovering) {
@@ -210,7 +202,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           return () => {};
         }
 
-        gsap.set(overlayRef.current, { transformOrigin: 'top' });
         let scrollLockActive = false;
         const runScrollLock = () => {
           if (!scrollLockActive) return;
@@ -220,19 +211,35 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           requestAnimationFrame(runScrollLock);
         };
 
-        const tl = gsap.timeline({
-          onComplete: () => {
-            const target = scrollTargetRef.current;
-            if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
-            document.documentElement.scrollTop = target;
-            document.body.scrollTop = target;
-            setTimeout(() => {
-              scrollLockActive = false;
-              gsap.set(overlayRef.current, { pointerEvents: 'none' });
-              restoreScroll(target, lenis);
-            }, 16);
-          },
-        });
+        const tl = gsap
+          .timeline({
+            onComplete: () => {
+              const target = scrollTargetRef.current;
+              if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true });
+              document.documentElement.scrollTop = target;
+              document.body.scrollTop = target;
+              setTimeout(() => {
+                scrollLockActive = false;
+                restoreScroll(target, lenis);
+              }, 16);
+            },
+          })
+          .fromTo(
+            secondLayer.current,
+            { y: '0%' },
+            { y: '-100%', duration: 0.5, ease: 'circ.inOut' }
+          )
+          .fromTo(
+            firstLayer.current,
+            { y: '0%' },
+            { y: '-100%', duration: 0.5, ease: 'circ.inOut' },
+            '<50%'
+          )
+          .call(() => {
+            requestAnimationFrame(() => {
+              startTransition(next);
+            });
+          }, undefined, '<50%');
 
         tl.add(() => {
           const isNavigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
@@ -251,12 +258,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           requestAnimationFrame(runScrollLock);
         }, 0);
 
-        tl.to(textRef.current, { y: -50, opacity: 0, duration: 0.25, ease: 'power3.in' }, 0.1);
-        tl.to(overlayRef.current, { scaleY: 0, duration: 0.55, ease: 'power3.inOut' }, '-=0.15');
-        tl.call(() => {
-          requestAnimationFrame(() => startTransition(next));
-        }, undefined, 0.3);
-
         return () => {
           scrollLockActive = false;
           tl.kill();
@@ -264,19 +265,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <main>{children}</main>
+
+      {/* Layer 1: Warm Terra Cotta Accent Curtain */}
       <div
-        ref={overlayRef}
-        className="fixed inset-0 z-[9995] bg-ink border-t-2 border-accent/40 flex items-center justify-center pointer-events-none scale-y-0"
-        style={{ transformOrigin: 'bottom', willChange: 'transform' }}
-      >
-        <div
-          ref={textRef}
-          className="text-cream font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-widest opacity-0 flex items-center select-none"
-        >
-          <span className="block w-2.5 h-2.5 sm:w-3 sm:h-3 bg-accent rounded-full mr-4 sm:mr-6" />
-          <span>{pageName}</span>
-        </div>
-      </div>
+        ref={firstLayer}
+        className="fixed inset-0 z-[9994] translate-y-full bg-accent pointer-events-none"
+        style={{ willChange: 'transform' }}
+      />
+      {/* Layer 2: Deep Dark Ink Curtain */}
+      <div
+        ref={secondLayer}
+        className="fixed inset-0 z-[9995] translate-y-full bg-ink pointer-events-none"
+        style={{ willChange: 'transform' }}
+      />
     </TransitionRouter>
   );
 }
