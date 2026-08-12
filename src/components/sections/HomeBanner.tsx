@@ -2,11 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
-import { useTransitionState } from 'next-transition-router';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
-import { safeSessionStorage } from '@/utils/storage';
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
   ssr: false,
@@ -77,8 +75,6 @@ const HomeBanner = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const innerContentRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
-  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
-  const { isReady } = useTransitionState();
   const reduced = useReducedMotion();
 
   const splitText = (text: string) =>
@@ -98,59 +94,9 @@ const HomeBanner = () => {
   useEffect(() => {
     if (reduced) return;
     if (nameRef.current) {
-      gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
       gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
     }
-    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-      if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
-    });
   }, [reduced]);
-
-  useEffect(() => {
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
-      setPreloaderComplete(true);
-    } else {
-      const handler = () => setPreloaderComplete(true);
-      window.addEventListener('preloaderComplete', handler);
-      return () => window.removeEventListener('preloaderComplete', handler);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!preloaderComplete || !isReady) return;
-    if (reduced) {
-      gsap.set(sectionRef.current, { opacity: 1 });
-      return;
-    }
-
-    // When returning from another page, wait for curtain transition to open (500ms) before animating entrance
-    const startDelay = safeSessionStorage.getItem('preloader-shown') ? 500 : 100;
-
-    const timer = setTimeout(() => {
-      if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-      }
-      const letters = nameRef.current?.querySelectorAll('.letter-wrapper');
-      if (letters?.length) {
-        gsap.to(letters, {
-          y: '0%',
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.05,
-          ease: 'power3.out',
-          delay: 0.2,
-        });
-      }
-      const tl = gsap.timeline({ delay: 1.0, ease: 'power3.out' });
-      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-        if (ref.current) {
-          tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.4');
-        }
-      });
-    }, startDelay);
-    return () => clearTimeout(timer);
-  }, [preloaderComplete, isReady, reduced]);
 
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;

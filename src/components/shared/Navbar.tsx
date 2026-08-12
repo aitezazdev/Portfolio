@@ -342,10 +342,10 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       }
     }
 
-    if (logo) gsap.set(logo, { x: shouldHideNav ? 0 : -50, opacity: shouldHideNav ? 1 : 0 });
+    if (logo) gsap.set(logo, { x: 0, opacity: 1 });
     if (linksContainer) {
       const links = linksContainer.querySelectorAll('li');
-      gsap.set(links, { y: shouldHideNav ? 0 : -20, opacity: shouldHideNav ? 1 : 0 });
+      gsap.set(links, { y: 0, opacity: 1 });
     }
   }, [hamburgerOnly, shouldHideNav]);
 
