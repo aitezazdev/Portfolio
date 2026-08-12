@@ -5,6 +5,17 @@ import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
+import { motion } from 'framer-motion';
+
+const headerSlideUp = {
+  initial: {
+    y: 300,
+  },
+  enter: {
+    y: 0,
+    transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] as const, delay: 2.5 },
+  },
+};
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
   ssr: false,
@@ -204,9 +215,12 @@ const HomeBanner = () => {
   };
 
   return (
-    <section
+    <motion.section
       ref={sectionRef}
       className="min-h-screen px-6 sm:px-8 md:px-12 lg:px-16 pt-28 pb-8 md:pt-20 md:pb-0 bg-cream flex items-center relative overflow-hidden"
+      variants={headerSlideUp}
+      initial="initial"
+      animate="enter"
     >
       <AmbientGeometry />
 
@@ -277,7 +291,7 @@ const HomeBanner = () => {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
