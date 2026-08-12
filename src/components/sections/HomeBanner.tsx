@@ -207,7 +207,6 @@ const HomeBanner = () => {
     <section
       ref={sectionRef}
       className="min-h-screen px-6 sm:px-8 md:px-12 lg:px-16 pt-28 pb-8 md:pt-20 md:pb-0 bg-cream flex items-center relative overflow-hidden"
-      style={{ opacity: reduced ? 1 : 0 }}
     >
       <AmbientGeometry />
 
