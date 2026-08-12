@@ -5,74 +5,100 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 /**
- * Hook to track window dimensions for responsive SVG paths.
+ * Track window dimensions for responsive SVG paths.
  */
 function useDimensions() {
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
+  const [dim, setDim] = useState({ width: 0, height: 0 });
   useEffect(() => {
     function update() {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+      setDim({ width: window.innerWidth, height: window.innerHeight });
     }
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-
-  return dimensions;
+  return dim;
 }
 
-/**
- * Variants for the main overlay container — slides up off screen.
- * Ease [0.76, 0, 0.24, 1] is Oliver Larose's signature snappy-smooth curve.
- */
+/*──────────────────────────────────────────────
+  Framer Motion variants
+  Ease [0.76, 0, 0.24, 1] — Oliver Larose's signature snappy-smooth curve
+──────────────────────────────────────────────*/
+
+/** Container slides up off screen on exit */
 const slideUp = {
-  initial: {
-    top: 0,
-  },
+  initial: { top: 0 },
   exit: {
     top: '-100vh',
     transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const, delay: 0.2 },
   },
 };
 
+/** Word text fades in on mount */
+const opacity = {
+  initial: { opacity: 0 },
+  enter: {
+    opacity: 0.75,
+    transition: { duration: 0.2, delay: 0.2 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+/*──────────────────────────────────────────────
+  Greeting words — cycle through before exit
+──────────────────────────────────────────────*/
+const WORDS = ['Hello', 'Salam', 'Bonjour', 'Hola', 'Ciao', 'Olà', 'Welcome'];
+
 /**
  * GlobalPreloader — Awwwards-style curved SVG preloader.
  *
- * Architecture from Denis Snellenberg / Oliver Larose:
- * - Full-screen overlay slides upward via `top: -100vh`
- * - SVG (calc(100%+300px) tall) has a path that morphs from
- *   curved bottom (control point at height+300) to flat (height)
- * - Both use [0.76, 0, 0.24, 1] ease for snappy, buttery feel
- * - Uses AnimatePresence for clean exit animations
+ * Architecture: Denis Snellenberg / Oliver Larose pattern.
+ * 1. Full-screen overlay with cycling greeting words
+ * 2. After words finish, parent triggers exit via AnimatePresence
+ * 3. Exit: container slides up (0.8s) + SVG path morphs curved→flat (0.7s)
+ * 4. onExitComplete fires body class changes (NOT before animation ends)
  */
 export default function GlobalPreloader() {
   const [isLoading, setIsLoading] = useState(true);
+  const [wordIndex, setWordIndex] = useState(0);
   const { width, height } = useDimensions();
   const reduced = useReducedMotion();
 
-  const finish = useCallback(() => {
-    setIsLoading(false);
+  // Reduced motion: skip immediately
+  useEffect(() => {
+    if (reduced) {
+      setIsLoading(false);
+      document.body.classList.remove('preloader-active');
+      document.body.classList.add('preloader-complete');
+      window.dispatchEvent(new CustomEvent('preloaderComplete'));
+    }
+  }, [reduced]);
+
+  // Cycle through words, then trigger exit
+  useEffect(() => {
+    if (!isLoading || reduced) return;
+    if (wordIndex >= WORDS.length - 1) {
+      // All words shown — wait a beat, then exit
+      const exitTimer = setTimeout(() => setIsLoading(false), 300);
+      return () => clearTimeout(exitTimer);
+    }
+    // First word stays longer (600ms), rest cycle fast (150ms)
+    const delay = wordIndex === 0 ? 600 : 150;
+    const timer = setTimeout(() => setWordIndex(wordIndex + 1), delay);
+    return () => clearTimeout(timer);
+  }, [wordIndex, isLoading, reduced]);
+
+  // Called by AnimatePresence AFTER exit animation finishes
+  const handleExitComplete = useCallback(() => {
     document.body.classList.remove('preloader-active');
     document.body.classList.add('preloader-complete');
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
 
-  // Reduced motion: skip immediately
-  useEffect(() => {
-    if (reduced) {
-      finish();
-    }
-  }, [reduced, finish]);
-
-  // Auto-finish after the slide-up animation completes (~1.2s total)
-  useEffect(() => {
-    if (!isLoading || reduced) return;
-    const timer = setTimeout(() => finish(), 1200);
-    return () => clearTimeout(timer);
-  }, [isLoading, reduced, finish]);
-
-  // SVG paths using actual window dimensions for pixel-perfect curves
+  // SVG paths — use actual window dimensions for pixel-perfect curves
   const initialPath = `M0 0 L${width} 0 L${width} ${height} Q${width / 2} ${
     height + 300
   } 0 ${height} L0 0`;
@@ -80,7 +106,7 @@ export default function GlobalPreloader() {
     width / 2
   } ${height} 0 ${height} L0 0`;
 
-  // Curve variants for the SVG path morphing
+  /** SVG curve morph variants */
   const curve = {
     initial: {
       d: initialPath,
@@ -93,7 +119,7 @@ export default function GlobalPreloader() {
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
       {isLoading && !reduced && width > 0 && (
         <motion.div
           key="preloader"
@@ -102,8 +128,20 @@ export default function GlobalPreloader() {
           initial="initial"
           exit="exit"
         >
+          {/* Cycling greeting word */}
+          <motion.p
+            className="flex items-center text-3xl sm:text-4xl md:text-5xl text-cream/75 font-display font-medium select-none z-10"
+            variants={opacity}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+          >
+            <span className="block w-2.5 h-2.5 bg-cream/75 rounded-full mr-3" />
+            {WORDS[wordIndex]}
+          </motion.p>
+
           {/* SVG extends 300px below viewport to create the visible curve */}
-          <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] -z-10">
+          <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] pointer-events-none">
             <motion.path
               className="fill-ink"
               variants={curve}
