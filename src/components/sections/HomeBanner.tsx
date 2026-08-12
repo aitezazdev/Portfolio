@@ -5,17 +5,6 @@ import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
-import { motion } from 'framer-motion';
-
-const headerSlideUp = {
-  initial: {
-    y: 300,
-  },
-  enter: {
-    y: 0,
-    transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] as const, delay: 2.5 },
-  },
-};
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
   ssr: false,
@@ -86,6 +75,7 @@ const HomeBanner = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const innerContentRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
   const reduced = useReducedMotion();
 
   const splitText = (text: string) =>
@@ -102,12 +92,51 @@ const HomeBanner = () => {
       </span>
     ));
 
+  // Set initial hidden positions for hero text elements
   useEffect(() => {
     if (reduced) return;
     if (nameRef.current) {
+      gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
       gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
     }
+    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+      if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
+    });
   }, [reduced]);
+
+  // Listen for preloader completion
+  useEffect(() => {
+    const handler = () => setPreloaderComplete(true);
+    window.addEventListener('preloaderComplete', handler);
+    return () => window.removeEventListener('preloaderComplete', handler);
+  }, []);
+
+  // Animate home screen elements ONLY AFTER preloader has fully finished exiting
+  useEffect(() => {
+    if (!preloaderComplete || reduced) return;
+
+    if (nameRef.current) {
+      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+      const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+      if (letters.length) {
+        gsap.to(letters, {
+          y: '0%',
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.04,
+          ease: 'power3.out',
+          delay: 0.1,
+        });
+      }
+    }
+
+    const tl = gsap.timeline({ delay: 0.5, ease: 'power3.out' });
+    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+      if (ref.current) {
+        tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
+      }
+    });
+  }, [preloaderComplete, reduced]);
 
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;
@@ -215,12 +244,9 @@ const HomeBanner = () => {
   };
 
   return (
-    <motion.section
+    <section
       ref={sectionRef}
       className="min-h-screen px-6 sm:px-8 md:px-12 lg:px-16 pt-28 pb-8 md:pt-20 md:pb-0 bg-cream flex items-center relative overflow-hidden"
-      variants={headerSlideUp}
-      initial="initial"
-      animate="enter"
     >
       <AmbientGeometry />
 
@@ -291,7 +317,7 @@ const HomeBanner = () => {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 

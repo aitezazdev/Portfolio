@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Dot } from 'lucide-react';
 
@@ -32,27 +32,29 @@ export const fade = {
   },
   enter: {
     opacity: 0.75,
-    transition: { duration: 1, delay: 0.2 },
+    transition: { duration: 0.8, delay: 0.2 },
   },
 };
 
 export default function GlobalPreloader() {
   const [index, setIndex] = useState(0);
-  const dimensions = useRef({ width: 0, height: 0 });
-  const [isMeasured, setIsMeasured] = useState(false);
+  const [dimension, setDimension] = useState<{ width: number; height: number }>(() => {
+    if (typeof window !== 'undefined') {
+      return { width: window.innerWidth, height: window.innerHeight };
+    }
+    return { width: 0, height: 0 };
+  });
 
   useEffect(() => {
-    dimensions.current.width = window.innerWidth;
-    dimensions.current.height = window.innerHeight;
-    setIsMeasured(true);
-
+    if (dimension.width === 0 && typeof window !== 'undefined') {
+      setDimension({ width: window.innerWidth, height: window.innerHeight });
+    }
     const handleResize = () => {
-      dimensions.current.width = window.innerWidth;
-      dimensions.current.height = window.innerHeight;
+      setDimension({ width: window.innerWidth, height: window.innerHeight });
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [dimension.width]);
 
   useEffect(() => {
     if (index === preloaderWords.length - 1) return;
@@ -60,12 +62,12 @@ export default function GlobalPreloader() {
       () => {
         setIndex((prevIndex) => prevIndex + 1);
       },
-      index === 0 ? 500 : 220
+      index === 0 ? 500 : 200
     );
     return () => clearTimeout(timeout);
   }, [index]);
 
-  const { width, height } = dimensions.current;
+  const { width, height } = dimension;
 
   const initialPath = `M0 0 L${width} 0 L${width} ${height} Q${width / 2} ${
     height + 300
@@ -92,7 +94,7 @@ export default function GlobalPreloader() {
       initial="initial"
       exit="exit"
     >
-      {isMeasured && width > 0 ? (
+      {width > 0 ? (
         <>
           <motion.div
             className="flex items-center text-3xl sm:text-4xl text-white font-medium select-none z-10"
