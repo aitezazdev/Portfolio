@@ -1,28 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion } from '@/lib/useReducedMotion';
-
-/**
- * Track window dimensions for responsive SVG paths.
- */
-function useDimensions() {
-  const [dim, setDim] = useState({ width: 0, height: 0 });
-  useEffect(() => {
-    function update() {
-      setDim({ width: window.innerWidth, height: window.innerHeight });
-    }
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-  return dim;
-}
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 /*──────────────────────────────────────────────
-  Framer Motion variants
-  Ease [0.76, 0, 0.24, 1] — Oliver Larose's signature snappy-smooth curve
+  Variants — exact Oliver Larose / Denis Snellenberg
+  Ease [0.76, 0, 0.24, 1] = snappy-smooth
 ──────────────────────────────────────────────*/
 
 /** Container slides up off screen on exit */
@@ -34,79 +17,49 @@ const slideUp = {
   },
 };
 
-/** Word text fades in on mount */
-const opacity = {
+/** Word text fades in */
+const fade = {
   initial: { opacity: 0 },
   enter: {
     opacity: 0.75,
-    transition: { duration: 0.2, delay: 0.2 },
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 0.2 },
+    transition: { duration: 1, delay: 0.2 },
   },
 };
 
-/*──────────────────────────────────────────────
-  Greeting words — cycle through before exit
-──────────────────────────────────────────────*/
 const WORDS = ['Hello', 'Salam', 'Bonjour', 'Hola', 'Ciao', 'Olà', 'Welcome'];
 
 /**
- * GlobalPreloader — Awwwards-style curved SVG preloader.
- *
- * Architecture: Denis Snellenberg / Oliver Larose pattern.
- * 1. Full-screen overlay with cycling greeting words
- * 2. After words finish, parent triggers exit via AnimatePresence
- * 3. Exit: container slides up (0.8s) + SVG path morphs curved→flat (0.7s)
- * 4. onExitComplete fires body class changes (NOT before animation ends)
+ * Preloader — the visual component.
+ * Has NO AnimatePresence — that lives in the parent (ClientLayout).
+ * Declares `exit` variants that are triggered by the parent's AnimatePresence
+ * when it unmounts this component.
  */
-export default function GlobalPreloader() {
-  const [isLoading, setIsLoading] = useState(true);
+export default function Preloader() {
   const [wordIndex, setWordIndex] = useState(0);
-  const { width, height } = useDimensions();
-  const reduced = useReducedMotion();
+  const [dimension, setDimension] = useState({ width: 0, height: 0 });
 
-  // Reduced motion: skip immediately
+  // Get window dimensions on mount
   useEffect(() => {
-    if (reduced) {
-      setIsLoading(false);
-      document.body.classList.remove('preloader-active');
-      document.body.classList.add('preloader-complete');
-      window.dispatchEvent(new CustomEvent('preloaderComplete'));
-    }
-  }, [reduced]);
+    setDimension({ width: window.innerWidth, height: window.innerHeight });
+  }, []);
 
-  // Cycle through words, then trigger exit
+  // Cycle through words
   useEffect(() => {
-    if (!isLoading || reduced) return;
-    if (wordIndex >= WORDS.length - 1) {
-      // All words shown — wait a beat, then exit
-      const exitTimer = setTimeout(() => setIsLoading(false), 300);
-      return () => clearTimeout(exitTimer);
-    }
-    // First word stays longer (600ms), rest cycle fast (150ms)
+    if (wordIndex >= WORDS.length - 1) return;
     const delay = wordIndex === 0 ? 600 : 150;
     const timer = setTimeout(() => setWordIndex(wordIndex + 1), delay);
     return () => clearTimeout(timer);
-  }, [wordIndex, isLoading, reduced]);
+  }, [wordIndex]);
 
-  // Called by AnimatePresence AFTER exit animation finishes
-  const handleExitComplete = useCallback(() => {
-    document.body.classList.remove('preloader-active');
-    document.body.classList.add('preloader-complete');
-    window.dispatchEvent(new CustomEvent('preloaderComplete'));
-  }, []);
+  // SVG paths using actual window dimensions
+  const initialPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${dimension.width / 2} ${
+    dimension.height + 300
+  } 0 ${dimension.height}  L0 0`;
 
-  // SVG paths — use actual window dimensions for pixel-perfect curves
-  const initialPath = `M0 0 L${width} 0 L${width} ${height} Q${width / 2} ${
-    height + 300
-  } 0 ${height} L0 0`;
-  const targetPath = `M0 0 L${width} 0 L${width} ${height} Q${
-    width / 2
-  } ${height} 0 ${height} L0 0`;
+  const targetPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${
+    dimension.width / 2
+  } ${dimension.height} 0 ${dimension.height}  L0 0`;
 
-  /** SVG curve morph variants */
   const curve = {
     initial: {
       d: initialPath,
@@ -119,29 +72,27 @@ export default function GlobalPreloader() {
   };
 
   return (
-    <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
-      {isLoading && !reduced && width > 0 && (
-        <motion.div
-          key="preloader"
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink"
-          variants={slideUp}
-          initial="initial"
-          exit="exit"
-        >
-          {/* Cycling greeting word */}
+    <motion.div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink cursor-wait"
+      variants={slideUp}
+      initial="initial"
+      exit="exit"
+    >
+      {dimension.width > 0 && (
+        <>
+          {/* Centered word with dot */}
           <motion.p
-            className="flex items-center text-3xl sm:text-4xl md:text-5xl text-cream/75 font-display font-medium select-none z-10"
-            variants={opacity}
+            className="flex items-center text-3xl sm:text-4xl md:text-5xl text-cream font-display font-medium select-none z-10"
+            variants={fade}
             initial="initial"
             animate="enter"
-            exit="exit"
           >
-            <span className="block w-2.5 h-2.5 bg-cream/75 rounded-full mr-3" />
+            <span className="block w-[10px] h-[10px] bg-cream rounded-full mr-3" />
             {WORDS[wordIndex]}
           </motion.p>
 
-          {/* SVG extends 300px below viewport to create the visible curve */}
-          <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] pointer-events-none">
+          {/* SVG curve — 300px taller than viewport for the bulge effect */}
+          <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] pointer-events-none -z-10">
             <motion.path
               className="fill-ink"
               variants={curve}
@@ -149,8 +100,8 @@ export default function GlobalPreloader() {
               exit="exit"
             />
           </svg>
-        </motion.div>
+        </>
       )}
-    </AnimatePresence>
+    </motion.div>
   );
 }

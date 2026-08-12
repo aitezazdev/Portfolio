@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import GlobalPreloader from '@/components/shared/GlobalPreloader';
 import CustomCursor from '@/components/shared/CustomCursor';
 import Providers from './providers';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [showCursor, setShowCursor] = useState(false);
+
   useEffect(() => {
     console.log(
       '%c Creative Portfolio Blueprint %c by Aitezaz Sikandar (https://aitezaz.xyz) ',
@@ -15,24 +18,39 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
     );
 
-    const handlePreloaderComplete = () => {
-      setShowCursor(true);
-    };
-    window.addEventListener('preloaderComplete', handlePreloaderComplete);
-    return () => {
-      window.removeEventListener('preloaderComplete', handlePreloaderComplete);
-    };
+    // Keep preloader active on body initially
+    document.body.classList.add('preloader-active');
+
+    // Wait ~1.8s for word cycling, then set isLoading to false to trigger AnimatePresence exit
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      window.scrollTo(0, 0);
+    }, 1800);
+
+    return () => clearTimeout(timer);
   }, []);
+
+  const handleExitComplete = useCallback(() => {
+    document.body.classList.remove('preloader-active');
+    document.body.classList.add('preloader-complete');
+    setShowCursor(true);
+    window.dispatchEvent(new CustomEvent('preloaderComplete'));
+  }, []);
+
   return (
     <>
       <div className="film-grain pointer-events-none" />
       {showCursor && <CustomCursor />}
-      <GlobalPreloader />
-      <div className="page-overlay"></div>
+
+      {/* AnimatePresence mode="wait" handles the unmounting exit curve animation */}
+      <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
+        {isLoading && <GlobalPreloader key="preloader" />}
+      </AnimatePresence>
+
+      <div className="page-overlay" />
       <Providers>
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </Providers>
     </>
   );
 }
-
