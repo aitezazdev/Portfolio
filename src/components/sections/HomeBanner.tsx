@@ -96,11 +96,7 @@ const HomeBanner = () => {
     ));
 
   useEffect(() => {
-    if (reduced) {
-      gsap.set(sectionRef.current, { opacity: 1 });
-      return;
-    }
-    if (sectionRef.current) gsap.set(sectionRef.current, { opacity: 0 });
+    if (reduced) return;
     if (nameRef.current) {
       gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
       gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -132,7 +128,6 @@ const HomeBanner = () => {
     const startDelay = safeSessionStorage.getItem('preloader-shown') ? 500 : 100;
 
     const timer = setTimeout(() => {
-      gsap.to(sectionRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
       }

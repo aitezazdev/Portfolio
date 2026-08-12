@@ -72,23 +72,6 @@ body.menu-open {
   overflow: hidden;
 }
 
-.preloader-active main {
-  visibility: hidden;
-}
-
-/* When the inline head script detects sessionStorage flag,
-   override preloader-active so content shows instantly (no flash) */
-.preloader-skip .preloader-active main {
-  visibility: visible !important;
-}
-.preloader-skip .preloader-active {
-  overflow: visible;
-}
-
-.preloader-complete main {
-  visibility: visible;
-}
-
 ::selection {
   background: #C45D3E;
   color: #ffffff;
