@@ -14,12 +14,8 @@ declare global {
   }
 }
 
-// Module-level flag — persists across React re-renders / effect cleanups
 let _isCurtainCovering = false;
 
-/**
- * Robustly restore scroll to `target` after page transition.
- */
 function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> | null | any) {
   const lenisObj = lenisInst?.current || window.__lenis;
   if (lenisObj) {
@@ -266,13 +262,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     >
       <main>{children}</main>
 
-      {/* Layer 1: Warm Terra Cotta Accent Curtain */}
       <div
         ref={firstLayer}
         className="fixed inset-0 z-[9994] translate-y-full bg-accent pointer-events-none"
         style={{ willChange: 'transform' }}
       />
-      {/* Layer 2: Deep Dark Ink Curtain */}
       <div
         ref={secondLayer}
         className="fixed inset-0 z-[9995] translate-y-full bg-ink pointer-events-none"

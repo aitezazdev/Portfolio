@@ -92,7 +92,6 @@ export default function AmbientGeometry() {
       parentSection.addEventListener('mouseleave', handleMouseLeave);
     }
 
-    // IntersectionObserver to pause RAF loop when canvas is scrolled off-screen
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
@@ -174,7 +173,6 @@ export default function AmbientGeometry() {
       }
       ctx.fill();
 
-      // Batch line drawing
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(196, 93, 62, 0.08)';
       ctx.lineWidth = 0.5;

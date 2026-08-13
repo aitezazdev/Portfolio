@@ -16,7 +16,6 @@ export default function CustomCursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const delayedMouse = useRef({ x: 0, y: 0 });
 
-  // Disable entirely on touch devices or when user prefers reduced motion
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch || reduced) return;
@@ -31,11 +30,9 @@ export default function CustomCursor() {
     };
   }, [enabled]);
 
-  // Restore native cursor on path change
   useEffect(() => {
     if (!enabled) return;
     document.body.classList.remove('cursor-disabled');
-    // (cursor-none is still served via CSS body:not(.cursor-disabled) *)
 
     const cursorDot = cursorDotRef.current;
     const cursorOutline = cursorOutlineRef.current;
@@ -61,9 +58,6 @@ export default function CustomCursor() {
       yPercent: -50,
     });
 
-    // Use gsap.ticker instead of a separate RAF loop
-    // Guard against HMR double-registration
-    const tickId = Symbol('cursor-tick');
     const tick = () => {
       delayedMouse.current.x += (mouse.current.x - delayedMouse.current.x) * 0.15;
       delayedMouse.current.y += (mouse.current.y - delayedMouse.current.y) * 0.15;
@@ -81,7 +75,6 @@ export default function CustomCursor() {
     };
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Interactive element hover states
     let currentHoveredEl: HTMLElement | null = null;
 
     const cursorLeave = () => {

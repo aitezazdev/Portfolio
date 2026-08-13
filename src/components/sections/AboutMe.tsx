@@ -20,7 +20,6 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // IntersectionObserver for lazy loading video & auto-pause off-screen
   useEffect(() => {
     const video = videoRef.current;
     const container = containerRef.current;
@@ -145,7 +144,6 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
                   />
                 </video>
 
-                {/* Subtle gradient overlay to match site aesthetic */}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent pointer-events-none" />
               </div>
             </div>

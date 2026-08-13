@@ -10,7 +10,6 @@ interface ContactRequestBody {
   message?: string;
 }
 
-// Memory-backed IP rate limiter (5 requests per 15 minutes)
 const ipCache = new Map<string, { count: number; expires: number }>();
 
 function isRateLimited(ip: string): boolean {
@@ -152,7 +151,6 @@ export async function POST(request: Request) {
         },
       );
 
-    // Name validations
     const trimmedName = name.trim();
     if (trimmedName.length < 2) {
       return NextResponse.json(
@@ -167,7 +165,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Message validations
     const trimmedMessage = message.trim();
     if (trimmedMessage.length < 30) {
       return NextResponse.json(

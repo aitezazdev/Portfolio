@@ -91,7 +91,6 @@ const HomeBanner = () => {
       </span>
     ));
 
-  // Set initial hidden positions (or visible if preloader already finished)
   useEffect(() => {
     if (reduced) return;
     const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
@@ -122,12 +121,10 @@ const HomeBanner = () => {
     }
   }, [reduced]);
 
-  // Listen for preloader completion to trigger entrance animation
   useEffect(() => {
     const handlePreloaderComplete = () => {
       if (reduced) return;
 
-      // 1. Heading Letters Stagger Wave ("Aitezaz Sikandar")
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
         const letters = nameRef.current.querySelectorAll('.letter-wrapper');
@@ -143,7 +140,6 @@ const HomeBanner = () => {
         }
       }
 
-      // 2. Subtitle Paragraph
       if (paragraphRef.current) {
         gsap.to(paragraphRef.current, {
           y: 0,
@@ -154,7 +150,6 @@ const HomeBanner = () => {
         });
       }
 
-      // 3. Role Ticker
       if (tickerRef.current) {
         gsap.to(tickerRef.current, {
           y: 0,
@@ -165,7 +160,6 @@ const HomeBanner = () => {
         });
       }
 
-      // 4. CTA Buttons (staggered cascade across button elements)
       if (buttonsRef.current) {
         const btnElements = buttonsRef.current.children;
         if (btnElements.length) {
@@ -247,7 +241,6 @@ const HomeBanner = () => {
     });
   };
 
-  // Mouse spotlight
   useEffect(() => {
     if (reduced) return;
     const handleMouseMove = (e: MouseEvent) => {

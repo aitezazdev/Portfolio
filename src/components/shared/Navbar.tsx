@@ -281,7 +281,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
 
 
 
-  // Initial scroll position check — determines whether nav should hide on mount
   useEffect(() => {
     if (hamburgerOnly) return;
     const checkScrollPosition = () => {
@@ -293,7 +292,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     return () => clearTimeout(timer);
   }, [hamburgerOnly, isReady]);
 
-  // Set initial positions based on scroll state & preloader state
   useEffect(() => {
     if (hamburgerOnly) {
       if (hamburgerRef.current) {
@@ -349,7 +347,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     }
   }, [hamburgerOnly, shouldHideNav]);
 
-  // Synchronized entry animation after preloader completes
   useEffect(() => {
     if (hamburgerOnly) return;
     const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
@@ -376,7 +373,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     return () => window.removeEventListener('preloaderComplete', handlePreloaderComplete);
   }, [hamburgerOnly]);
 
-  // Scroll-triggered: slide nav up on scroll, show hamburger in about section
   useEffect(() => {
     if (hamburgerOnly) return;
     if (!hasAnimated || isTransitioning) return;

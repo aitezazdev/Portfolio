@@ -9,9 +9,6 @@ import AnimatedHeading from '@/components/ui/AnimateHeading';
 import { getAllProjects } from '@/lib/projects';
 import { Project } from '@/lib/projects';
 
-/* ─────────────────────────────────────────────
-   DESKTOP: Hover-preview cursor hook
-───────────────────────────────────────────── */
 const useHoverPreview = (
   containerRef: React.RefObject<HTMLDivElement | null>,
   onScrollLeave: () => void
@@ -159,9 +156,6 @@ const useHoverPreview = (
   return { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering };
 };
 
-/* ─────────────────────────────────────────────
-   MOBILE: Editorial Contained-Image Cards
-───────────────────────────────────────────── */
 interface MobileSnapProjectsProps {
   projects: Project[];
   router: ReturnType<typeof useRouter>;
@@ -465,9 +459,6 @@ export default function ProjectsPage() {
       ref={containerRef}
       className="relative w-full bg-cream text-charcoal overflow-hidden"
     >
-      {/* ═══════════════════════════════════════
-          DESKTOP
-      ══════════════════════════════════════ */}
       <div className="hidden md:block py-24 md:py-32 px-6 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
         <div className="mb-12">
           <AnimatedHeading

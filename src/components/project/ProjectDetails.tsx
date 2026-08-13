@@ -27,7 +27,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
   return (
     <section className="min-h-screen bg-[#080807] text-white px-6 sm:px-8 md:px-12 lg:px-16 py-12 md:py-20 relative">
       <div className="max-w-6xl mx-auto">
-      {/* Back Button */}
       <div>
         <Link
           href="/"
@@ -40,7 +39,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </Link>
       </div>
 
-      {/* Header & External Links */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-6 mb-6 md:mb-0">
           <AnimatedHeading
@@ -73,7 +71,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
           </div>
         </div>
 
-        {/* Mobile External Links */}
         <div className="flex md:hidden gap-4 mt-4">
           {project.github && (
             <a
@@ -100,7 +97,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </div>
       </div>
 
-      {/* Tech Stack */}
       <div className="mb-6 mt-4">
         <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Tech Stack</strong>
         <AnimateDescription
@@ -109,7 +105,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         />
       </div>
 
-      {/* Description */}
       <div className="mb-6">
         <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Description</strong>
         <AnimateDescription
@@ -118,7 +113,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         />
       </div>
 
-      {/* My Role */}
       {project.myRole?.length > 0 && (
         <div className="mb-10">
           <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">My Role</strong>
@@ -132,7 +126,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </div>
       )}
 
-      {/* Project Image Showcase with Skeleton + Progressive Fade-In */}
       <div className="flex flex-col gap-12 mb-16">
         {project.images?.map((img, i) => {
           const isLoaded = loadedImages[i];
@@ -141,7 +134,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
               key={`${project.slug}-img-${i}`}
               className="overflow-hidden rounded-xl bg-[#121211] border border-[#1f1f1d] relative aspect-[16/10] max-h-[750px] w-full"
             >
-              {/* Skeleton Placeholder while Image Loads */}
               {!isLoaded && (
                 <div className="absolute inset-0 bg-[#121211] flex flex-col items-center justify-center gap-3 z-0 animate-pulse">
                   <div className="w-3 h-3 rounded-full bg-[#C45D3E] shadow-[0_0_12px_rgba(196,93,62,0.6)]" />
@@ -151,7 +143,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
                 </div>
               )}
 
-              {/* High Resolution Project Screenshot */}
               <a
                 href={img}
                 target="_blank"
@@ -177,7 +168,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
         })}
       </div>
 
-      {/* Footer Contact CTA & Scroll to Top */}
       <div className="relative flex justify-center py-8">
         <div className="text-center">
           <p className="text-muted text-lg">Have a project in mind?</p>
