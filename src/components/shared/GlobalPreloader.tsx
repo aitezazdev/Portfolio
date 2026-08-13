@@ -19,9 +19,11 @@ export const preloaderWords = [
 export const slideUp: Variants = {
   initial: {
     top: 0,
+    backgroundColor: '#141516',
   },
   exit: {
     top: '-100vh',
+    backgroundColor: 'rgba(20, 21, 22, 0)',
     transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 },
   },
 };
@@ -39,8 +41,8 @@ export const fade: Variants = {
 export default function GlobalPreloader() {
   const [index, setIndex] = useState(0);
   const [dimension, setDimension] = useState<{ width: number; height: number }>({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+    width: typeof window !== 'undefined' ? window.innerWidth : 1920,
+    height: typeof window !== 'undefined' ? window.innerHeight : 1080,
   });
 
   useEffect(() => {
@@ -90,30 +92,26 @@ export default function GlobalPreloader() {
       variants={slideUp}
       initial="initial"
       exit="exit"
-      className="fixed inset-0 z-[99999] flex items-center justify-center cursor-wait text-cream select-none pointer-events-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#141516] cursor-wait text-cream select-none pointer-events-auto"
     >
-      {dimension.width > 0 && (
-        <>
-          <motion.div
-            variants={fade}
-            initial="initial"
-            animate="enter"
-            className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10"
-          >
-            <Dot size={48} className="me-2 text-accent animate-pulse" />
-            <p className="tracking-wide">{preloaderWords[index]}</p>
-          </motion.div>
+      <motion.div
+        variants={fade}
+        initial="initial"
+        animate="enter"
+        className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10"
+      >
+        <Dot size={48} className="me-2 text-accent animate-pulse" />
+        <p className="tracking-wide">{preloaderWords[index]}</p>
+      </motion.div>
 
-          <svg className="absolute top-0 -z-10 h-[calc(100%+300px)] w-full pointer-events-none">
-            <motion.path
-              className="fill-[#141516]"
-              variants={curve}
-              initial="initial"
-              exit="exit"
-            />
-          </svg>
-        </>
-      )}
+      <svg className="absolute top-0 -z-10 h-[calc(100%+300px)] w-full pointer-events-none">
+        <motion.path
+          className="fill-[#141516]"
+          variants={curve}
+          initial="initial"
+          exit="exit"
+        />
+      </svg>
     </motion.div>
   );
 }
