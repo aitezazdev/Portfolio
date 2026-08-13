@@ -37,8 +37,8 @@ export const fade: Variants = {
 export default function GlobalPreloader() {
   const [index, setIndex] = useState(0);
   const [dimension, setDimension] = useState<{ width: number; height: number }>({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1920,
-    height: typeof window !== 'undefined' ? window.innerHeight : 1080,
+    width: 1920,
+    height: 1080,
   });
 
   useEffect(() => {
