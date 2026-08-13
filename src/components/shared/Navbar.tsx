@@ -7,6 +7,7 @@ import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
 import Lenis from '@studio-freight/lenis';
+import { safeSessionStorage } from '@/utils/storage';
 
 interface AnimatedHamburgerProps {
   isOpen: boolean;
@@ -281,7 +282,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const isTransitioning = stage === 'entering' || stage === 'leaving';
 
   useEffect(() => {
-    const hasShownPreloader = sessionStorage.getItem('preloader-shown');
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
@@ -303,7 +304,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     return () => clearTimeout(timer);
   }, [hamburgerOnly, isReady]);
 
-  // Set initial positions based on scroll state
+  // Set initial positions based on scroll state & preloader state
   useEffect(() => {
     if (hamburgerOnly) {
       if (hamburgerRef.current) {
@@ -342,14 +343,23 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       }
     }
 
-    if (logo) gsap.set(logo, { x: 0, opacity: 1 });
-    if (linksContainer) {
-      const links = linksContainer.querySelectorAll('li');
-      gsap.set(links, { y: 0, opacity: 1 });
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
+    if (hasShownPreloader) {
+      if (logo) gsap.set(logo, { y: 0, opacity: 1 });
+      if (linksContainer) {
+        const links = linksContainer.querySelectorAll('li');
+        gsap.set(links, { y: 0, opacity: 1 });
+      }
+    } else {
+      if (logo) gsap.set(logo, { y: -40, opacity: 0 });
+      if (linksContainer) {
+        const links = linksContainer.querySelectorAll('li');
+        gsap.set(links, { y: -30, opacity: 0 });
+      }
     }
   }, [hamburgerOnly, shouldHideNav]);
 
-  // Entry animation after preloader + page transition
+  // Synchronized entry animation after preloader completes
   useEffect(() => {
     if (hamburgerOnly) return;
     if (!preloaderComplete || !isReady || isTransitioning) return;
@@ -361,18 +371,26 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
 
     const logo = logoRef.current;
     const linksContainer = linksContainerRef.current;
+    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
 
-    const timer = setTimeout(() => {
-      if (logo) {
-        gsap.to(logo, { x: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.3 });
-      }
+    if (hasShownPreloader) {
+      if (logo) gsap.set(logo, { y: 0, opacity: 1 });
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.to(links, { y: 0, opacity: 1, duration: 1, stagger: 0.3, ease: 'power2.out', delay: 0.5 });
+        gsap.set(links, { y: 0, opacity: 1 });
       }
       setHasAnimated(true);
-    }, 100);
-    return () => clearTimeout(timer);
+      return;
+    }
+
+    if (logo) {
+      gsap.to(logo, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.1 });
+    }
+    if (linksContainer) {
+      const links = linksContainer.querySelectorAll('li');
+      gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power3.out', delay: 0.2 });
+    }
+    setHasAnimated(true);
   }, [preloaderComplete, isReady, hasAnimated, hamburgerOnly, isTransitioning, shouldHideNav]);
 
   // Scroll-triggered: slide nav up on scroll, show hamburger in about section
