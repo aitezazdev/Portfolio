@@ -77,24 +77,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    // Initial page load dual curtain exit animation
-    if (firstLayer.current && secondLayer.current) {
-      gsap.set(firstLayer.current, { y: '0%' });
-      gsap.set(secondLayer.current, { y: '0%' });
-
-      const timer = setTimeout(() => {
-        const tl = gsap.timeline({
-          onComplete: () => {
-            safeSessionStorage.setItem('preloader-shown', 'true');
-            window.dispatchEvent(new CustomEvent('preloaderComplete'));
-          },
-        });
-        tl.fromTo(secondLayer.current, { y: '0%' }, { y: '-100%', duration: 0.5, ease: 'circ.inOut' })
-          .fromTo(firstLayer.current, { y: '0%' }, { y: '-100%', duration: 0.5, ease: 'circ.inOut' }, '<50%');
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
   }, []);
 
   useEffect(() => {
