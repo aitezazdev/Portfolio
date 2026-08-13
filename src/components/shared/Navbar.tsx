@@ -356,11 +356,11 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       const linksContainer = linksContainerRef.current;
 
       if (logo) {
-        gsap.to(logo, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.05 });
+        gsap.to(logo, { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out', delay: 0.05 });
       }
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.to(links, { y: 0, opacity: 1, duration: 0.75, stagger: 0.12, ease: 'power3.out', delay: 0.15 });
+        gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.12 });
       }
       setHasAnimated(true);
     };

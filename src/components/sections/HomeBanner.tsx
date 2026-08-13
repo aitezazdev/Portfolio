@@ -100,17 +100,25 @@ const HomeBanner = () => {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
       }
-      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+      [paragraphRef, tickerRef].forEach((ref) => {
         if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
       });
+      if (buttonsRef.current) {
+        gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
+        gsap.set(buttonsRef.current.children, { y: 0, opacity: 1 });
+      }
     } else {
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
       }
-      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
+      [paragraphRef, tickerRef].forEach((ref) => {
         if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
       });
+      if (buttonsRef.current) {
+        gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
+        gsap.set(buttonsRef.current.children, { y: 25, opacity: 0 });
+      }
     }
   }, [reduced]);
 
@@ -119,6 +127,7 @@ const HomeBanner = () => {
     const handlePreloaderComplete = () => {
       if (reduced) return;
 
+      // 1. Heading Letters Stagger Wave ("Aitezaz Sikandar")
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
         const letters = nameRef.current.querySelectorAll('.letter-wrapper');
@@ -126,20 +135,58 @@ const HomeBanner = () => {
           gsap.to(letters, {
             y: '0%',
             opacity: 1,
-            duration: 0.8,
-            stagger: 0.04,
+            duration: 0.75,
+            stagger: 0.035,
             ease: 'power3.out',
-            delay: 0.05,
+            delay: 0.1,
           });
         }
       }
 
-      const tl = gsap.timeline({ delay: 0.35, ease: 'power3.out' });
-      [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-        if (ref.current) {
-          tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
+      // 2. Subtitle Paragraph
+      if (paragraphRef.current) {
+        gsap.to(paragraphRef.current, {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          ease: 'power3.out',
+          delay: 0.45,
+        });
+      }
+
+      // 3. Role Ticker
+      if (tickerRef.current) {
+        gsap.to(tickerRef.current, {
+          y: 0,
+          opacity: 1,
+          duration: 0.65,
+          ease: 'power3.out',
+          delay: 0.65,
+        });
+      }
+
+      // 4. CTA Buttons (staggered cascade across button elements)
+      if (buttonsRef.current) {
+        const btnElements = buttonsRef.current.children;
+        if (btnElements.length) {
+          gsap.to(btnElements, {
+            y: 0,
+            opacity: 1,
+            duration: 0.65,
+            stagger: 0.1,
+            ease: 'power3.out',
+            delay: 0.85,
+          });
+        } else {
+          gsap.to(buttonsRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 0.65,
+            ease: 'power3.out',
+            delay: 0.85,
+          });
         }
-      });
+      }
     };
 
     window.addEventListener('preloaderComplete', handlePreloaderComplete);
