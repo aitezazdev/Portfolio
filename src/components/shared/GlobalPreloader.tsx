@@ -6,9 +6,10 @@ import { motion, Variants } from 'framer-motion';
 export const preloaderWords = [
   'السلام علیکم', // Urdu
   'नमस्ते',       // Hindi
+  'Hola',         // Spanish
   'مرحباً',        // Arabic
   'په خیر راغلي',  // Pashto
-  'Hello',         // English
+  'Welcome',      // English
 ];
 
 export const slideUp: Variants = {
