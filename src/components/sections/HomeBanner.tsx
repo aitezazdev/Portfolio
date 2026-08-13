@@ -5,7 +5,6 @@ import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
-import { safeSessionStorage } from '@/utils/storage';
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
   ssr: false,
@@ -76,8 +75,6 @@ const HomeBanner = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const innerContentRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
-  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
-  const isFirstLoadRef = useRef<boolean>(false);
   const reduced = useReducedMotion();
 
   const splitText = (text: string) =>
@@ -94,12 +91,11 @@ const HomeBanner = () => {
       </span>
     ));
 
-  // Set initial hidden positions or immediate visible positions on route return
+  // Set initial hidden positions (or visible if preloader already finished)
   useEffect(() => {
     if (reduced) return;
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
-      isFirstLoadRef.current = false;
+    const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
+    if (isDone) {
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -107,9 +103,7 @@ const HomeBanner = () => {
       [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
         if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
       });
-      setPreloaderComplete(true);
     } else {
-      isFirstLoadRef.current = true;
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -120,65 +114,37 @@ const HomeBanner = () => {
     }
   }, [reduced]);
 
-  // Listen for preloader exit completion
+  // Listen for preloader completion to trigger entrance animation
   useEffect(() => {
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
-      setPreloaderComplete(true);
-    } else {
-      const handler = () => {
-        isFirstLoadRef.current = true;
-        setPreloaderComplete(true);
-      };
-      window.addEventListener('preloaderComplete', handler);
-      return () => window.removeEventListener('preloaderComplete', handler);
-    }
-  }, []);
+    const handlePreloaderComplete = () => {
+      if (reduced) return;
 
-  // Animate home screen elements after preloader finishes
-  useEffect(() => {
-    if (!preloaderComplete || reduced) return;
-
-    if (!isFirstLoadRef.current) {
       if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
+        const letters = nameRef.current.querySelectorAll('.letter-wrapper');
+        if (letters.length) {
+          gsap.to(letters, {
+            y: '0%',
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: 'power3.out',
+            delay: 0.05,
+          });
+        }
       }
+
+      const tl = gsap.timeline({ delay: 0.35, ease: 'power3.out' });
       [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-        if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
+        if (ref.current) {
+          tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
+        }
       });
-      return;
-    }
+    };
 
-    if (nameRef.current) {
-      gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-      const letters = nameRef.current.querySelectorAll('.letter-wrapper');
-      if (letters.length) {
-        gsap.to(letters, {
-          y: '0%',
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.04,
-          ease: 'power3.out',
-          delay: 0.1,
-        });
-      }
-    }
-
-    const tl = gsap.timeline({
-      delay: 0.35,
-      ease: 'power3.out',
-      onComplete: () => {
-        safeSessionStorage.setItem('preloader-shown', 'true');
-      },
-    });
-
-    [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
-      if (ref.current) {
-        tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
-      }
-    });
-  }, [preloaderComplete, reduced]);
+    window.addEventListener('preloaderComplete', handlePreloaderComplete);
+    return () => window.removeEventListener('preloaderComplete', handlePreloaderComplete);
+  }, [reduced]);
 
   const handleMouseEnter = () => {
     if (reduced || !nameRef.current) return;

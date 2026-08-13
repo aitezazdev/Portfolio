@@ -6,7 +6,12 @@ import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import GlobalPreloader from '@/components/shared/GlobalPreloader';
 import CustomCursor from '@/components/shared/CustomCursor';
 import Providers from './providers';
-import { safeSessionStorage } from '@/utils/storage';
+
+declare global {
+  interface Window {
+    __preloaderDone?: boolean;
+  }
+}
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +24,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
     );
 
-    safeSessionStorage.removeItem('preloader-shown');
+    if (typeof window !== 'undefined') {
+      window.__preloaderDone = false;
+    }
 
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -31,6 +38,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const handleExitComplete = useCallback(() => {
     setShowCursor(true);
+    if (typeof window !== 'undefined') {
+      window.__preloaderDone = true;
+    }
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
 

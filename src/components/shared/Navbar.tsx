@@ -273,7 +273,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const logoRef = useRef<HTMLElement>(null);
   const linksContainerRef = useRef<HTMLUListElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const [shouldHideNav, setShouldHideNav] = useState<boolean>(false);
   const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
@@ -343,8 +342,8 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       }
     }
 
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
+    const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
+    if (isDone) {
       if (logo) gsap.set(logo, { y: 0, opacity: 1 });
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
@@ -362,36 +361,23 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   // Synchronized entry animation after preloader completes
   useEffect(() => {
     if (hamburgerOnly) return;
-    if (!preloaderComplete || !isReady || isTransitioning) return;
-    if (hasAnimated) return;
-    if (shouldHideNav) {
-      setHasAnimated(true);
-      return;
-    }
+    const handlePreloaderComplete = () => {
+      const logo = logoRef.current;
+      const linksContainer = linksContainerRef.current;
 
-    const logo = logoRef.current;
-    const linksContainer = linksContainerRef.current;
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-
-    if (hasShownPreloader) {
-      if (logo) gsap.set(logo, { y: 0, opacity: 1 });
+      if (logo) {
+        gsap.to(logo, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.05 });
+      }
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.set(links, { y: 0, opacity: 1 });
+        gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power3.out', delay: 0.15 });
       }
       setHasAnimated(true);
-      return;
-    }
+    };
 
-    if (logo) {
-      gsap.to(logo, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.1 });
-    }
-    if (linksContainer) {
-      const links = linksContainer.querySelectorAll('li');
-      gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power3.out', delay: 0.2 });
-    }
-    setHasAnimated(true);
-  }, [preloaderComplete, isReady, hasAnimated, hamburgerOnly, isTransitioning, shouldHideNav]);
+    window.addEventListener('preloaderComplete', handlePreloaderComplete);
+    return () => window.removeEventListener('preloaderComplete', handlePreloaderComplete);
+  }, [hamburgerOnly]);
 
   // Scroll-triggered: slide nav up on scroll, show hamburger in about section
   useEffect(() => {
