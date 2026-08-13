@@ -90,7 +90,7 @@ export default function GlobalPreloader() {
       variants={slideUp}
       initial="initial"
       exit="exit"
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#141516] cursor-wait text-cream select-none overflow-hidden"
+      className="fixed inset-0 z-[99999] flex items-center justify-center cursor-wait text-cream select-none pointer-events-auto"
     >
       {dimension.width > 0 && (
         <>
@@ -98,7 +98,7 @@ export default function GlobalPreloader() {
             variants={fade}
             initial="initial"
             animate="enter"
-            className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6]"
+            className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10"
           >
             <Dot size={48} className="me-2 text-accent animate-pulse" />
             <p className="tracking-wide">{preloaderWords[index]}</p>

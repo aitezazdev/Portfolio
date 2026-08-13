@@ -159,7 +159,13 @@ const HomeBanner = () => {
       }
     }
 
-    const tl = gsap.timeline({ delay: 0.5, ease: 'power3.out' });
+    const tl = gsap.timeline({
+      delay: 0.45,
+      ease: 'power3.out',
+      onComplete: () => {
+        safeSessionStorage.setItem('preloader-shown', 'true');
+      },
+    });
     [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
       if (ref.current) {
         tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
