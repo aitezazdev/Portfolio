@@ -77,6 +77,7 @@ const HomeBanner = () => {
   const innerContentRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
   const [preloaderComplete, setPreloaderComplete] = useState<boolean>(false);
+  const isFirstLoadRef = useRef<boolean>(false);
   const reduced = useReducedMotion();
 
   const splitText = (text: string) =>
@@ -98,6 +99,7 @@ const HomeBanner = () => {
     if (reduced) return;
     const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
     if (hasShownPreloader) {
+      isFirstLoadRef.current = false;
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -107,6 +109,7 @@ const HomeBanner = () => {
       });
       setPreloaderComplete(true);
     } else {
+      isFirstLoadRef.current = true;
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -123,7 +126,10 @@ const HomeBanner = () => {
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
-      const handler = () => setPreloaderComplete(true);
+      const handler = () => {
+        isFirstLoadRef.current = true;
+        setPreloaderComplete(true);
+      };
       window.addEventListener('preloaderComplete', handler);
       return () => window.removeEventListener('preloaderComplete', handler);
     }
@@ -132,8 +138,8 @@ const HomeBanner = () => {
   // Animate home screen elements after preloader finishes
   useEffect(() => {
     if (!preloaderComplete || reduced) return;
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
+
+    if (!isFirstLoadRef.current) {
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
@@ -162,7 +168,11 @@ const HomeBanner = () => {
     const tl = gsap.timeline({
       delay: 0.35,
       ease: 'power3.out',
+      onComplete: () => {
+        safeSessionStorage.setItem('preloader-shown', 'true');
+      },
     });
+
     [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
       if (ref.current) {
         tl.to(ref.current, { y: 0, opacity: 1, duration: 0.8 }, '-=0.5');
