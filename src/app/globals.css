@@ -188,17 +188,17 @@ body.menu-open {
   background: linear-gradient(to left, #0F0E0C, transparent);
 }
 
-/* ── Targeted Custom cursor ── */
-body.custom-cursor-active a,
-body.custom-cursor-active button,
-body.custom-cursor-active [role='button'],
-body.custom-cursor-active [data-cursor] {
-  cursor: none !important;
+/* ── Custom cursor — hide default OS arrow cursor globally when custom cursor is active ── */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
 }
 
-body.cursor-disabled a,
-body.cursor-disabled button {
-  cursor: pointer;
+body.cursor-disabled,
+body.cursor-disabled * {
+  cursor: auto !important;
 }
 
 html {
