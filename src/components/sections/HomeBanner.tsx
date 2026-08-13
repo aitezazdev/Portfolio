@@ -117,19 +117,15 @@ const HomeBanner = () => {
     }
   }, [reduced]);
 
-  // Listen for preloader exit start or completion
+  // Listen for preloader exit completion
   useEffect(() => {
     const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
     if (hasShownPreloader) {
       setPreloaderComplete(true);
     } else {
       const handler = () => setPreloaderComplete(true);
-      window.addEventListener('preloaderStartExit', handler);
       window.addEventListener('preloaderComplete', handler);
-      return () => {
-        window.removeEventListener('preloaderStartExit', handler);
-        window.removeEventListener('preloaderComplete', handler);
-      };
+      return () => window.removeEventListener('preloaderComplete', handler);
     }
   }, []);
 
@@ -158,17 +154,14 @@ const HomeBanner = () => {
           duration: 0.8,
           stagger: 0.04,
           ease: 'power3.out',
-          delay: 0.35,
+          delay: 0.1,
         });
       }
     }
 
     const tl = gsap.timeline({
-      delay: 0.6,
+      delay: 0.35,
       ease: 'power3.out',
-      onComplete: () => {
-        safeSessionStorage.setItem('preloader-shown', 'true');
-      },
     });
     [paragraphRef, tickerRef, buttonsRef].forEach((ref) => {
       if (ref.current) {
