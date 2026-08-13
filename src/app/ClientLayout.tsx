@@ -20,6 +20,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     const timer = setTimeout(() => {
       setIsLoading(false);
+      window.dispatchEvent(new CustomEvent('preloaderStartExit'));
       window.scrollTo(0, 0);
     }, 2000);
 
