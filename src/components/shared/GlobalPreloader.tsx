@@ -2,18 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
-import { Dot } from 'lucide-react';
 
 export const preloaderWords = [
-  'Hello',
-  'Bonjour',
-  'Ciao',
-  'Olà',
-  'سلام',
-  'やあ',
-  'Hallå',
-  'Guten tag',
-  'Hallo',
+  'السلام علیکم', // Urdu
+  'नमस्ते',       // Hindi
+  'مرحباً',        // Arabic
+  'په خیر راغلي',  // Pashto
+  'Hello',         // English
 ];
 
 export const slideUp: Variants = {
@@ -63,7 +58,7 @@ export default function GlobalPreloader() {
       () => {
         setIndex((prev) => prev + 1);
       },
-      index === 0 ? 500 : 250
+      index === 0 ? 400 : 300
     );
     return () => clearTimeout(timeout);
   }, [index]);
@@ -100,7 +95,6 @@ export default function GlobalPreloader() {
         animate="enter"
         className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10"
       >
-        <Dot size={48} className="me-2 text-accent animate-pulse" />
         <p className="tracking-wide">{preloaderWords[index]}</p>
       </motion.div>
 
