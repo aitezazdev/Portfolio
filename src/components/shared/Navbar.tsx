@@ -339,6 +339,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         const links = linksContainer.querySelectorAll('li');
         gsap.set(links, { y: 0, opacity: 1 });
       }
+      setHasAnimated(true);
     } else {
       if (logo) gsap.set(logo, { y: -40, opacity: 0 });
       if (linksContainer) {
@@ -351,6 +352,12 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   // Synchronized entry animation after preloader completes
   useEffect(() => {
     if (hamburgerOnly) return;
+    const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
+    if (isDone) {
+      setHasAnimated(true);
+      return;
+    }
+
     const handlePreloaderComplete = () => {
       const logo = logoRef.current;
       const linksContainer = linksContainerRef.current;
