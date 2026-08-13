@@ -7,7 +7,6 @@ import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
 import Lenis from '@studio-freight/lenis';
-import { safeSessionStorage } from '@/utils/storage';
 
 interface AnimatedHamburgerProps {
   isOpen: boolean;
@@ -280,16 +279,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const { stage, isReady } = useTransitionState();
   const isTransitioning = stage === 'entering' || stage === 'leaving';
 
-  useEffect(() => {
-    const hasShownPreloader = safeSessionStorage.getItem('preloader-shown');
-    if (hasShownPreloader) {
-      setPreloaderComplete(true);
-    } else {
-      const handler = () => setPreloaderComplete(true);
-      window.addEventListener('preloaderComplete', handler);
-      return () => window.removeEventListener('preloaderComplete', handler);
-    }
-  }, []);
+
 
   // Initial scroll position check — determines whether nav should hide on mount
   useEffect(() => {
@@ -366,11 +356,11 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       const linksContainer = linksContainerRef.current;
 
       if (logo) {
-        gsap.to(logo, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.05 });
+        gsap.to(logo, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.05 });
       }
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power3.out', delay: 0.15 });
+        gsap.to(links, { y: 0, opacity: 1, duration: 0.75, stagger: 0.12, ease: 'power3.out', delay: 0.15 });
       }
       setHasAnimated(true);
     };
