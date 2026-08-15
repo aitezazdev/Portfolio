@@ -347,13 +347,13 @@ const HomeBanner = () => {
                 onClick={() => handleScroll('projects')}
                 topText="PROJECTS"
                 bottomText="VIEW WORK →"
-                variant="dark"
+                variant="primary"
               />
               <AnimatedButton
                 onClick={() => handleScroll('contact')}
                 topText="CONTACT"
                 bottomText="GET IN TOUCH →"
-                variant="light"
+                variant="dark"
               />
               <AnimatedButton
                 onClick={() => window.open('/01_aitezaz_resume.pdf', '_blank')}

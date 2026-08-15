@@ -34,36 +34,36 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   switch (variant) {
     case 'light':
       bgColor = 'bg-transparent';
-      textColor = 'text-elevated';
-      borderColor = 'border-2 border-elevated';
-      rippleColor = 'rgba(42, 42, 42, 0.1)';
-      hoverBgColor = 'rgba(42, 42, 42, 0.05)';
+      textColor = 'text-[#141516]';
+      borderColor = 'border border-[#141516]/25';
+      rippleColor = 'rgba(20, 21, 22, 0.1)';
+      hoverBgColor = 'rgba(20, 21, 22, 0.06)';
       originalBgColor = 'transparent';
       break;
     case 'primary':
       bgColor = 'bg-accent';
       textColor = 'text-white';
-      borderColor = '';
-      rippleColor = 'rgba(255,255,255,0.2)';
-      hoverBgColor = '#A84B30';
+      borderColor = 'border border-[#C45D3E]';
+      rippleColor = 'rgba(255,255,255,0.25)';
+      hoverBgColor = '#b85133';
       originalBgColor = '#C45D3E';
       break;
     case 'outline':
       bgColor = 'bg-transparent';
       textColor = 'text-warm';
-      borderColor = 'border border-muted';
-      rippleColor = 'rgba(97, 92, 86, 0.1)';
-      hoverBgColor = 'rgba(97, 92, 86, 0.05)';
+      borderColor = 'border border-warm/30';
+      rippleColor = 'rgba(196, 93, 62, 0.15)';
+      hoverBgColor = 'rgba(196, 93, 62, 0.08)';
       originalBgColor = 'transparent';
       break;
     case 'dark':
     default:
-      bgColor = 'bg-elevated';
-      textColor = 'text-white';
-      borderColor = '';
+      bgColor = 'bg-[#141516]';
+      textColor = 'text-[#f0ede6]';
+      borderColor = 'border border-white/10';
       rippleColor = 'rgba(255, 255, 255, 0.15)';
-      hoverBgColor = '#3b3b3b';
-      originalBgColor = '#2a2a2a';
+      hoverBgColor = '#242422';
+      originalBgColor = '#141516';
       break;
   }
 
@@ -127,7 +127,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleButtonMouseLeave}
         disabled={disabled}
-        className={`relative text-xs md:text-sm outline-none overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-block ${className}`}
+        className={`relative text-xs md:text-sm outline-none overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-flex items-center justify-center ${className}`}
         style={{ transformOrigin: 'center' }}
         {...props}
       >

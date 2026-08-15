@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Link } from 'next-transition-router';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
+import AnimatedButton from '@/components/ui/AnimatedButton';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import { Project } from '@/lib/projects';
 
@@ -42,11 +43,6 @@ export default function ProjectDetails({ project }: { project: Project }) {
       <div className="mb-8 md:mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/[0.08]">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="font-mono text-xs uppercase tracking-widest text-accent px-3 py-1 rounded-full bg-accent/10 border border-accent/20">
-                {project.year}
-              </span>
-            </div>
             <AnimatedHeading
               text={project.title}
               className="text-[clamp(1.75rem,5vw,3.8rem)] font-black tracking-tight leading-[1.15] uppercase text-white"
@@ -56,30 +52,49 @@ export default function ProjectDetails({ project }: { project: Project }) {
           </div>
 
           {(project.liveUrl || project.github) && (
-            <div className="flex flex-wrap items-center gap-3 pt-2 md:pt-0">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-2 md:pt-0">
               {project.liveUrl && (
-                <a
+                <AnimatedButton
+                  as="a"
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-accent hover:bg-accent-light text-white font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg shadow-accent/20 hover:scale-105"
-                  aria-label="Live Demo"
-                >
-                  <span>Live Demo</span>
-                  <FaExternalLinkAlt className="text-xs" />
-                </a>
+                  topText={
+                    <span className="flex items-center gap-2">
+                      <span>LIVE DEMO</span>
+                      <FaExternalLinkAlt className="text-[11px]" />
+                    </span>
+                  }
+                  bottomText={
+                    <span className="flex items-center gap-2">
+                      <span>EXPLORE SITE</span>
+                      <span className="text-xs">↗</span>
+                    </span>
+                  }
+                  variant="primary"
+                />
               )}
               {project.github && (
-                <a
+                <AnimatedButton
+                  as="a"
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-elevated-dark border border-border-subtle hover:border-white/40 text-light hover:text-white font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105"
-                  aria-label="GitHub Repository"
-                >
-                  <FaGithub className="text-base" />
-                  <span>Source Code</span>
-                </a>
+                  topText={
+                    <span className="flex items-center gap-2">
+                      <FaGithub className="text-sm" />
+                      <span>SOURCE CODE</span>
+                    </span>
+                  }
+                  bottomText={
+                    <span className="flex items-center gap-2">
+                      <FaGithub className="text-sm" />
+                      <span>VIEW GITHUB ↗</span>
+                    </span>
+                  }
+                  variant="dark"
+                  className="!border !border-white/15 hover:!border-white/40"
+                />
               )}
             </div>
           )}
