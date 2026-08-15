@@ -6,6 +6,8 @@ import { useTransitionState } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
+import { Code2 } from 'lucide-react';
+import Link from 'next/link';
 import Lenis from '@studio-freight/lenis';
 
 interface AnimatedHamburgerProps {
@@ -465,12 +467,29 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           style={navStyle}
         >
           <div className="w-full px-6 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
-            <strong
-              ref={logoRef}
-              className="text-warm text-lg font-sans tracking-wide font-medium"
+            <Link
+              ref={logoRef as any}
+              href="/#top"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('/#top');
+              }}
+              className="group flex items-center cursor-pointer select-none py-1 text-warm"
+              aria-label="Aitezaz Sikandar Home"
             >
-              Aitezaz.
-            </strong>
+              <div className="flex items-center justify-center transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:rotate-[360deg] text-warm group-hover:text-accent">
+                <Code2 className="w-4 h-4" />
+              </div>
+              <div className="relative ms-2 flex items-center overflow-hidden whitespace-nowrap text-warm text-lg font-sans tracking-wide font-medium transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:pe-20">
+                <span>aitezaz</span>
+                <span className="ps-0.5 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-x-full group-hover:opacity-0">
+                  dev
+                </span>
+                <span className="absolute left-[4.6rem] ps-1.5 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-x-[4.6rem]">
+                  sikandar
+                </span>
+              </div>
+            </Link>
             <ul
               ref={linksContainerRef}
               className="flex gap-6 text-warm text-base font-sans font-medium uppercase tracking-wider"
@@ -500,9 +519,28 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           style={navStyle}
         >
           <div className="flex justify-between items-center px-6 sm:px-8 h-20 w-full">
-            <strong className="text-warm text-lg font-sans tracking-wide font-medium">
-              Aitezaz.
-            </strong>
+            <Link
+              href="/#top"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('/#top');
+              }}
+              className="group flex items-center cursor-pointer select-none py-1 text-warm"
+              aria-label="Aitezaz Sikandar Home"
+            >
+              <div className="flex items-center justify-center transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:rotate-[360deg] text-warm group-hover:text-accent">
+                <Code2 className="w-4 h-4" />
+              </div>
+              <div className="relative ms-2 flex items-center overflow-hidden whitespace-nowrap text-warm text-lg font-sans tracking-wide font-medium transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:pe-20">
+                <span>aitezaz</span>
+                <span className="ps-0.5 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-x-full group-hover:opacity-0">
+                  dev
+                </span>
+                <span className="absolute left-[4.6rem] ps-1.5 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-x-[4.6rem]">
+                  sikandar
+                </span>
+              </div>
+            </Link>
             <div className="w-10 h-10" />
           </div>
         </nav>
