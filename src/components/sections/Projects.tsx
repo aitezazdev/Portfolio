@@ -307,8 +307,8 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
               </div>
 
               <h3
-                className="mc-title font-black uppercase leading-none text-white mb-5"
-                style={{ fontSize: 'clamp(1.75rem,7.5vw,2.6rem)', letterSpacing: '-0.025em' }}
+                className="mc-title font-black uppercase leading-tight text-white mb-5"
+                style={{ fontSize: 'clamp(1.5rem,6.5vw,2.4rem)', letterSpacing: '-0.025em' }}
               >
                 {project.title}
               </h3>

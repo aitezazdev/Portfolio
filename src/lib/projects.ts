@@ -73,7 +73,7 @@ const projects: Project[] = [
   {
     id: 3,
     slug: 'ecommerce',
-    title: 'Ecommerce-Next.js',
+    title: 'E-Commerce Store',
     year: '2026',
     tech: ['Next.js 16', 'React 19', 'TypeScript', 'Redux Toolkit', 'Stripe', 'MongoDB', 'Tailwind CSS'],
     description:
@@ -101,7 +101,7 @@ const projects: Project[] = [
   {
     id: 4,
     slug: 'finance',
-    title: 'Finance Tracker',
+    title: 'Personal Finance Tracker',
     year: '2025',
     tech: ['React', 'Express', 'Node.js', 'MongoDB', 'JWT Auth', 'Recharts.js', 'Tailwind CSS'],
     description:
@@ -129,7 +129,7 @@ const projects: Project[] = [
   {
     id: 5,
     slug: 'blog',
-    title: 'Blog App',
+    title: 'Modern Blog Space',
     year: '2025',
     tech: ['React', 'Express', 'Node.js', 'MongoDB', 'JWT Auth', 'Cloudinary', 'Tailwind CSS'],
     description:

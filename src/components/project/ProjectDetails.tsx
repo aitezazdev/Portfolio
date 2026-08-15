@@ -30,101 +30,112 @@ export default function ProjectDetails({ project }: { project: Project }) {
       <div>
         <Link
           href="/"
-          className="inline-flex items-center gap-3 text-muted hover:text-white transition-all duration-300 group mb-12"
+          className="inline-flex items-center gap-2.5 text-muted hover:text-white transition-all duration-300 group mb-8 md:mb-12"
         >
-          <span className="text-lg md:text-2xl transform group-hover:-translate-x-1 transition-transform duration-300">
+          <span className="text-base md:text-xl transform group-hover:-translate-x-1 transition-transform duration-300">
             ←
           </span>
-          <span className="text-sm md:text-lg font-medium">Back</span>
+          <span className="font-mono text-xs md:text-sm uppercase tracking-widest">Back to Projects</span>
         </Link>
       </div>
 
-      <div className="mb-6">
-        <div className="flex items-start justify-between gap-6 mb-6 md:mb-0">
-          <AnimatedHeading
-            text={project.title}
-            className="text-[clamp(2.2rem,6vw,4.5rem)] font-black tracking-tight leading-none uppercase flex-1 text-white"
-          />
-          <div className="hidden md:flex gap-4 pt-2">
-            {project.github && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-14 h-14 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-white hover:border-[#3a3a38] hover:bg-[#252523] transition-all duration-300"
-                aria-label="GitHub Repository"
-              >
-                <FaGithub className="text-2xl" />
-              </a>
-            )}
-            {project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-14 h-14 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-white hover:border-[#3a3a38] hover:bg-[#252523] transition-all duration-300"
-                aria-label="Live Demo"
-              >
-                <FaExternalLinkAlt className="text-xl" />
-              </a>
-            )}
+      <div className="mb-8 md:mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/[0.08]">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="font-mono text-xs uppercase tracking-widest text-accent px-3 py-1 rounded-full bg-accent/10 border border-accent/20">
+                {project.year}
+              </span>
+            </div>
+            <AnimatedHeading
+              text={project.title}
+              className="text-[clamp(1.75rem,5vw,3.8rem)] font-black tracking-tight leading-[1.15] uppercase text-white"
+              containerClassName="mb-0"
+              showLine={false}
+            />
+          </div>
+
+          {(project.liveUrl || project.github) && (
+            <div className="flex flex-wrap items-center gap-3 pt-2 md:pt-0">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-accent hover:bg-accent-light text-white font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg shadow-accent/20 hover:scale-105"
+                  aria-label="Live Demo"
+                >
+                  <span>Live Demo</span>
+                  <FaExternalLinkAlt className="text-xs" />
+                </a>
+              )}
+              {project.github && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-elevated-dark border border-border-subtle hover:border-white/40 text-light hover:text-white font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105"
+                  aria-label="GitHub Repository"
+                >
+                  <FaGithub className="text-base" />
+                  <span>Source Code</span>
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+        <div className="md:col-span-4 space-y-6">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-widest text-warm block mb-3">
+              Tech Stack
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {project.tech?.map((t) => (
+                <span
+                  key={t}
+                  className="font-mono text-xs px-3 py-1.5 rounded-lg bg-surface-mid border border-white/[0.08] text-cream"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="flex md:hidden gap-4 mt-4">
-          {project.github && (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-white hover:border-[#3a3a38] hover:bg-[#252523] transition-all duration-300"
-              aria-label="GitHub Repository"
-            >
-              <FaGithub className="text-xl" />
-            </a>
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-muted hover:text-white hover:border-[#3a3a38] hover:bg-[#252523] transition-all duration-300"
-              aria-label="Live Demo"
-            >
-              <FaExternalLinkAlt className="text-lg" />
-            </a>
+        <div className="md:col-span-8 space-y-6">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-widest text-warm block mb-2">
+              Description
+            </span>
+            <AnimateDescription
+              text={project.description}
+              className="text-sm sm:text-base md:text-lg text-light/80 font-sans leading-relaxed"
+            />
+          </div>
+
+          {project.myRole?.length > 0 && (
+            <div className="pt-4">
+              <span className="font-mono text-xs uppercase tracking-widest text-warm block mb-3">
+                Key Contributions & Role
+              </span>
+              <ul className="space-y-2.5">
+                {project.myRole.map((role, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-sm sm:text-base text-light/80 font-sans leading-relaxed"
+                  >
+                    <span className="text-accent mt-1 text-xs">◆</span>
+                    <span>{role}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </div>
-
-      <div className="mb-6 mt-4">
-        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Tech Stack</strong>
-        <AnimateDescription
-          text={project.tech?.join(', ')}
-          className="text-sm sm:text-base md:text-lg text-muted font-sans"
-        />
-      </div>
-
-      <div className="mb-6">
-        <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">Description</strong>
-        <AnimateDescription
-          text={project.description}
-          className="text-sm sm:text-base md:text-lg text-muted font-sans"
-        />
-      </div>
-
-      {project.myRole?.length > 0 && (
-        <div className="mb-10">
-          <strong className="text-sm sm:text-base md:text-xl font-bold block mb-1">My Role</strong>
-          <ul className="list-disc list-inside text-muted font-sans mt-2 space-y-2">
-            {project.myRole.map((role, i) => (
-              <li key={i} className="text-sm sm:text-base md:text-lg">
-                {role}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       <div className="flex flex-col gap-12 mb-16">
         {project.images?.map((img, i) => {

@@ -7,9 +7,16 @@ import { useReducedMotion } from '@/lib/useReducedMotion';
 interface AnimatedHeadingProps {
   text: string;
   className?: string;
+  containerClassName?: string;
+  showLine?: boolean;
 }
 
-const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' }) => {
+const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
+  text,
+  className = '',
+  containerClassName = 'mb-8',
+  showLine = true,
+}) => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const visibleRef = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotion();
@@ -87,7 +94,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' 
   }, [text, reduced]);
 
   return (
-    <div className="mb-8">
+    <div className={containerClassName}>
       <div className="overflow-hidden">
         <h2 ref={headingRef} className={`font-display font-bold uppercase tracking-tighter ${className}`}>
           {/* Visually hidden — real text for screen readers */}
@@ -98,7 +105,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ text, className = '' 
           </span>
         </h2>
       </div>
-      <div className="h-1 w-24 bg-gradient-to-r from-accent to-transparent mt-1" />
+      {showLine && <div className="h-1 w-24 bg-gradient-to-r from-accent to-transparent mt-1" />}
     </div>
   );
 };
