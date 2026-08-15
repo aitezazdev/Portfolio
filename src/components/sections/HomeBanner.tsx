@@ -347,7 +347,7 @@ const HomeBanner = () => {
                 onClick={() => handleScroll('projects')}
                 topText="PROJECTS"
                 bottomText="VIEW WORK →"
-                variant="dark"
+                variant="primary"
               />
               <AnimatedButton
                 onClick={() => handleScroll('contact')}
