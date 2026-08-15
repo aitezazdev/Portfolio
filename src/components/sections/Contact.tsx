@@ -211,19 +211,21 @@ const Contact = () => {
               )}
             </div>
 
-            <button
-              type="submit"
-              disabled={isDisabled}
-              className="inline-block border-0 bg-transparent p-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <AnimatedButton
-                topText={isDisabled ? 'PLEASE WAIT...' : 'SEND MESSAGE'}
-                bottomText={isDisabled ? 'PROCESSING' : 'PROCEED →'}
-                variant="primary"
-                as="span"
-                className={isDisabled ? 'pointer-events-none' : ''}
-              />
-            </button>
+            <div className="w-full flex justify-center md:justify-start">
+              <button
+                type="submit"
+                disabled={isDisabled}
+                className="inline-block border-0 bg-transparent p-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <AnimatedButton
+                  topText={isDisabled ? 'PLEASE WAIT...' : 'SEND MESSAGE'}
+                  bottomText={isDisabled ? 'PROCESSING' : 'PROCEED →'}
+                  variant="primary"
+                  as="span"
+                  className={isDisabled ? 'pointer-events-none' : ''}
+                />
+              </button>
+            </div>
           </form>
 
           <div className="mt-16 pt-12 border-t border-elevated-dark flex flex-col md:flex-row items-center justify-between gap-6">

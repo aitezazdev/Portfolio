@@ -42,17 +42,17 @@ export default function ProjectDetails({ project }: { project: Project }) {
 
       <div className="mb-8 md:mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/[0.08]">
-          <div className="flex-1">
+          <div className="flex-1 w-full text-center md:text-left">
             <AnimatedHeading
               text={project.title}
-              className="text-[clamp(1.75rem,5vw,3.8rem)] font-black tracking-tight leading-[1.15] uppercase text-white"
-              containerClassName="mb-0"
+              className="text-[clamp(1.75rem,5vw,3.8rem)] font-black tracking-tight leading-[1.15] uppercase text-white text-center md:text-left"
+              containerClassName="mb-0 text-center md:text-left"
               showLine={false}
             />
           </div>
 
           {(project.liveUrl || project.github) && (
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-2 md:pt-0">
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-2.5 sm:gap-4 pt-2 md:pt-0 w-full md:w-auto">
               {project.liveUrl && (
                 <AnimatedButton
                   as="a"

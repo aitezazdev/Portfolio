@@ -328,21 +328,21 @@ const HomeBanner = () => {
           </h1>
         </div>
 
-        <div className="flex justify-center items-center py-1 md:py-3 px-4 sm:px-6">
-          <div className="max-w-xl text-center">
+        <div className="flex justify-center items-center py-1 md:py-3 px-4 sm:px-6 w-full">
+          <div className="max-w-xl w-full text-center mx-auto">
             <p
               ref={paragraphRef}
-              className="text-warm font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10"
+              className="text-warm font-sans text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10 text-center mx-auto"
             >
               Open to job opportunities worldwide. Passionate about building polished, intuitive,
               and thoughtful digital experiences that leave a mark.
             </p>
 
-            <div ref={tickerRef}>
+            <div ref={tickerRef} className="w-full flex justify-center">
               <RoleTicker />
             </div>
 
-            <div ref={buttonsRef} className="flex flex-row justify-center items-center gap-2 sm:gap-4 flex-wrap max-w-full px-2">
+            <div ref={buttonsRef} className="flex flex-row justify-center items-center gap-2.5 sm:gap-4 flex-wrap w-full max-w-full mx-auto px-2">
               <AnimatedButton
                 onClick={() => handleScroll('projects')}
                 topText="PROJECTS"

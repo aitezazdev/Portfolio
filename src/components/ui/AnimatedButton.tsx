@@ -120,7 +120,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   }, [disabled]);
 
   return (
-    <div ref={containerRef} className="inline-block md:p-8 md:-m-8 pointer-events-auto">
+    <div ref={containerRef} className="inline-flex justify-center items-center md:p-8 md:-m-8 pointer-events-auto">
       <Component
         ref={buttonRef}
         onClick={onClick}
