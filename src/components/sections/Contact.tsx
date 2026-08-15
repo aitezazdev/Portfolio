@@ -228,9 +228,9 @@ const Contact = () => {
             </div>
           </form>
 
-          <div className="mt-16 pt-12 border-t border-elevated-dark flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-warm mb-2 font-mono">
+          <div className="mt-16 pt-12 border-t border-elevated-dark flex flex-col items-center justify-center text-center w-full">
+            <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
+              <p className="text-xs uppercase tracking-widest text-warm mb-3 font-mono text-center">
                 Direct Contact
               </p>
 
@@ -249,15 +249,18 @@ const Contact = () => {
                     }, 2000);
                   }
                 }}
-                className="group relative inline-block cursor-none text-light font-display font-black uppercase leading-none hover:text-accent transition-colors duration-300 max-w-full whitespace-nowrap"
+                className="group relative inline-flex items-center justify-center cursor-pointer text-light font-display font-black uppercase leading-tight hover:text-accent transition-colors duration-300 max-w-full text-center"
                 style={{
-                  fontSize: 'clamp(1.1rem, 3.4vw, 4.5rem)',
-                  whiteSpace: 'nowrap',
+                  fontSize: 'clamp(1.1rem, 4.2vw, 3rem)',
                 }}
               >
-                aitezazsikandar@gmail.com
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
+                <span className="break-all sm:break-normal">aitezazsikandar@gmail.com</span>
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
               </button>
+
+              <span className="font-mono text-[11px] text-warm/70 uppercase tracking-widest mt-2 block text-center">
+                Click to copy email address
+              </span>
             </div>
           </div>
         </div>
