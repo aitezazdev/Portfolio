@@ -421,14 +421,16 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   }, [hasAnimated, hamburgerOnly, isTransitioning]);
 
   useEffect(() => {
-    if (!lenis) return;
-    if (isMenuOpen) {
-      lenis.stop();
-    } else {
-      lenis.start();
-      ScrollTrigger.refresh();
+    if (lenis) {
+      if (isMenuOpen) {
+        lenis.stop();
+      } else {
+        lenis.start();
+        ScrollTrigger.refresh();
+      }
     }
     document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    document.body.classList.toggle('menu-open', isMenuOpen);
   }, [isMenuOpen, lenis]);
 
   useEffect(() => {

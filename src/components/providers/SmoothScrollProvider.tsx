@@ -19,6 +19,23 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   const aliveRef = useRef<boolean>(false);
 
   useEffect(() => {
+    const isTouch =
+      typeof window !== 'undefined' &&
+      ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
+
+    if (isTouch) {
+      // On mobile / touch devices, native momentum scrolling is smoother, faster, and uninhibited
+      aliveRef.current = true;
+      const refreshTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 500);
+
+      return () => {
+        aliveRef.current = false;
+        clearTimeout(refreshTimer);
+      };
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -30,10 +47,11 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     window.__lenis = lenis;
     aliveRef.current = true;
 
+    lenis.on('scroll', ScrollTrigger.update);
+
     function raf(time: number) {
       if (!aliveRef.current) return;  // ← protects against HMR stale callback
       lenis.raf(time * 1000);
-      ScrollTrigger.update();
     }
 
     gsap.ticker.add(raf);
@@ -45,6 +63,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
 
     return () => {
       aliveRef.current = false;
+      lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(raf);
       delete window.__lenis;
       lenis.destroy();

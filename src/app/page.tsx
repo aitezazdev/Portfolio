@@ -79,7 +79,7 @@ export default function Home() {
     <>
       <Navbar />
       <main className="relative">
-        <section ref={homeRef} className="sticky top-0 left-0 w-full h-screen">
+        <section ref={homeRef} className="sticky top-0 left-0 w-full min-h-[100dvh] md:h-screen">
           <HomeBanner />
         </section>
         <div id="about-section-wrapper" className="relative bg-black">

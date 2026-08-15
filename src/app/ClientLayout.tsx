@@ -26,17 +26,29 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     if (typeof window !== 'undefined') {
       window.__preloaderDone = false;
+      document.body.classList.add('preloader-active');
     }
 
     const timer = setTimeout(() => {
       setIsLoading(false);
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('preloader-active');
+      }
       window.scrollTo(0, 0);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('preloader-active');
+      }
+    };
   }, []);
 
   const handleExitComplete = useCallback(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('preloader-active');
+    }
     setShowCursor(true);
     if (typeof window !== 'undefined') {
       window.__preloaderDone = true;

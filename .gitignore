@@ -43,4 +43,5 @@ next-env.d.ts
 
 # misc
 .claude/
+messages.txt
 

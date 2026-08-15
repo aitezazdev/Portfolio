@@ -64,12 +64,17 @@ body.menu-open {
   height: 100vh;
 }
 
-.html {
-  scroll-behavior: smooth;
+body.preloader-active {
+  overflow: hidden;
 }
 
-.preloader-active {
-  overflow: hidden;
+html {
+  touch-action: pan-y;
+}
+
+body {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 ::selection {
