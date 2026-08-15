@@ -37,8 +37,8 @@ const projects: Project[] = [
       '/Projects/c-study/06_CSP.webp',
     ],
     hoverImage: '/Projects/c-study/02_CSP.webp',
-    github: 'https://github.com/aitezazdev/collaborative-study-platform',
-    liveUrl: '',
+    github: '',
+    liveUrl: 'https://collaborative-study-platform-uni.vercel.app/',
   },
   {
     id: 2,
