@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import AnimatedLink from '@/components/ui/AnimateLink';
+import Magnetic from '@/components/ui/Magnetic';
 import { FaArrowUp } from 'react-icons/fa';
 import { useHandleLinkClick } from '@/lib/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
@@ -72,17 +73,19 @@ const Footer = () => {
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               {links.map((link) => (
-                <AnimatedLink key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(link.href);
-                    }}
-                  >
-                    {link.name}
-                  </a>
-                </AnimatedLink>
+                <Magnetic key={link.href} strength={0.3}>
+                  <AnimatedLink>
+                    <a
+                      href={link.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLinkClick(link.href);
+                      }}
+                    >
+                      {link.name}
+                    </a>
+                  </AnimatedLink>
+                </Magnetic>
               ))}
             </ul>
           </div>
@@ -92,26 +95,20 @@ const Footer = () => {
               Socials
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
-              <AnimatedLink>
-                <a href="https://linkedin.com/in/aitezaz-sikandar" target="_blank" rel="noopener noreferrer">
-                  Linkedin
-                </a>
-              </AnimatedLink>
-              <AnimatedLink>
-                <a href="https://instagram.com/ur_zaz" target="_blank" rel="noopener noreferrer">
-                  Instagram
-                </a>
-              </AnimatedLink>
-              <AnimatedLink>
-                <a href="https://github.com/aitezazdev" target="_blank" rel="noopener noreferrer">
-                  Github
-                </a>
-              </AnimatedLink>
-              <AnimatedLink>
-                <a href="https://github.com/aitezazdev/Portfolio" target="_blank" rel="noopener noreferrer">
-                  Source Code
-                </a>
-              </AnimatedLink>
+              {[
+                { label: 'Linkedin', href: 'https://linkedin.com/in/aitezaz-sikandar' },
+                { label: 'Instagram', href: 'https://instagram.com/ur_zaz' },
+                { label: 'Github', href: 'https://github.com/aitezazdev' },
+                { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
+              ].map((s) => (
+                <Magnetic key={s.label} strength={0.3}>
+                  <AnimatedLink>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer">
+                      {s.label}
+                    </a>
+                  </AnimatedLink>
+                </Magnetic>
+              ))}
             </ul>
           </div>
 
@@ -126,13 +123,15 @@ const Footer = () => {
         </div>
 
         <div className="flex justify-end">
-          <button
-            onClick={scrollToTop}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-footer-bg border border-footer-border flex items-center justify-center text-warm hover:text-accent hover:border-accent hover:bg-accent/10 transition-all duration-300 group focus:outline-none"
-            aria-label="Scroll to top"
-          >
-            <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
-          </button>
+          <Magnetic strength={0.4}>
+            <button
+              onClick={scrollToTop}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-footer-bg border border-footer-border flex items-center justify-center text-warm hover:text-accent hover:border-accent hover:bg-accent/10 transition-all duration-300 group focus:outline-none"
+              aria-label="Scroll to top"
+            >
+              <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
+            </button>
+          </Magnetic>
         </div>
       </div>
     </footer>

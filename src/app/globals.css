@@ -28,6 +28,8 @@
   --color-gray-btn: #524f4c;
   --color-footer-bg: #dfdfd9;
   --color-footer-border: #cfcfc8;
+  --ease-in-expo: cubic-bezier(0.1, 0, 0.3, 1);
+  --ease-custom: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 /* ── Reduced motion ── */

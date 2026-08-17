@@ -8,6 +8,8 @@ import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
 import Link from 'next/link';
 import Lenis from '@studio-freight/lenis';
+import { Copyright } from 'lucide-react';
+import Magnetic from '@/components/ui/Magnetic';
 
 interface AnimatedHamburgerProps {
   isOpen: boolean;
@@ -58,50 +60,34 @@ interface NavbarBrandProps {
 }
 
 const NavbarBrand: React.FC<NavbarBrandProps> = ({ logoRef, handleLinkClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-    <Link
-      ref={logoRef as any}
-      href="/#top"
-      onClick={(e) => {
-        e.preventDefault();
-        handleLinkClick('/#top');
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group flex items-center cursor-pointer select-none py-1 text-warm"
-      aria-label="Aitezaz Sikandar Home"
-    >
-      <div
-        className={`w-5 h-5 rounded-full border border-warm/80 flex items-center justify-center text-[10px] font-sans font-bold leading-none transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] select-none ${
-          isHovered ? 'rotate-[360deg] border-accent text-accent' : ''
-        }`}
+    <Magnetic strength={0.3}>
+      <Link
+        ref={logoRef as any}
+        href="/#top"
+        onClick={(e) => {
+          e.preventDefault();
+          handleLinkClick('/#top');
+        }}
+        className="group flex items-center cursor-pointer select-none py-1 text-warm"
+        aria-label="Aitezaz Sikandar Home"
       >
-        <span>A</span>
-      </div>
-      <div
-        className={`relative ms-2.5 flex items-center overflow-hidden whitespace-nowrap text-warm text-lg font-sans tracking-wide font-medium leading-none transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          isHovered ? 'pe-20' : ''
-        }`}
-      >
-        <span>aitezaz</span>
-        <span
-          className={`transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] inline-block ${
-            isHovered ? '-translate-x-12 opacity-0' : 'translate-x-0 opacity-100'
-          }`}
-        >
-          dev
-        </span>
-        <span
-          className={`absolute left-[102px] ps-1.5 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] inline-block ${
-            isHovered ? '-translate-x-[36px] opacity-100' : 'translate-x-0 opacity-0'
-          }`}
-        >
-          sikandar
-        </span>
-      </div>
-    </Link>
+        <div className="transition-transform duration-500 ease-in-expo group-hover:rotate-[360deg] flex items-center justify-center">
+          <Copyright className="w-[18px] h-[18px]" />
+        </div>
+        <div className="relative ms-2 flex items-center whitespace-nowrap text-warm text-lg font-sans tracking-wide font-medium leading-none">
+          <span>aitezaz</span>
+          <span className="relative inline-flex items-center overflow-hidden transition-all duration-500 ease-in-expo w-[32px] group-hover:w-[86px]">
+            <span className="transition-transform duration-500 ease-in-expo group-hover:-translate-x-full inline-block">
+              dev
+            </span>
+            <span className="absolute left-0 ps-1.5 transition-transform duration-500 ease-in-expo translate-x-full group-hover:translate-x-0 inline-block">
+              sikandar
+            </span>
+          </span>
+        </div>
+      </Link>
+    </Magnetic>
   );
 };
 
@@ -283,12 +269,14 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
         >
           <div className="space-y-1 text-left">
             <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
-            <a
-              href="mailto:aitezazsikandar@gmail.com"
-              className="text-muted hover:text-white text-sm transition-colors duration-200"
-            >
-              aitezazsikandar@gmail.com
-            </a>
+            <Magnetic strength={0.3}>
+              <a
+                href="mailto:aitezazsikandar@gmail.com"
+                className="text-muted hover:text-white text-sm transition-colors duration-200"
+              >
+                aitezazsikandar@gmail.com
+              </a>
+            </Magnetic>
           </div>
 
           <div className="flex gap-6 justify-start">
@@ -297,15 +285,16 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
               { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
               { label: 'LinkedIn', href: 'https://linkedin.com/in/aitezaz-sikandar' },
             ].map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-200 underline-offset-4 hover:underline"
-              >
-                {s.label}
-              </a>
+              <Magnetic key={s.label} strength={0.3}>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-200 underline-offset-4 hover:underline"
+                >
+                  {s.label}
+                </a>
+              </Magnetic>
             ))}
           </div>
         </div>
@@ -525,17 +514,19 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
               className="flex gap-6 text-warm text-base font-sans font-medium uppercase tracking-wider"
             >
               {links.filter((l) => !l.menuOnly).map((link) => (
-                <AnimatedLink key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(link.href);
-                    }}
-                  >
-                    {link.name}
-                  </a>
-                </AnimatedLink>
+                <Magnetic key={link.href} strength={0.3}>
+                  <AnimatedLink>
+                    <a
+                      href={link.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLinkClick(link.href);
+                      }}
+                    >
+                      {link.name}
+                    </a>
+                  </AnimatedLink>
+                </Magnetic>
               ))}
             </ul>
           </div>
