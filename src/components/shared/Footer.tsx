@@ -73,19 +73,17 @@ const Footer = () => {
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               {links.map((link) => (
-                <Magnetic key={link.href} strength={0.3}>
-                  <AnimatedLink>
-                    <a
-                      href={link.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleLinkClick(link.href);
-                      }}
-                    >
-                      {link.name}
-                    </a>
-                  </AnimatedLink>
-                </Magnetic>
+                <AnimatedLink key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </a>
+                </AnimatedLink>
               ))}
             </ul>
           </div>
@@ -101,13 +99,11 @@ const Footer = () => {
                 { label: 'Github', href: 'https://github.com/aitezazdev' },
                 { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
               ].map((s) => (
-                <Magnetic key={s.label} strength={0.3}>
-                  <AnimatedLink>
-                    <a href={s.href} target="_blank" rel="noopener noreferrer">
-                      {s.label}
-                    </a>
-                  </AnimatedLink>
-                </Magnetic>
+                <AnimatedLink key={s.label}>
+                  <a href={s.href} target="_blank" rel="noopener noreferrer">
+                    {s.label}
+                  </a>
+                </AnimatedLink>
               ))}
             </ul>
           </div>

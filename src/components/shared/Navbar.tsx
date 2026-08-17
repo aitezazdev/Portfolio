@@ -514,19 +514,17 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
               className="flex gap-6 text-warm text-base font-sans font-medium uppercase tracking-wider"
             >
               {links.filter((l) => !l.menuOnly).map((link) => (
-                <Magnetic key={link.href} strength={0.3}>
-                  <AnimatedLink>
-                    <a
-                      href={link.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleLinkClick(link.href);
-                      }}
-                    >
-                      {link.name}
-                    </a>
-                  </AnimatedLink>
-                </Magnetic>
+                <AnimatedLink key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </a>
+                </AnimatedLink>
               ))}
             </ul>
           </div>
