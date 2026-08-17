@@ -14,9 +14,6 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   compress: true,
-  experimental: {
-    optimizePackageImports: ['gsap', 'lucide-react', 'react-icons'],
-  },
   poweredByHeader: false,
   reactStrictMode: false,
 };
