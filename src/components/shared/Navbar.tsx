@@ -435,7 +435,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         if (nav) {
           gsap.to(nav, {
             y: -120,
-            duration: 0.35,
+            duration: 0.22,
             ease: 'power2.out',
             overwrite: 'auto',
           });
@@ -444,16 +444,16 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           opacity: 1,
           scale: 1,
           pointerEvents: 'auto',
-          duration: 0.4,
-          ease: 'back.out(1.7)',
+          duration: 0.2,
+          ease: 'power2.out',
           overwrite: 'auto',
         });
       } else {
         if (nav) {
           gsap.to(nav, {
             y: 0,
-            duration: 0.4,
-            ease: 'power3.out',
+            duration: 0.22,
+            ease: 'power2.out',
             overwrite: 'auto',
           });
         }
@@ -461,7 +461,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           opacity: 0,
           scale: 0,
           pointerEvents: 'none',
-          duration: 0.3,
+          duration: 0.18,
           ease: 'power2.in',
           overwrite: 'auto',
         });
@@ -473,6 +473,10 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     window.addEventListener('scroll', updateVisibility, { passive: true });
     window.addEventListener('resize', updateVisibility, { passive: true });
 
+    if (lenis) {
+      lenis.on('scroll', updateVisibility);
+    }
+
     const scrollTrigger = ScrollTrigger.create({
       start: 'top top',
       end: 'max',
@@ -482,9 +486,12 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     return () => {
       window.removeEventListener('scroll', updateVisibility);
       window.removeEventListener('resize', updateVisibility);
+      if (lenis) {
+        lenis.off('scroll', updateVisibility);
+      }
       scrollTrigger.kill();
     };
-  }, [hamburgerOnly, isMenuOpen, hasAnimated, isTransitioning]);
+  }, [hamburgerOnly, isMenuOpen, hasAnimated, isTransitioning, lenis]);
 
   useEffect(() => {
     if (lenis) {
