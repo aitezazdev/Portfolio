@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTransitionState } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
@@ -96,8 +97,6 @@ interface LinkItem {
   href: string;
   menuOnly?: boolean;
 }
-
-import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const menuSlideVariants: Variants = {
   initial: {
