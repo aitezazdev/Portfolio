@@ -391,129 +391,89 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   }, [hamburgerOnly]);
 
   useEffect(() => {
-    const nav = navRef.current;
-    const hamburger = hamburgerRef.current;
-    const mobileNav = mobileNavRef.current;
-    if (!hamburger) return;
-
     if (hamburgerOnly) {
-      gsap.set(hamburger, { opacity: 1, scale: 1, pointerEvents: 'auto' });
+      if (hamburgerRef.current) {
+        gsap.set(hamburgerRef.current, { opacity: 1, scale: 1 });
+      }
       return;
     }
 
+    const nav = navRef.current;
+    const hamburger = hamburgerRef.current;
+    const mobileNav = mobileNavRef.current;
+    if (!nav || !hamburger) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
+    const scrollProgress = Math.min(scrollY / 80, 1);
+
+    gsap.set(nav, { y: -120 * scrollProgress, opacity: 1 });
+    if (mobileNav) gsap.set(mobileNav, { y: -190 * scrollProgress, opacity: 1 });
+
     const isMobile = window.innerWidth < 768;
-
-    const updateVisibility = () => {
-      if (isMobile) {
-        gsap.set(hamburger, { opacity: 1, scale: 1, pointerEvents: 'auto' });
-        if (mobileNav) gsap.set(mobileNav, { y: 0, opacity: 1 });
-        return;
-      }
-
-      if (isMenuOpen) {
-        gsap.to(hamburger, {
-          opacity: 1,
-          scale: 1,
-          pointerEvents: 'auto',
-          duration: 0.2,
-          overwrite: 'auto',
-        });
-        return;
-      }
-
-      const scrollY = window.scrollY || window.pageYOffset;
+    if (isMobile) {
+      gsap.set(hamburger, { opacity: 1, scale: 1 });
+    } else {
       const aboutWrapper = document.getElementById('about-section-wrapper');
-      let isPastHero = false;
-
       if (aboutWrapper) {
         const aboutTop = aboutWrapper.getBoundingClientRect().top + scrollY;
-        isPastHero = scrollY >= aboutTop - 100;
-      } else {
-        isPastHero = scrollY >= window.innerHeight - 100;
-      }
-
-      if (isPastHero) {
-        if (nav) {
-          gsap.to(nav, {
-            y: -120,
-            duration: 0.22,
-            ease: 'power2.out',
-            overwrite: 'auto',
-          });
-        }
-        gsap.to(hamburger, {
-          opacity: 1,
-          scale: 1,
-          pointerEvents: 'auto',
-          duration: 0.2,
-          ease: 'power2.out',
-          overwrite: 'auto',
+        const shouldShowHamburger = scrollY >= aboutTop;
+        gsap.set(hamburger, {
+          opacity: shouldShowHamburger ? 1 : 0,
+          scale: shouldShowHamburger ? 1 : 0,
         });
       } else {
-        if (nav) {
-          gsap.to(nav, {
-            y: 0,
-            duration: 0.22,
-            ease: 'power2.out',
-            overwrite: 'auto',
-          });
-        }
-        gsap.to(hamburger, {
-          opacity: 0,
-          scale: 0,
-          pointerEvents: 'none',
-          duration: 0.18,
-          ease: 'power2.in',
-          overwrite: 'auto',
-        });
+        gsap.set(hamburger, { opacity: 0, scale: 0 });
       }
-    };
-
-    updateVisibility();
-
-    window.addEventListener('scroll', updateVisibility, { passive: true });
-    window.addEventListener('resize', updateVisibility, { passive: true });
-
-    if (lenis) {
-      lenis.on('scroll', updateVisibility);
     }
+  }, [hamburgerOnly]);
 
-    let aboutTrigger: ScrollTrigger | null = null;
+  useEffect(() => {
+    if (hamburgerOnly) return;
+    if (!hasAnimated || isTransitioning) return;
+
+    const nav = navRef.current;
+    const hamburger = hamburgerRef.current;
+    const mobileNav = mobileNavRef.current;
+    if (!nav || !hamburger) return;
+
+    const isMobile = window.innerWidth < 768;
+
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: 'body',
+      start: 'top top',
+      end: '+=80',
+      scrub: 0.5,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        gsap.to(nav, { y: -120 * progress, duration: 0 });
+        if (mobileNav) gsap.to(mobileNav, { y: -190 * progress, duration: 0 });
+      },
+    });
+
     const aboutWrapper = document.getElementById('about-section-wrapper');
+    let aboutTrigger: ScrollTrigger | null = null;
+
     if (aboutWrapper && !isMobile) {
       aboutTrigger = ScrollTrigger.create({
         trigger: aboutWrapper,
-        start: 'top 100px',
+        start: 'top top',
+        end: 'top -200px',
         onEnter: () => {
-          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
-          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
+          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' });
         },
         onLeaveBack: () => {
-          gsap.to(hamburger, { opacity: 0, scale: 0, duration: 0.18, ease: 'power2.in', pointerEvents: 'none' });
-          if (nav) gsap.to(nav, { y: 0, duration: 0.22, ease: 'power2.out' });
-        },
-        onEnterBack: () => {
-          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
-          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
-        },
-        onLeave: () => {
-          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
-          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
+          gsap.to(hamburger, { opacity: 0, scale: 0, duration: 0.3, ease: 'power2.in' });
         },
       });
+    } else if (isMobile) {
+      gsap.set(hamburger, { opacity: 1, scale: 1 });
     }
 
     return () => {
-      window.removeEventListener('scroll', updateVisibility);
-      window.removeEventListener('resize', updateVisibility);
-      if (lenis) {
-        lenis.off('scroll', updateVisibility);
-      }
-      if (aboutTrigger) {
-        aboutTrigger.kill();
-      }
+      scrollTrigger.kill();
+      if (aboutTrigger) aboutTrigger.kill();
     };
-  }, [hamburgerOnly, isMenuOpen, hasAnimated, isTransitioning, lenis]);
+  }, [hasAnimated, hamburgerOnly, isTransitioning]);
 
   useEffect(() => {
     if (lenis) {
@@ -601,8 +561,17 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         onClick={toggleMenu}
         className={`fixed top-5 md:top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full
           bg-elevated ${!hamburgerOnly ? 'md:bg-gray-btn' : ''}
-          flex items-center justify-center shadow-lg
-          ${!hamburgerOnly ? 'opacity-0 scale-0 md:opacity-0 md:scale-0 pointer-events-none' : 'opacity-100 scale-100'}`}
+          flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300`}
+        style={
+          hamburgerOnly
+            ? { opacity: 1, scale: 1 }
+            : {
+                opacity: isTransitioning ? 0 : 0,
+                scale: isTransitioning ? 0 : 0,
+                pointerEvents: isTransitioning ? 'none' : 'auto',
+                transition: 'opacity 0.5s ease-in-out',
+              }
+        }
         aria-label="Toggle menu"
         aria-expanded={isMenuOpen}
         aria-controls="fullscreen-menu"
