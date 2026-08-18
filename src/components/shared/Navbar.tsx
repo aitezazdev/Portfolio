@@ -401,9 +401,9 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       return;
     }
 
-    const updateVisibility = () => {
-      const isMobile = window.innerWidth < 768;
+    const isMobile = window.innerWidth < 768;
 
+    const updateVisibility = () => {
       if (isMobile) {
         gsap.set(hamburger, { opacity: 1, scale: 1, pointerEvents: 'auto' });
         if (mobileNav) gsap.set(mobileNav, { y: 0, opacity: 1 });
@@ -415,20 +415,21 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
           opacity: 1,
           scale: 1,
           pointerEvents: 'auto',
-          duration: 0.3,
+          duration: 0.2,
           overwrite: 'auto',
         });
         return;
       }
 
+      const scrollY = window.scrollY || window.pageYOffset;
       const aboutWrapper = document.getElementById('about-section-wrapper');
       let isPastHero = false;
+
       if (aboutWrapper) {
-        const rect = aboutWrapper.getBoundingClientRect();
-        isPastHero = rect.top <= 80;
+        const aboutTop = aboutWrapper.getBoundingClientRect().top + scrollY;
+        isPastHero = scrollY >= aboutTop - 100;
       } else {
-        const scrollY = window.scrollY || window.pageYOffset;
-        isPastHero = scrollY > window.innerHeight * 0.8;
+        isPastHero = scrollY >= window.innerHeight - 100;
       }
 
       if (isPastHero) {
@@ -477,11 +478,30 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       lenis.on('scroll', updateVisibility);
     }
 
-    const scrollTrigger = ScrollTrigger.create({
-      start: 'top top',
-      end: 'max',
-      onUpdate: () => updateVisibility(),
-    });
+    let aboutTrigger: ScrollTrigger | null = null;
+    const aboutWrapper = document.getElementById('about-section-wrapper');
+    if (aboutWrapper && !isMobile) {
+      aboutTrigger = ScrollTrigger.create({
+        trigger: aboutWrapper,
+        start: 'top 100px',
+        onEnter: () => {
+          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
+          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
+        },
+        onLeaveBack: () => {
+          gsap.to(hamburger, { opacity: 0, scale: 0, duration: 0.18, ease: 'power2.in', pointerEvents: 'none' });
+          if (nav) gsap.to(nav, { y: 0, duration: 0.22, ease: 'power2.out' });
+        },
+        onEnterBack: () => {
+          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
+          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
+        },
+        onLeave: () => {
+          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', pointerEvents: 'auto' });
+          if (nav) gsap.to(nav, { y: -120, duration: 0.22, ease: 'power2.out' });
+        },
+      });
+    }
 
     return () => {
       window.removeEventListener('scroll', updateVisibility);
@@ -489,7 +509,9 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
       if (lenis) {
         lenis.off('scroll', updateVisibility);
       }
-      scrollTrigger.kill();
+      if (aboutTrigger) {
+        aboutTrigger.kill();
+      }
     };
   }, [hamburgerOnly, isMenuOpen, hasAnimated, isTransitioning, lenis]);
 
@@ -579,12 +601,8 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         onClick={toggleMenu}
         className={`fixed top-5 md:top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full
           bg-elevated ${!hamburgerOnly ? 'md:bg-gray-btn' : ''}
-          flex items-center justify-center shadow-lg`}
-        style={
-          hamburgerOnly
-            ? { opacity: 1, transform: 'scale(1)', pointerEvents: 'auto' }
-            : { opacity: 0, transform: 'scale(0)', pointerEvents: 'none' }
-        }
+          flex items-center justify-center shadow-lg
+          ${!hamburgerOnly ? 'opacity-0 scale-0 md:opacity-0 md:scale-0 pointer-events-none' : 'opacity-100 scale-100'}`}
         aria-label="Toggle menu"
         aria-expanded={isMenuOpen}
         aria-controls="fullscreen-menu"
