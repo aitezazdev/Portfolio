@@ -147,36 +147,27 @@ const metaVariants: Variants = {
   exit: { y: 20, opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } },
 };
 
+const curveVariants: Variants = {
+  initial: {
+    d: 'M100 0 L200 0 L200 100 L100 100 Q-100 50 100 0',
+  },
+  enter: {
+    d: 'M100 0 L200 0 L200 100 L100 100 Q100 50 100 0',
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+  },
+  exit: {
+    d: 'M100 0 L200 0 L200 100 L100 100 Q-100 50 100 0',
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+  },
+};
+
 function MenuCurve() {
-  const [windowHeight, setWindowHeight] = useState<number>(0);
-
-  useEffect(() => {
-    setWindowHeight(window.innerHeight);
-    const handleResize = () => setWindowHeight(window.innerHeight);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const h = windowHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
-  const initialPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q-100 ${h / 2} 100 0`;
-  const targetPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q100 ${h / 2} 100 0`;
-
-  const curveVariants: Variants = {
-    initial: {
-      d: initialPath,
-    },
-    enter: {
-      d: targetPath,
-      transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
-    },
-    exit: {
-      d: initialPath,
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
-    },
-  };
-
   return (
-    <svg className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible">
+    <svg
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible will-change-transform"
+    >
       <motion.path
         variants={curveVariants}
         initial="initial"
@@ -223,7 +214,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
   return (
     <>
       <motion.div
-        className="fixed inset-0 z-[9980] bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[9980] bg-black/65"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -236,7 +227,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
         initial="initial"
         animate="enter"
         exit="exit"
-        className="fixed top-0 right-0 h-screen w-full md:w-[55%] z-[9981] bg-surface flex flex-col pointer-events-auto"
+        className="fixed top-0 right-0 h-screen w-full md:w-[55%] z-[9981] bg-surface flex flex-col pointer-events-auto will-change-transform transform-gpu"
         onClick={(e) => e.stopPropagation()}
       >
         <MenuCurve />
@@ -349,26 +340,48 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const { stage } = useTransitionState();
   const isTransitioning = stage === 'entering' || stage === 'leaving';
 
-
-
   useEffect(() => {
     if (hamburgerOnly) return;
     const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
+    const logo = logoRef.current;
+    const linksContainer = linksContainerRef.current;
+    const mobileNav = mobileNavRef.current;
+
     if (isDone) {
+      if (logo) gsap.set(logo, { y: 0, opacity: 1 });
+      if (linksContainer) {
+        const links = linksContainer.querySelectorAll('li');
+        gsap.set(links, { y: 0, opacity: 1 });
+      }
+      if (mobileNav) gsap.set(mobileNav, { y: 0, opacity: 1 });
       setHasAnimated(true);
       return;
     }
 
-    const handlePreloaderComplete = () => {
-      const logo = logoRef.current;
-      const linksContainer = linksContainerRef.current;
+    if (logo) gsap.set(logo, { y: -30, opacity: 0 });
+    if (linksContainer) {
+      const links = linksContainer.querySelectorAll('li');
+      gsap.set(links, { y: -30, opacity: 0 });
+    }
+    if (mobileNav) gsap.set(mobileNav, { y: -30, opacity: 0 });
 
+    const handlePreloaderComplete = () => {
       if (logo) {
-        gsap.to(logo, { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out', delay: 0.05 });
+        gsap.to(logo, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.1 });
       }
       if (linksContainer) {
         const links = linksContainer.querySelectorAll('li');
-        gsap.to(links, { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.12 });
+        gsap.to(links, {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.07,
+          ease: 'power3.out',
+          delay: 0.15,
+        });
+      }
+      if (mobileNav) {
+        gsap.to(mobileNav, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.1 });
       }
       setHasAnimated(true);
     };
@@ -389,7 +402,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     }
 
     const updateVisibility = () => {
-      const scrollY = window.scrollY || window.pageYOffset;
       const isMobile = window.innerWidth < 768;
 
       if (isMobile) {
@@ -409,7 +421,17 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         return;
       }
 
-      if (scrollY > 80) {
+      const aboutWrapper = document.getElementById('about-section-wrapper');
+      let isPastHero = false;
+      if (aboutWrapper) {
+        const rect = aboutWrapper.getBoundingClientRect();
+        isPastHero = rect.top <= 80;
+      } else {
+        const scrollY = window.scrollY || window.pageYOffset;
+        isPastHero = scrollY > window.innerHeight * 0.8;
+      }
+
+      if (isPastHero) {
         if (nav) {
           gsap.to(nav, {
             y: -120,
