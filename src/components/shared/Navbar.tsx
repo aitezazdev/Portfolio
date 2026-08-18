@@ -108,6 +108,7 @@ interface FullscreenMenuProps {
 const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning, onClose, handleLinkClick, links }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const curvePathRef = useRef<SVGPathElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const linksRef = useRef<(HTMLDivElement | null)[]>([]);
   const metaRef = useRef<HTMLDivElement>(null);
@@ -115,6 +116,20 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
   const lineBotRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const magnetRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [windowHeight, setWindowHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setWindowHeight(window.innerHeight);
+    };
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  const h = windowHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
+  const initialPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q-100 ${h / 2} 100 0`;
+  const targetPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q100 ${h / 2} 100 0`;
 
   useEffect(() => {
     if (!menuRef.current) return;
@@ -124,25 +139,33 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
       gsap.set(panelRef.current, { display: 'flex' });
       gsap.set(overlayRef.current, { display: 'block' });
 
+      if (curvePathRef.current) {
+        gsap.set(curvePathRef.current, { attr: { d: initialPath } });
+      }
+
       const tl = gsap.timeline();
       tlRef.current = tl;
 
-      tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
-      tl.fromTo(panelRef.current, { x: '100%' }, { x: '0%', duration: 0.38, ease: 'power4.out' }, '-=0.2');
-      tl.fromTo(lineTopRef.current, { scaleX: 0, transformOrigin: 'left' }, { scaleX: 1, duration: 0.3, ease: 'power3.out' }, '-=0.2');
-      tl.fromTo(lineBotRef.current, { scaleX: 0, transformOrigin: 'right' }, { scaleX: 1, duration: 0.3, ease: 'power3.out' }, '-=0.25');
+      tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
+      tl.fromTo(panelRef.current, { x: 'calc(100% + 100px)' }, { x: '0%', duration: 0.85, ease: 'snellenberg' }, 0);
+      if (curvePathRef.current) {
+        tl.fromTo(curvePathRef.current, { attr: { d: initialPath } }, { attr: { d: targetPath }, duration: 0.85, ease: 'snellenberg' }, 0);
+      }
+      tl.fromTo(lineTopRef.current, { scaleX: 0, transformOrigin: 'left' }, { scaleX: 1, duration: 0.5, ease: 'snellenberg' }, 0.25);
+      tl.fromTo(lineBotRef.current, { scaleX: 0, transformOrigin: 'right' }, { scaleX: 1, duration: 0.5, ease: 'snellenberg' }, 0.3);
 
       linksRef.current.forEach((link, i) => {
         if (!link) return;
         const chars = link.querySelectorAll('.char');
         tl.fromTo(
-          chars, { y: '120%', opacity: 0 },
-          { y: '0%', opacity: 1, duration: 0.35, stagger: 0.015, ease: 'power4.out' },
-          `-=${i === 0 ? 0.1 : 0.3}`,
+          chars,
+          { y: '120%', opacity: 0 },
+          { y: '0%', opacity: 1, duration: 0.45, stagger: 0.015, ease: 'snellenberg' },
+          0.2 + i * 0.05,
         );
       });
 
-      tl.fromTo(metaRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.22');
+      tl.fromTo(metaRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'snellenberg' }, 0.45);
     } else if (!isOpen) {
       if (tlRef.current) tlRef.current.kill();
 
@@ -154,19 +177,22 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
       });
       tlRef.current = tl;
 
-      tl.to(metaRef.current, { y: 15, opacity: 0, duration: 0.15, ease: 'power2.in' });
+      tl.to(metaRef.current, { y: 15, opacity: 0, duration: 0.2, ease: 'power2.in' }, 0);
 
-      linksRef.current.forEach((link, i) => {
+      linksRef.current.forEach((link) => {
         if (!link) return;
         const chars = link.querySelectorAll('.char');
-        tl.to(chars, { y: '-120%', opacity: 0, duration: 0.18, stagger: 0.01, ease: 'power3.in' }, i === 0 ? '-=0.05' : '-=0.15');
+        tl.to(chars, { y: '-120%', opacity: 0, duration: 0.22, stagger: 0.01, ease: 'power3.in' }, 0);
       });
 
-      tl.to([lineTopRef.current, lineBotRef.current], { scaleX: 0, duration: 0.18, ease: 'power2.in' }, '-=0.1');
-      tl.to(panelRef.current, { x: '100%', duration: 0.28, ease: 'power4.in' }, '-=0.12');
-      tl.to(overlayRef.current, { opacity: 0, duration: 0.18 }, '-=0.18');
+      tl.to([lineTopRef.current, lineBotRef.current], { scaleX: 0, duration: 0.2, ease: 'power2.in' }, 0.05);
+      tl.to(panelRef.current, { x: 'calc(100% + 100px)', duration: 0.8, ease: 'snellenberg' }, 0.08);
+      if (curvePathRef.current) {
+        tl.to(curvePathRef.current, { attr: { d: initialPath }, duration: 0.8, ease: 'snellenberg' }, 0.08);
+      }
+      tl.to(overlayRef.current, { opacity: 0, duration: 0.35, ease: 'power2.in' }, 0.45);
     }
-  }, [isOpen, isTransitioning]);
+  }, [isOpen, isTransitioning, initialPath, targetPath]);
 
   const handleMagneticMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
     const el = magnetRefs.current[index];
@@ -203,99 +229,110 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
 
       <div
         ref={panelRef}
-        className="fixed top-0 right-0 h-full w-full md:w-[55%] z-[9981] bg-surface flex flex-col overflow-hidden"
-        style={{ display: 'none', transform: 'translateX(100%)' }}
+        className="fixed top-0 right-0 h-full w-full md:w-[55%] z-[9981] bg-surface flex flex-col"
+        style={{ display: 'none', transform: 'translateX(calc(100% + 100px))' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          ref={lineTopRef}
-          className="absolute top-[72px] left-0 right-0 h-px bg-border-subtler"
-          style={{ transformOrigin: 'left', transform: 'scaleX(0)' }}
-        />
-        <div
-          ref={lineBotRef}
-          className="absolute bottom-[170px] md:bottom-[100px] left-0 right-0 h-px bg-border-subtler"
-          style={{ transformOrigin: 'right', transform: 'scaleX(0)' }}
-        />
-
-        <div className="flex justify-between items-center px-10 h-20 border-b border-elevated-dark">
-          <span className="text-gray-mid font-mono text-xs tracking-widest uppercase">Navigation</span>
-        </div>
-
-        <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2">
-          {links.map((link, i) => (
-            <div
-              key={link.href}
-              ref={(el) => { linksRef.current[i] = el; }}
-              className="overflow-hidden py-2"
-            >
-              <div
-                ref={(el) => { magnetRefs.current[i] = el; }}
-                onMouseMove={(e) => handleMagneticMouseMove(e, i)}
-                onMouseLeave={() => handleMagneticMouseLeave(i)}
-                className="inline-block"
-              >
-                <button
-                  onClick={() => handleLinkClick(link.href)}
-                  className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
-                >
-                  <span className="text-gray-mid font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-accent">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-cream hover:text-accent transition-colors duration-300 flex overflow-hidden">
-                    {link.name.split('').map((char, ci) => (
-                      <span
-                        key={ci}
-                        className="char inline-block"
-                        style={{ transform: 'translateY(120%)', opacity: 0 }}
-                      >
-                        {char === ' ' ? ' ' : char}
-                      </span>
-                    ))}
-                  </span>
-                  <span className="text-accent text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
-                    →
-                  </span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </nav>
-
-        <div
-          ref={metaRef}
-          className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] pl-20 pr-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
-          style={{ opacity: 0 }}
+        {/* Dennis Snellenberg curved SVG morph backdrop */}
+        <svg
+          className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible"
+          viewBox={`0 0 100 ${h}`}
+          preserveAspectRatio="none"
         >
-          <div className="space-y-1 text-left">
-            <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
-            <Magnetic strength={0.3}>
-              <a
-                href="mailto:aitezazsikandar@gmail.com"
-                className="text-muted hover:text-white text-sm transition-colors duration-200"
-              >
-                aitezazsikandar@gmail.com
-              </a>
-            </Magnetic>
+          <path ref={curvePathRef} d={initialPath} fill="#0d0d0c" />
+        </svg>
+
+        <div className="relative w-full h-full flex flex-col overflow-hidden">
+          <div
+            ref={lineTopRef}
+            className="absolute top-[72px] left-0 right-0 h-px bg-border-subtler"
+            style={{ transformOrigin: 'left', transform: 'scaleX(0)' }}
+          />
+          <div
+            ref={lineBotRef}
+            className="absolute bottom-[170px] md:bottom-[100px] left-0 right-0 h-px bg-border-subtler"
+            style={{ transformOrigin: 'right', transform: 'scaleX(0)' }}
+          />
+
+          <div className="flex justify-between items-center px-10 h-20 border-b border-elevated-dark">
+            <span className="text-gray-mid font-mono text-xs tracking-widest uppercase">Navigation</span>
           </div>
 
-          <div className="flex gap-6 justify-start">
-            {[
-              { label: 'GitHub', href: 'https://github.com/aitezazdev' },
-              { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
-              { label: 'LinkedIn', href: 'https://linkedin.com/in/aitezaz-sikandar' },
-            ].map((s) => (
-              <Magnetic key={s.label} strength={0.3}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-200 underline-offset-4 hover:underline"
+          <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2">
+            {links.map((link, i) => (
+              <div
+                key={link.href}
+                ref={(el) => { linksRef.current[i] = el; }}
+                className="overflow-hidden py-2"
+              >
+                <div
+                  ref={(el) => { magnetRefs.current[i] = el; }}
+                  onMouseMove={(e) => handleMagneticMouseMove(e, i)}
+                  onMouseLeave={() => handleMagneticMouseLeave(i)}
+                  className="inline-block"
                 >
-                  {s.label}
+                  <button
+                    onClick={() => handleLinkClick(link.href)}
+                    className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
+                  >
+                    <span className="text-gray-mid font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-accent">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-cream hover:text-accent transition-colors duration-300 flex overflow-hidden">
+                      {link.name.split('').map((char, ci) => (
+                        <span
+                          key={ci}
+                          className="char inline-block"
+                          style={{ transform: 'translateY(120%)', opacity: 0 }}
+                        >
+                          {char === ' ' ? '\u00A0' : char}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="text-accent text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                      →
+                    </span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </nav>
+
+          <div
+            ref={metaRef}
+            className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] pl-20 pr-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
+            style={{ opacity: 0 }}
+          >
+            <div className="space-y-1 text-left">
+              <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
+              <Magnetic strength={0.3}>
+                <a
+                  href="mailto:aitezazsikandar@gmail.com"
+                  className="text-muted hover:text-white text-sm transition-colors duration-200"
+                >
+                  aitezazsikandar@gmail.com
                 </a>
               </Magnetic>
-            ))}
+            </div>
+
+            <div className="flex gap-6 justify-start">
+              {[
+                { label: 'GitHub', href: 'https://github.com/aitezazdev' },
+                { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
+                { label: 'LinkedIn', href: 'https://linkedin.com/in/aitezaz-sikandar' },
+              ].map((s) => (
+                <Magnetic key={s.label} strength={0.3}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-200 underline-offset-4 hover:underline"
+                  >
+                    {s.label}
+                  </a>
+                </Magnetic>
+              ))}
+            </div>
           </div>
         </div>
       </div>

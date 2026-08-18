@@ -1,12 +1,12 @@
-/**
- * Single entry-point for GSAP plugin registration.
- * Import this once (usually in ClientLayout) so every component
- * can use ScrollTrigger / useGSAP without re-registering.
- */
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { CustomEase } from 'gsap/CustomEase';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, useGSAP, CustomEase);
+if (typeof window !== 'undefined' && !CustomEase.get('snellenberg')) {
+  CustomEase.create('snellenberg', '0.76, 0, 0.24, 1');
+}
 
-export { gsap, ScrollTrigger, useGSAP };
+export { gsap, ScrollTrigger, useGSAP, CustomEase };
+
