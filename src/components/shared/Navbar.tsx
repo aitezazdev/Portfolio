@@ -97,102 +97,114 @@ interface LinkItem {
   menuOnly?: boolean;
 }
 
-interface FullscreenMenuProps {
-  isOpen: boolean;
-  isTransitioning: boolean;
-  onClose: () => void;
-  handleLinkClick: (href: string) => void;
-  links: LinkItem[];
-}
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
-const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning, onClose, handleLinkClick, links }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const curvePathRef = useRef<SVGPathElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const linksRef = useRef<(HTMLDivElement | null)[]>([]);
-  const metaRef = useRef<HTMLDivElement>(null);
-  const lineTopRef = useRef<HTMLDivElement>(null);
-  const lineBotRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const magnetRefs = useRef<(HTMLDivElement | null)[]>([]);
+const menuSlideVariants: Variants = {
+  initial: {
+    x: 'calc(100% + 100px)',
+  },
+  enter: {
+    x: '0%',
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+  },
+  exit: {
+    x: 'calc(100% + 100px)',
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+  },
+};
+
+const linkSlideVariants: Variants = {
+  initial: {
+    x: 80,
+    opacity: 0,
+  },
+  enter: (i: number) => ({
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+  }),
+  exit: (i: number) => ({
+    x: 80,
+    opacity: 0,
+    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+  }),
+};
+
+const lineTopVariants: Variants = {
+  initial: { scaleX: 0 },
+  enter: { scaleX: 1, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1], delay: 0.1 } },
+  exit: { scaleX: 0, transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] } },
+};
+
+const lineBotVariants: Variants = {
+  initial: { scaleX: 0 },
+  enter: { scaleX: 1, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1], delay: 0.15 } },
+  exit: { scaleX: 0, transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] } },
+};
+
+const metaVariants: Variants = {
+  initial: { y: 20, opacity: 0 },
+  enter: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1], delay: 0.25 } },
+  exit: { y: 20, opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } },
+};
+
+function MenuCurve() {
   const [windowHeight, setWindowHeight] = useState<number>(0);
 
   useEffect(() => {
-    const updateDimensions = () => {
-      setWindowHeight(window.innerHeight);
-    };
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    setWindowHeight(window.innerHeight);
+    const handleResize = () => setWindowHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const h = windowHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
   const initialPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q-100 ${h / 2} 100 0`;
   const targetPath = `M100 0 L200 0 L200 ${h} L100 ${h} Q100 ${h / 2} 100 0`;
 
+  const curveVariants: Variants = {
+    initial: {
+      d: initialPath,
+    },
+    enter: {
+      d: targetPath,
+      transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
+    },
+    exit: {
+      d: initialPath,
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+    },
+  };
+
+  return (
+    <svg className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible">
+      <motion.path
+        variants={curveVariants}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        fill="#0d0d0c"
+      />
+    </svg>
+  );
+}
+
+interface FullscreenMenuProps {
+  onClose: () => void;
+  handleLinkClick: (href: string) => void;
+  links: LinkItem[];
+}
+
+const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClick, links }) => {
+  const magnetRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   useEffect(() => {
-    if (!menuRef.current) return;
-
-    if (isOpen && !isTransitioning) {
-      if (tlRef.current) tlRef.current.kill();
-      gsap.set(panelRef.current, { display: 'flex' });
-      gsap.set(overlayRef.current, { display: 'block' });
-
-      if (curvePathRef.current) {
-        gsap.set(curvePathRef.current, { attr: { d: initialPath } });
-      }
-
-      const tl = gsap.timeline();
-      tlRef.current = tl;
-
-      tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
-      tl.fromTo(panelRef.current, { x: 'calc(100% + 100px)' }, { x: '0%', duration: 0.85, ease: 'snellenberg' }, 0);
-      if (curvePathRef.current) {
-        tl.fromTo(curvePathRef.current, { attr: { d: initialPath } }, { attr: { d: targetPath }, duration: 0.85, ease: 'snellenberg' }, 0);
-      }
-      tl.fromTo(lineTopRef.current, { scaleX: 0, transformOrigin: 'left' }, { scaleX: 1, duration: 0.5, ease: 'snellenberg' }, 0.25);
-      tl.fromTo(lineBotRef.current, { scaleX: 0, transformOrigin: 'right' }, { scaleX: 1, duration: 0.5, ease: 'snellenberg' }, 0.3);
-
-      linksRef.current.forEach((link, i) => {
-        if (!link) return;
-        const chars = link.querySelectorAll('.char');
-        tl.fromTo(
-          chars,
-          { y: '120%', opacity: 0 },
-          { y: '0%', opacity: 1, duration: 0.45, stagger: 0.015, ease: 'snellenberg' },
-          0.2 + i * 0.05,
-        );
-      });
-
-      tl.fromTo(metaRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'snellenberg' }, 0.45);
-    } else if (!isOpen) {
-      if (tlRef.current) tlRef.current.kill();
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          if (panelRef.current) gsap.set(panelRef.current, { display: 'none' });
-          if (overlayRef.current) gsap.set(overlayRef.current, { display: 'none' });
-        },
-      });
-      tlRef.current = tl;
-
-      tl.to(metaRef.current, { y: 15, opacity: 0, duration: 0.2, ease: 'power2.in' }, 0);
-
-      linksRef.current.forEach((link) => {
-        if (!link) return;
-        const chars = link.querySelectorAll('.char');
-        tl.to(chars, { y: '-120%', opacity: 0, duration: 0.22, stagger: 0.01, ease: 'power3.in' }, 0);
-      });
-
-      tl.to([lineTopRef.current, lineBotRef.current], { scaleX: 0, duration: 0.2, ease: 'power2.in' }, 0.05);
-      tl.to(panelRef.current, { x: 'calc(100% + 100px)', duration: 0.8, ease: 'snellenberg' }, 0.08);
-      if (curvePathRef.current) {
-        tl.to(curvePathRef.current, { attr: { d: initialPath }, duration: 0.8, ease: 'snellenberg' }, 0.08);
-      }
-      tl.to(overlayRef.current, { opacity: 0, duration: 0.35, ease: 'power2.in' }, 0.45);
-    }
-  }, [isOpen, isTransitioning, initialPath, targetPath]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleMagneticMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
     const el = magnetRefs.current[index];
@@ -203,15 +215,6 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
     gsap.to(el, { x: dx, y: dy, duration: 0.4, ease: 'power2.out' });
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   const handleMagneticMouseLeave = (index: number) => {
     const el = magnetRefs.current[index];
     if (!el) return;
@@ -219,39 +222,36 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
   };
 
   return (
-    <div ref={menuRef}>
-      <div
-        ref={overlayRef}
+    <>
+      <motion.div
         className="fixed inset-0 z-[9980] bg-black/60 backdrop-blur-sm"
-        style={{ display: 'none' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         onClick={onClose}
       />
 
-      <div
-        ref={panelRef}
-        className="fixed top-0 right-0 h-full w-full md:w-[55%] z-[9981] bg-surface flex flex-col"
-        style={{ display: 'none', transform: 'translateX(calc(100% + 100px))' }}
+      <motion.div
+        variants={menuSlideVariants}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        className="fixed top-0 right-0 h-screen w-full md:w-[55%] z-[9981] bg-surface flex flex-col pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Dennis Snellenberg curved SVG morph backdrop */}
-        <svg
-          className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible"
-          viewBox={`0 0 100 ${h}`}
-          preserveAspectRatio="none"
-        >
-          <path ref={curvePathRef} d={initialPath} fill="#0d0d0c" />
-        </svg>
+        <MenuCurve />
 
         <div className="relative w-full h-full flex flex-col overflow-hidden">
-          <div
-            ref={lineTopRef}
+          <motion.div
+            variants={lineTopVariants}
+            style={{ transformOrigin: 'left' }}
             className="absolute top-[72px] left-0 right-0 h-px bg-border-subtler"
-            style={{ transformOrigin: 'left', transform: 'scaleX(0)' }}
           />
-          <div
-            ref={lineBotRef}
+          <motion.div
+            variants={lineBotVariants}
+            style={{ transformOrigin: 'right' }}
             className="absolute bottom-[170px] md:bottom-[100px] left-0 right-0 h-px bg-border-subtler"
-            style={{ transformOrigin: 'right', transform: 'scaleX(0)' }}
           />
 
           <div className="flex justify-between items-center px-10 h-20 border-b border-elevated-dark">
@@ -260,9 +260,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
 
           <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2">
             {links.map((link, i) => (
-              <div
+              <motion.div
                 key={link.href}
-                ref={(el) => { linksRef.current[i] = el; }}
+                custom={i}
+                variants={linkSlideVariants}
                 className="overflow-hidden py-2"
               >
                 <div
@@ -279,29 +280,20 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-cream hover:text-accent transition-colors duration-300 flex overflow-hidden">
-                      {link.name.split('').map((char, ci) => (
-                        <span
-                          key={ci}
-                          className="char inline-block"
-                          style={{ transform: 'translateY(120%)', opacity: 0 }}
-                        >
-                          {char === ' ' ? '\u00A0' : char}
-                        </span>
-                      ))}
+                      {link.name}
                     </span>
                     <span className="text-accent text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
                       →
                     </span>
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </nav>
 
-          <div
-            ref={metaRef}
+          <motion.div
+            variants={metaVariants}
             className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] pl-20 pr-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
-            style={{ opacity: 0 }}
           >
             <div className="space-y-1 text-left">
               <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
@@ -333,10 +325,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, isTransitioning
                 </Magnetic>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </>
   );
 };
 
@@ -604,13 +596,15 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         <AnimatedHamburger isOpen={isMenuOpen} />
       </button>
 
-      <FullscreenMenu
-        isOpen={isMenuOpen && !isTransitioning}
-        isTransitioning={isTransitioning}
-        onClose={() => setIsMenuOpen(false)}
-        handleLinkClick={handleLinkClick}
-        links={links}
-      />
+      <AnimatePresence mode="wait">
+        {isMenuOpen && !isTransitioning && (
+          <FullscreenMenu
+            onClose={() => setIsMenuOpen(false)}
+            handleLinkClick={handleLinkClick}
+            links={links}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
