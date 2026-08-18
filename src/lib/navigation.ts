@@ -8,13 +8,13 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
   const router = useRouter();
   const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
 
-  const scrollToHash = (hash: string) => {
+  const scrollToSection = (targetId: string) => {
     const lenis = lenisRef?.current || (typeof window !== 'undefined' ? (window as any).__lenis : null);
 
-    if (hash === 'top' || hash === '' || !hash) {
+    if (targetId === 'top' || targetId === '' || !targetId) {
       if (lenis) {
         lenis.scrollTo(0, {
-          duration: 1.2,
+          duration: 1.4,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         });
       } else if (typeof window !== 'undefined') {
@@ -26,12 +26,12 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
     let attempts = 0;
     const maxAttempts = 30;
     const tryScroll = () => {
-      const el = document.getElementById(hash);
+      const el = document.getElementById(targetId);
       if (el) {
         if (lenis) {
           lenis.scrollTo(el, {
             offset: 0,
-            duration: 1.2,
+            duration: 1.4,
             easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           });
         } else if (typeof window !== 'undefined') {
@@ -56,12 +56,12 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
     }
 
     let targetPath = '/';
-    let hash = '';
+    let targetId = '';
 
     if (href.includes('#')) {
       const parts = href.split('#');
       targetPath = parts[0] || '/';
-      hash = parts[1] || '';
+      targetId = parts[1] || '';
     } else {
       targetPath = href;
     }
@@ -74,10 +74,12 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
       (targetPath === '' && currentPath === '/');
 
     if (!isCurrentPage) {
-      router.push(href, { scroll: false });
-      setTimeout(() => {
-        scrollToHash(hash);
-      }, 350);
+      if (typeof window !== 'undefined' && targetId) {
+        try {
+          sessionStorage.setItem('nav_target_section', targetId);
+        } catch {}
+      }
+      router.push(targetPath || '/', { scroll: false });
       return;
     }
 
@@ -86,9 +88,10 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
       lenis.start();
     }
 
-    scrollToHash(hash);
-    if (typeof window !== 'undefined') {
-      window.history.pushState(null, '', hash ? `#${hash}` : window.location.pathname);
+    scrollToSection(targetId);
+
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
     }
   };
 };

@@ -75,6 +75,36 @@ export default function Home() {
 
     return () => ctx.revert();
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    try {
+      const target = sessionStorage.getItem('nav_target_section');
+      if (target) {
+        sessionStorage.removeItem('nav_target_section');
+        const timer = setTimeout(() => {
+          const el = document.getElementById(target);
+          if (el) {
+            const lenis = (window as any).__lenis;
+            if (lenis) {
+              lenis.scrollTo(el, {
+                offset: 0,
+                duration: 1.4,
+                easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              });
+            } else {
+              const targetTop = el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+              window.scrollTo({ top: targetTop, behavior: 'smooth' });
+            }
+          }
+        }, 400);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, []);
   return (
     <>
       <Navbar />
