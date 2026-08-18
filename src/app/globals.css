@@ -5,7 +5,6 @@
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
-  /* ── Core palette ── */
   --color-cream: #E8E4DE;
   --color-ink: #0F0E0C;
   --color-accent: #C45D3E;
@@ -32,7 +31,6 @@
   --ease-custom: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -108,7 +106,6 @@ body {
   z-index: 9990;
 }
 
-/* ── Marquee ── */
 .marquee-container {
   overflow: hidden;
   width: 100%;
@@ -195,7 +192,6 @@ body {
   background: linear-gradient(to left, #0F0E0C, transparent);
 }
 
-/* ── Custom cursor — hide default OS arrow cursor globally when custom cursor is active ── */
 @media (pointer: fine) {
   body.custom-cursor-active,
   body.custom-cursor-active * {

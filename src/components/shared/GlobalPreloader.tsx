@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 
 export const preloaderWords = [
-  'السلام علیکم', // Urdu
-  'नमस्ते',       // Hindi
-  'Hola',         // Spanish
-  'مرحباً',        // Arabic
-  'په خیر راغلي',  // Pashto
-  'Welcome',      // English
+  'السلام علیکم',
+  'नमस्ते',
+  'Hola',
+  'مرحباً',
+  'په خیر راغلي',
+  'Welcome',
 ];
 
 export const slideUp: Variants = {

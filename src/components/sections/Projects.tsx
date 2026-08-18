@@ -338,9 +338,6 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   MAIN EXPORT
-───────────────────────────────────────────── */
 export default function ProjectsPage() {
   const router = useRouter();
   const projects = getAllProjects();
@@ -431,7 +428,6 @@ export default function ProjectsPage() {
     sessionStorage.setItem('previous-project-url', window.location.pathname);
   };
 
-  /* ── Loading skeleton ── */
   if (isLoading) {
     return (
       <section id="projects" className="relative min-h-screen w-full bg-cream text-charcoal overflow-hidden px-12 py-20">
@@ -527,7 +523,6 @@ export default function ProjectsPage() {
           ))}
         </div>
 
-        {/* Floating hover preview */}
         <div
           ref={setFloatingRef}
           className="floating-preview-ref fixed pointer-events-none z-[100] opacity-0"
@@ -578,9 +573,6 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════
-          MOBILE
-      ══════════════════════════════════════ */}
       <MobileSnapProjects projects={projects} router={router} />
     </section>
   );

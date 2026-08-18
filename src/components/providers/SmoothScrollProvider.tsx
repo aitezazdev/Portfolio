@@ -24,7 +24,6 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
 
     if (isTouch) {
-      // On mobile / touch devices, native momentum scrolling is smoother, faster, and uninhibited
       aliveRef.current = true;
       const refreshTimer = setTimeout(() => {
         ScrollTrigger.refresh();
@@ -50,7 +49,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     lenis.on('scroll', ScrollTrigger.update);
 
     function raf(time: number) {
-      if (!aliveRef.current) return;  // ← protects against HMR stale callback
+      if (!aliveRef.current) return;
       lenis.raf(time * 1000);
     }
 

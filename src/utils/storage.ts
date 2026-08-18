@@ -1,7 +1,3 @@
-/**
- * Safe wrapper around sessionStorage to prevent crashes in sandboxed environments,
- * private browsing modes, or browsers with disabled storage/cookies.
- */
 export const safeSessionStorage = {
   getItem(key: string): string | null {
     try {

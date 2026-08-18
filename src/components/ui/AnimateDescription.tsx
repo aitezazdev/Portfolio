@@ -19,7 +19,6 @@ const AnimateDescription: React.FC<AnimateDescriptionProps> = ({ text, className
       const words = descRef.current.querySelectorAll('.word');
 
       if (reduced) {
-        // Just reveal immediately without stagger
         gsap.set(words, { opacity: 1, y: '0%' });
         return;
       }

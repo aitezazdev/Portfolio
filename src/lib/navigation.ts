@@ -10,7 +10,6 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
   
   const scrollToHash = (hash: string) => {
     const lenis = lenisRef?.current;
-    // Special case: 'top' scrolls to the very top of the page
     if (hash === 'top') {
       if (lenis) {
         lenis.scrollTo(0, {

@@ -38,14 +38,12 @@ export default function ProjectLoading() {
         }
       `}</style>
 
-      {/* Top Back Navigation Skeleton */}
       <div className="mb-12">
         <div className="shimmer-box h-7 w-24 rounded-full flex items-center px-3">
           <div className="h-2 w-12 bg-white/10 rounded" />
         </div>
       </div>
 
-      {/* Header & Action Buttons Skeleton */}
       <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="shimmer-box h-12 md:h-16 w-3/4 max-w-2xl rounded-2xl" />
         <div className="flex gap-4">
@@ -54,7 +52,6 @@ export default function ProjectLoading() {
         </div>
       </div>
 
-      {/* Metadata Section: Tech Stack */}
       <div className="mb-8">
         <div className="h-4 w-28 bg-[#1f1f1d] rounded mb-3 pulse-subtle" />
         <div className="flex flex-wrap gap-2">
@@ -64,7 +61,6 @@ export default function ProjectLoading() {
         </div>
       </div>
 
-      {/* Description Section */}
       <div className="mb-12">
         <div className="h-4 w-32 bg-[#1f1f1d] rounded mb-4 pulse-subtle" />
         <div className="space-y-3 max-w-4xl">
@@ -74,7 +70,6 @@ export default function ProjectLoading() {
         </div>
       </div>
 
-      {/* Main Image Showcase Card Skeleton */}
       <div className="flex flex-col gap-12 mb-16">
         <div className="shimmer-box w-full aspect-[16/10] max-h-[750px] rounded-2xl flex flex-col items-center justify-center gap-3">
           <div className="w-3 h-3 rounded-full bg-[#C45D3E] pulse-subtle shadow-[0_0_12px_rgba(196,93,62,0.6)]" />

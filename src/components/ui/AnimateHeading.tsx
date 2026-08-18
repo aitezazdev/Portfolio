@@ -25,7 +25,6 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
     const el = headingRef.current;
     if (!el) return;
 
-    // For reduced motion, just fade in — no scramble
     if (reduced) {
       gsap.set(el, { opacity: 0, y: '30px' });
       ScrollTrigger.create({
@@ -44,7 +43,6 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
       return;
     }
 
-    // Full scramble effect
     let intervalId: any = null;
     const scrambleText = (targetEl: HTMLElement, finalText: string, duration = 400) => {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01';
@@ -74,7 +72,6 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
       start: 'top 85%',
       once: true,
       onEnter: () => {
-        // Scramble the visible (aria-hidden) span
         if (visibleRef.current) {
           scrambleText(visibleRef.current, text, 400);
         }
@@ -97,9 +94,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
     <div className={containerClassName}>
       <div className="overflow-hidden">
         <h2 ref={headingRef} className={`font-display font-bold uppercase tracking-tighter ${className}`}>
-          {/* Visually hidden — real text for screen readers */}
           <span className="sr-only">{text}</span>
-          {/* Visible span — gets scrambled */}
           <span ref={visibleRef} aria-hidden="true">
             {text}
           </span>
