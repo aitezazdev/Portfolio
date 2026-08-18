@@ -176,7 +176,6 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           const imgWrap = card.querySelector('.mc-img-wrap');
           const img = card.querySelector('.mc-img');
           const num = card.querySelector('.mc-num');
-          const year = card.querySelector('.mc-year');
           const tags = card.querySelectorAll('.mc-tag');
           const title = card.querySelector('.mc-title');
           const cta = card.querySelector('.mc-cta');
@@ -184,8 +183,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           gsap.set(card, { opacity: 0, y: 52 });
           if (imgWrap) gsap.set(imgWrap, { clipPath: 'inset(100% 0 0 0 round 14px)' });
           if (img) gsap.set(img, { scale: 1.12 });
-          const metaEls = [num, year].filter(Boolean);
-          if (metaEls.length) gsap.set(metaEls, { opacity: 0, y: 16 });
+          if (num) gsap.set(num, { opacity: 0, y: 16 });
           if (tags.length) gsap.set(tags, { opacity: 0, y: 12 });
           if (title) gsap.set(title, { opacity: 0, y: 22 });
           if (cta) gsap.set(cta, { opacity: 0, y: 14 });
@@ -203,8 +201,8 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           if (img) {
             tl.to(img, { scale: 1, duration: 1.1, ease: 'power3.out' }, 0.1);
           }
-          if (metaEls.length) {
-            tl.to(metaEls, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.42);
+          if (num) {
+            tl.to(num, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.42);
           }
           if (tags.length) {
             tl.to(tags, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.07 }, 0.55);
@@ -280,12 +278,6 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                   }}
                 >
                   {String(index + 1).padStart(2, '0')}
-                </span>
-                <span
-                  className="mc-year font-mono text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(196, 93, 62, 0.13)', color: '#E07A5F', border: '1px solid rgba(196, 93, 62, 0.28)' }}
-                >
-                  {project.year}
                 </span>
               </div>
 
@@ -505,8 +497,6 @@ export default function ProjectsPage() {
                     </span>
                   ))}
                 </div>
-
-                <div className="font-mono text-xs text-gray-soft mt-2">{project.year}</div>
               </div>
 
               <div className="flex-[0_0_200px] text-right flex flex-col justify-end items-end pb-2">
