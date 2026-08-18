@@ -579,7 +579,12 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         onClick={toggleMenu}
         className={`fixed top-5 md:top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full
           bg-elevated ${!hamburgerOnly ? 'md:bg-gray-btn' : ''}
-          flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300`}
+          flex items-center justify-center shadow-lg`}
+        style={
+          hamburgerOnly
+            ? { opacity: 1, transform: 'scale(1)', pointerEvents: 'auto' }
+            : { opacity: 0, transform: 'scale(0)', pointerEvents: 'none' }
+        }
         aria-label="Toggle menu"
         aria-expanded={isMenuOpen}
         aria-controls="fullscreen-menu"
