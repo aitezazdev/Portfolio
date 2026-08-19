@@ -227,7 +227,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
         initial="initial"
         animate="enter"
         exit="exit"
-        className="fixed top-0 right-0 h-screen w-full md:w-1/3 z-[9981] bg-surface flex flex-col pointer-events-auto will-change-transform transform-gpu shadow-2xl"
+        className="fixed top-0 right-0 h-screen w-full md:w-[40%] z-[9981] bg-surface flex flex-col pointer-events-auto will-change-transform transform-gpu shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <MenuCurve />
