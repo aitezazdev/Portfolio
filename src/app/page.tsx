@@ -19,6 +19,7 @@ import CurvedSectionDivider from '@/components/ui/CurvedSectionDivider';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
+import { scrollToSection } from '@/lib/navigation';
 export default function Home() {
   const homeRef = useRef<HTMLDivElement>(null);
   const reuniteRef = useRef<HTMLDivElement>(null);
@@ -87,21 +88,8 @@ export default function Home() {
       if (target) {
         sessionStorage.removeItem('nav_target_section');
         const timer = setTimeout(() => {
-          const el = document.getElementById(target);
-          if (el) {
-            const lenis = (window as any).__lenis;
-            if (lenis) {
-              lenis.scrollTo(el, {
-                offset: 0,
-                duration: 1.4,
-                easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-              });
-            } else {
-              const targetTop = el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
-              window.scrollTo({ top: targetTop, behavior: 'smooth' });
-            }
-          }
-        }, 400);
+          scrollToSection(target);
+        }, 350);
         return () => clearTimeout(timer);
       }
     } catch {}
