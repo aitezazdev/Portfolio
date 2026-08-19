@@ -18,6 +18,7 @@ interface MagneticHamburgerButtonProps {
 }
 
 const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpen, onClick }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const rippleRef = useRef<HTMLSpanElement>(null);
 
@@ -35,89 +36,82 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
       Math.hypot(x, rect.height - y),
       Math.hypot(rect.width - x, rect.height - y),
     );
-    const finalScale = (maxDistance * 2) / 60;
+    const finalScale = (maxDistance * 2) / 100;
 
     gsap.set(ripple, { left: x, top: y, scale: 0, opacity: 1 });
-    gsap.to(ripple, { scale: finalScale, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+    gsap.to(ripple, { scale: finalScale, opacity: 1, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonMouseLeave = () => {
     const button = buttonRef.current;
     const ripple = rippleRef.current;
     if (!button || !ripple) return;
-
-    if (!isOpen) {
-      const rect = button.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      gsap.to(ripple, {
-        left: x,
-        top: y,
-        scale: 0,
-        opacity: 0,
-        duration: 0.45,
-        ease: 'power2.in',
-        overwrite: 'auto',
-      });
-    }
+    gsap.to(ripple, { scale: 0, opacity: 0, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
   };
 
   useEffect(() => {
-    const ripple = rippleRef.current;
-    if (!ripple) return;
-    if (isOpen) {
-      gsap.to(ripple, { scale: 3.5, opacity: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-    } else {
-      gsap.to(ripple, { scale: 0, opacity: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-    }
-  }, [isOpen]);
+    const el = buttonRef.current;
+    if (!el) return;
+
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    if (isTouch) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      gsap.to(el, { x: x * 0.35, y: y * 0.35, duration: 0.4, ease: 'power2.out' });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+    };
+
+    el.addEventListener('mousemove', handleMouseMove);
+    el.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      el.removeEventListener('mousemove', handleMouseMove);
+      el.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
 
   return (
-    <Magnetic strength={0.4}>
+    <div ref={containerRef} className="inline-flex justify-center items-center pointer-events-auto">
       <button
         ref={buttonRef}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={`w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden relative
-          bg-[#181817] border border-white/15 hover:border-accent/80
-          flex items-center justify-center transition-all duration-300 group cursor-pointer focus:outline-none
-          ${isOpen ? 'shadow-[0_0_24px_rgba(196,93,62,0.5)] border-accent' : 'shadow-xl hover:shadow-[0_8px_25px_rgba(0,0,0,0.35)]'}
-        `}
+        onMouseLeave={handleButtonMouseLeave}
+        className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden bg-[#141516] border border-white/15 outline-none flex items-center justify-center cursor-pointer shadow-xl group"
+        style={{ transformOrigin: 'center' }}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
         aria-controls="fullscreen-menu"
       >
-        {/* Dynamic Wave Ripple (Filled from cursor position) */}
+        {/* Exact Theme Ripple Wave from AnimatedButton */}
         <span
           ref={rippleRef}
-          className="absolute pointer-events-none rounded-full w-[60px] h-[60px] -translate-x-1/2 -translate-y-1/2 bg-accent opacity-0"
+          className="absolute pointer-events-none rounded-full w-[100px] h-[100px] -translate-x-1/2 -translate-y-1/2 bg-accent opacity-0"
           style={{ transformOrigin: 'center' }}
         />
 
-        {/* Morphing Lines to Cross */}
-        <div className="relative z-10 w-6 h-6 flex items-center justify-center pointer-events-none">
-          <div className="relative w-5 h-3 flex items-center justify-center">
-            <span
-              className={`absolute w-full h-[2px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-                isOpen
-                  ? 'top-1/2 -translate-y-1/2 rotate-45 bg-white'
-                  : 'top-0 rotate-0 bg-cream group-hover:bg-white'
-              }`}
-              style={{ transformOrigin: 'center' }}
-            />
-            <span
-              className={`absolute w-full h-[2px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-                isOpen
-                  ? 'bottom-1/2 translate-y-1/2 -rotate-45 bg-white'
-                  : 'bottom-0 rotate-0 bg-cream group-hover:bg-white'
-              }`}
-              style={{ transformOrigin: 'center' }}
-            />
-          </div>
+        {/* Dennis Snellenberg Morphing Lines / Cross */}
+        <div className="relative z-10 w-5 h-3 flex items-center justify-center pointer-events-none">
+          <span
+            className={`absolute w-full h-[2px] rounded-full bg-[#f0ede6] transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+              isOpen ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-0 rotate-0'
+            }`}
+            style={{ transformOrigin: 'center' }}
+          />
+          <span
+            className={`absolute w-full h-[2px] rounded-full bg-[#f0ede6] transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+              isOpen ? 'bottom-1/2 translate-y-1/2 -rotate-45' : 'bottom-0 rotate-0'
+            }`}
+            style={{ transformOrigin: 'center' }}
+          />
         </div>
       </button>
-    </Magnetic>
+    </div>
   );
 };
 
