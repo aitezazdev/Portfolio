@@ -350,9 +350,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
               <Magnetic strength={0.3}>
                 <a
                   href="mailto:aitezazsikandar@gmail.com"
-                  className="text-muted hover:text-white text-xs sm:text-sm transition-colors duration-200"
+                  className="group relative inline-block text-muted hover:text-white text-xs sm:text-sm transition-colors duration-300 py-0.5"
                 >
-                  aitezazsikandar@gmail.com
+                  <span>aitezazsikandar@gmail.com</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none block" />
                 </a>
               </Magnetic>
             </div>
@@ -368,9 +369,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-200 underline-offset-4 hover:underline"
+                    className="group relative inline-block text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-300 py-1"
                   >
-                    {s.label}
+                    <span>{s.label}</span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none block" />
                   </a>
                 </Magnetic>
               ))}
