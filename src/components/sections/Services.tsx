@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
-import AnimateDescription from '@/components/ui/AnimateDescription';
+import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 
 const Services = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -87,8 +87,9 @@ const Services = () => {
                 (Services)
               </span>
 
-              <AnimateDescription
+              <ScrollWordReveal
                 text={descriptionText}
+                offset={['start 0.95', 'end 0.65']}
                 className="max-w-2xl text-base sm:text-lg md:text-xl text-gray-soft font-sans leading-relaxed"
               />
             </div>
@@ -116,9 +117,11 @@ const Services = () => {
 
               <div className="grid md:grid-cols-12 gap-4 md:gap-8 pt-4 md:pt-6">
                 <div className="md:col-span-7 md:col-start-6 space-y-4 md:space-y-6">
-                  <p className="text-gray-soft text-base sm:text-base md:text-lg leading-relaxed font-sans">
-                    {service.description}
-                  </p>
+                  <ScrollWordReveal
+                    text={service.description}
+                    offset={['start 0.95', 'end 0.7']}
+                    className="text-gray-soft text-base sm:text-base md:text-lg leading-relaxed font-sans"
+                  />
 
                   <div className="divide-y divide-border-subtle">
                     {service.items.map((item, i) => (

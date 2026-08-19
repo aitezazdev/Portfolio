@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { gsap, useGSAP } from '@/lib/gsap';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
-import AnimateDescription from '@/components/ui/AnimateDescription';
+import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 
 const STACK_SECTIONS = [
   {
@@ -110,8 +110,9 @@ const TechStack = () => {
             text={headingText}
             className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
           />
-          <AnimateDescription
+          <ScrollWordReveal
             text={descriptionText}
+            offset={['start 0.95', 'end 0.7']}
             className="text-base sm:text-lg md:text-xl text-gray-soft font-sans leading-relaxed"
           />
         </div>

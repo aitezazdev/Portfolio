@@ -391,8 +391,8 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const navRef = useRef<HTMLDivElement>(null);
-  const hamburgerRef = useRef<HTMLButtonElement>(null);
   const mobileNavRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLElement>(null);
   const linksContainerRef = useRef<HTMLUListElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);

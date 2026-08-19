@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Link } from 'next-transition-router';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
-import AnimateDescription from '@/components/ui/AnimateDescription';
+import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { FaArrowUp, FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import { Project } from '@/lib/projects';
@@ -125,8 +125,9 @@ export default function ProjectDetails({ project }: { project: Project }) {
             <span className="font-mono text-xs uppercase tracking-widest text-warm block mb-2">
               Description
             </span>
-            <AnimateDescription
+            <ScrollWordReveal
               text={project.description}
+              offset={['start 0.95', 'end 0.7']}
               className="text-sm sm:text-base md:text-lg text-light/80 font-sans leading-relaxed"
             />
           </div>

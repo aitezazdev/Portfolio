@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
-import AnimateDescription from '@/components/ui/AnimateDescription';
+import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
@@ -138,8 +138,9 @@ const Contact = () => {
             className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-6 text-light"
           />
           <div className="max-w-2xl mb-12">
-            <AnimateDescription
+            <ScrollWordReveal
               text={descriptionText}
+              offset={['start 0.95', 'end 0.7']}
               className="text-base sm:text-lg text-gray-soft font-sans leading-relaxed"
             />
           </div>
