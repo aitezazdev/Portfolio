@@ -3,7 +3,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import Image from 'next/image';
-import AnimateDescription from '@/components/ui/AnimateDescription';
+import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 
 const About = () => {
@@ -49,12 +49,12 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
     () => {
       gsap.fromTo(
         '.about-image-wrapper',
-        { x: -80, opacity: 0 },
+        { x: -60, opacity: 0 },
         {
           x: 0,
           opacity: 1,
           duration: 1.2,
-          ease: 'power4.out',
+          ease: 'power3.out',
           force3D: true,
           scrollTrigger: {
             trigger: '.about-image-wrapper',
@@ -64,24 +64,8 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
         },
       );
       gsap.fromTo(
-        '.about-bio-para',
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.about-bio-para',
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-        },
-      );
-      gsap.fromTo(
         '.about-label',
-        { opacity: 0, letterSpacing: '0.5em' },
+        { opacity: 0, letterSpacing: '0.45em' },
         {
           opacity: 1,
           letterSpacing: '0.3em',
@@ -111,9 +95,10 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
               text={headingText}
               className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
             />
-            <AnimateDescription
+            <ScrollWordReveal
               text={descriptionText}
-              className="text-base sm:text-lg text-gray-soft font-sans"
+              offset={['start 0.95', 'end 0.7']}
+              className="text-base sm:text-lg md:text-xl text-gray-soft font-sans leading-relaxed"
             />
           </div>
 
@@ -154,12 +139,12 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
               </span>
               <div className="space-y-6">
                 {aboutMeText.split('\n\n').map((p, i) => (
-                  <p
+                  <ScrollWordReveal
                     key={i}
-                    className="about-bio-para text-light/70 text-base sm:text-lg md:text-lg leading-relaxed font-sans"
-                  >
-                    {p}
-                  </p>
+                    text={p}
+                    offset={['start 0.92', 'end 0.65']}
+                    className="text-base sm:text-lg md:text-lg leading-relaxed font-sans"
+                  />
                 ))}
               </div>
             </div>
