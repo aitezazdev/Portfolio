@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
@@ -8,18 +8,22 @@ interface WordProps {
   children: string;
   range: [number, number];
   progress: MotionValue<number>;
-  dimOpacity?: number;
-  highlightColor?: string;
-  dimColor?: string;
+  dimOpacity: number;
+  highlightColor: string;
+  dimColor: string;
+  isMounted: boolean;
+  reduced: boolean;
 }
 
 const Word: React.FC<WordProps> = ({
   children,
   range,
   progress,
-  dimOpacity = 0.22,
-  highlightColor = '#f0ede6',
-  dimColor = 'rgba(240, 237, 230, 0.22)',
+  dimOpacity,
+  highlightColor,
+  dimColor,
+  isMounted,
+  reduced,
 }) => {
   const opacity = useTransform(progress, range, [dimOpacity, 1]);
   const color = useTransform(progress, range, [dimColor, highlightColor]);
@@ -27,7 +31,11 @@ const Word: React.FC<WordProps> = ({
   return (
     <span className="relative inline-block mr-[0.28em] my-[0.04em]">
       <motion.span
-        style={{ opacity, color }}
+        style={
+          isMounted && !reduced
+            ? { opacity, color }
+            : { color: reduced ? highlightColor : dimColor, opacity: reduced ? 1 : dimOpacity }
+        }
         className="inline-block transition-colors duration-150 will-change-[opacity,color]"
       >
         {children}
@@ -49,12 +57,17 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
   text,
   className = '',
   dimOpacity = 0.22,
-  offset = ['start 0.9', 'end 0.55'],
+  offset = ['start 0.95', 'end 0.65'],
   highlightColor = '#f0ede6',
   dimColor = 'rgba(240, 237, 230, 0.22)',
 }) => {
   const containerRef = useRef<HTMLParagraphElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -64,12 +77,8 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
   const words = text.split(/\s+/).filter(Boolean);
   const total = words.length;
 
-  if (reduced) {
-    return <p className={className}>{text}</p>;
-  }
-
   return (
-    <p ref={containerRef} className={`flex flex-wrap ${className}`}>
+    <p ref={containerRef} className={`flex flex-wrap ${className}`} suppressHydrationWarning>
       {words.map((word, i) => {
         const start = i / total;
         const end = start + 1 / total;
@@ -81,6 +90,8 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
             dimOpacity={dimOpacity}
             highlightColor={highlightColor}
             dimColor={dimColor}
+            isMounted={isMounted}
+            reduced={reduced}
           >
             {word}
           </Word>
