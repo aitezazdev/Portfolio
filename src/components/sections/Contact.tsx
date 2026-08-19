@@ -1,12 +1,25 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import AnimateDescription from '@/components/ui/AnimateDescription';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 const Contact = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end end'],
+  });
+
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [-160, 0]);
+  const ctaSlideX = useTransform(scrollYProgress, [0, 1], [80, 0]);
+
   const headingText = 'Contact';
   const descriptionText =
     'Have a project in mind or just want to say hello? Feel free to reach out.';
@@ -114,12 +127,15 @@ const Contact = () => {
   const isDisabled = isSubmitting;
 
   return (
-    <section ref={sectionRef} id="contact" className="bg-cream py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 w-full">
-        <div className="rounded-3xl bg-ink text-light p-8 sm:p-12 md:p-16 lg:p-20 border border-elevated-dark">
+    <section ref={sectionRef} id="contact" className="bg-ink text-light py-20 md:py-32 relative overflow-hidden">
+      <div ref={containerRef} className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 w-full">
+        <motion.div
+          style={{ y: reduced ? 0 : parallaxY }}
+          className="rounded-3xl bg-surface text-light p-8 sm:p-12 md:p-16 lg:p-20 border border-elevated-dark"
+        >
           <AnimatedHeading
             text={headingText}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-6"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-6 text-light"
           />
           <div className="max-w-2xl mb-12">
             <AnimateDescription
@@ -130,7 +146,7 @@ const Contact = () => {
 
           <form
             onSubmit={handleSubmit}
-            className="max-w-2xl space-y-6 p-6 sm:p-8 rounded-2xl mx-auto bg-surface border border-white/[0.04]"
+            className="max-w-2xl space-y-6 p-6 sm:p-8 rounded-2xl mx-auto bg-surface-mid border border-white/[0.04]"
           >
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="font-medium text-sm sm:text-base text-muted">
@@ -143,7 +159,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Your Name"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.name ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -163,7 +179,7 @@ const Contact = () => {
                 onChange={handleChange}
                 autoComplete="email"
                 placeholder="you@example.com"
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.email ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -182,7 +198,7 @@ const Contact = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Write your message here..."
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface-mid text-cream placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.message ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
@@ -234,36 +250,38 @@ const Contact = () => {
                 Direct Contact
               </p>
 
-              <button
-                type="button"
-                aria-label="Copy email address to clipboard"
-                onClick={() => {
-                  navigator.clipboard.writeText('aitezazsikandar@gmail.com');
-                  const toast = document.getElementById('email-copy-toast');
-                  if (toast) {
-                    toast.style.opacity = '1';
-                    toast.style.transform = 'translateY(0)';
-                    setTimeout(() => {
-                      toast.style.opacity = '0';
-                      toast.style.transform = 'translateY(8px)';
-                    }, 2000);
-                  }
-                }}
-                className="group relative inline-flex items-center justify-center cursor-pointer text-light font-display font-black uppercase leading-tight hover:text-accent transition-colors duration-300 max-w-full text-center"
-                style={{
-                  fontSize: 'clamp(1.1rem, 4.2vw, 3rem)',
-                }}
-              >
-                <span className="break-all sm:break-normal">aitezazsikandar@gmail.com</span>
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
-              </button>
+              <motion.div style={{ x: reduced ? 0 : ctaSlideX }} className="inline-block">
+                <button
+                  type="button"
+                  aria-label="Copy email address to clipboard"
+                  onClick={() => {
+                    navigator.clipboard.writeText('aitezazsikandar@gmail.com');
+                    const toast = document.getElementById('email-copy-toast');
+                    if (toast) {
+                      toast.style.opacity = '1';
+                      toast.style.transform = 'translateY(0)';
+                      setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(8px)';
+                      }, 2000);
+                    }
+                  }}
+                  className="group relative inline-flex items-center justify-center cursor-pointer text-light font-display font-black uppercase leading-tight hover:text-accent transition-colors duration-300 max-w-full text-center"
+                  style={{
+                    fontSize: 'clamp(1.1rem, 4.2vw, 3rem)',
+                  }}
+                >
+                  <span className="break-all sm:break-normal">aitezazsikandar@gmail.com</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
+                </button>
+              </motion.div>
 
               <span className="font-mono text-[11px] text-warm/70 uppercase tracking-widest mt-2 block text-center">
                 Click to copy email address
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <div

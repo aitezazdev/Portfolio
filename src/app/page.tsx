@@ -15,6 +15,7 @@ import HomeBanner from '@/components/sections/HomeBanner';
 import Projects from '@/components/sections/Projects';
 import About from '@/components/sections/About';
 import MarqueeStrip from '@/components/sections/MarqueeStrip';
+import CurvedSectionDivider from '@/components/ui/CurvedSectionDivider';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
@@ -117,14 +118,15 @@ export default function Home() {
             <About techStackRef={techStackRef} />
           </div>
         </div>
-        <section className="relative z-20 bg-white">
+        <section className="relative z-20 bg-cream">
           <Projects />
         </section>
         <MarqueeStrip />
-        <section className="relative z-25 bg-black">
+        <CurvedSectionDivider curveColor="#E8E4DE" bottomColor="#0F0E0C" />
+        <div className="relative z-25 bg-ink overflow-hidden">
           <Contact />
-        </section>
-        <Footer />
+          <Footer />
+        </div>
       </main>
     </>
   );

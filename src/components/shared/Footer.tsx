@@ -64,14 +64,14 @@ const Footer = () => {
   };
 
   return (
-    <footer ref={footerRef} className="relative z-30 bg-cream px-6 sm:px-8 md:px-12 py-12 md:py-16">
+    <footer ref={footerRef} className="relative z-30 bg-ink border-t border-border-subtle px-6 sm:px-8 md:px-12 py-12 md:py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 mb-10 md:mb-12">
           <div>
-            <h3 className="text-warm text-base sm:text-lg font-sans tracking-wide font-semibold mb-4 md:mb-6">
+            <h3 className="text-light/90 text-base sm:text-lg font-sans tracking-wide font-semibold mb-4 md:mb-6">
               Menu
             </h3>
-            <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
+            <ul className="flex flex-col gap-3 sm:gap-4 text-gray-soft text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               {links.map((link) => (
                 <AnimatedLink key={link.href}>
                   <a
@@ -89,10 +89,10 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-warm text-base sm:text-lg font-sans tracking-wide font-semibold mb-4 md:mb-6">
+            <h3 className="text-light/90 text-base sm:text-lg font-sans tracking-wide font-semibold mb-4 md:mb-6">
               Socials
             </h3>
-            <ul className="flex flex-col gap-3 sm:gap-4 text-warm text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
+            <ul className="flex flex-col gap-3 sm:gap-4 text-gray-soft text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
               {[
                 { label: 'Linkedin', href: 'https://linkedin.com/in/aitezaz-sikandar' },
                 { label: 'Instagram', href: 'https://instagram.com/ur_zaz' },
@@ -109,10 +109,10 @@ const Footer = () => {
           </div>
 
           <div className="col-span-2 md:col-span-1 mt-6 md:mt-0">
-            <h3 className="text-warm text-base sm:text-lg font-sans tracking-wide font-semibold mb-2 md:mb-6">
+            <h3 className="text-light/90 text-base sm:text-lg font-sans tracking-wide font-semibold mb-2 md:mb-6">
               Local Time
             </h3>
-            <p className="text-warm text-sm sm:text-base font-sans font-medium tracking-wide">
+            <p className="text-gray-soft text-sm sm:text-base font-sans font-medium tracking-wide">
               {isMounted && currentTime ? `${currentTime} PKT` : 'Loading local time...'}
             </p>
           </div>
@@ -122,7 +122,7 @@ const Footer = () => {
           <Magnetic strength={0.4}>
             <button
               onClick={scrollToTop}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-footer-bg border border-footer-border flex items-center justify-center text-warm hover:text-accent hover:border-accent hover:bg-accent/10 transition-all duration-300 group focus:outline-none"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-elevated-dark border border-border-subtler flex items-center justify-center text-gray-soft hover:text-accent hover:border-accent hover:bg-accent/10 transition-all duration-300 group focus:outline-none"
               aria-label="Scroll to top"
             >
               <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:-translate-y-1 transition-transform duration-300" />
