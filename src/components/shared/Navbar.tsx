@@ -227,7 +227,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
         initial="initial"
         animate="enter"
         exit="exit"
-        className="fixed top-0 right-0 h-screen w-full md:w-[55%] z-[9981] bg-surface flex flex-col pointer-events-auto will-change-transform transform-gpu"
+        className="fixed top-0 right-0 h-screen w-full md:w-[42%] lg:w-[34%] xl:w-[28%] min-w-[360px] md:max-w-[520px] z-[9981] bg-surface flex flex-col pointer-events-auto will-change-transform transform-gpu shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <MenuCurve />
@@ -244,17 +244,17 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
             className="absolute bottom-[170px] md:bottom-[100px] left-0 right-0 h-px bg-border-subtler"
           />
 
-          <div className="flex justify-between items-center px-10 h-20 border-b border-elevated-dark">
+          <div className="flex justify-between items-center px-8 sm:px-10 md:px-12 h-20 border-b border-elevated-dark">
             <span className="text-gray-mid font-mono text-xs tracking-widest uppercase">Navigation</span>
           </div>
 
-          <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-10 md:px-16 gap-2">
+          <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-8 sm:px-10 md:px-12 gap-1.5 md:gap-2">
             {links.map((link, i) => (
               <motion.div
                 key={link.href}
                 custom={i}
                 variants={linkSlideVariants}
-                className="overflow-hidden py-2"
+                className="overflow-hidden py-1.5 md:py-2"
               >
                 <div
                   ref={(el) => { magnetRefs.current[i] = el; }}
@@ -264,15 +264,15 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
                 >
                   <button
                     onClick={() => handleLinkClick(link.href)}
-                    className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
+                    className="group flex items-center gap-3.5 md:gap-5 text-left animate-link-row"
                   >
                     <span className="text-gray-mid font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-accent">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className="font-display text-[3.2rem] sm:text-[4rem] md:text-[5rem] font-black uppercase leading-none tracking-tight text-cream hover:text-accent transition-colors duration-300 flex overflow-hidden">
+                    <span className="font-display text-[2.6rem] sm:text-[3.2rem] md:text-[3.6rem] lg:text-[4rem] font-black uppercase leading-none tracking-tight text-cream hover:text-accent transition-colors duration-300 flex overflow-hidden">
                       {link.name}
                     </span>
-                    <span className="text-accent text-3xl md:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                    <span className="text-accent text-2xl md:text-3xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
                       →
                     </span>
                   </button>
@@ -283,21 +283,21 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
 
           <motion.div
             variants={metaVariants}
-            className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] pl-20 pr-10 md:px-16 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
+            className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] px-8 sm:px-10 md:px-12 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
           >
             <div className="space-y-1 text-left">
-              <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-2">Get in Touch</p>
+              <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-1.5">Get in Touch</p>
               <Magnetic strength={0.3}>
                 <a
                   href="mailto:aitezazsikandar@gmail.com"
-                  className="text-muted hover:text-white text-sm transition-colors duration-200"
+                  className="text-muted hover:text-white text-xs sm:text-sm transition-colors duration-200"
                 >
                   aitezazsikandar@gmail.com
                 </a>
               </Magnetic>
             </div>
 
-            <div className="flex gap-6 justify-start">
+            <div className="flex gap-4 md:gap-6 justify-start flex-wrap">
               {[
                 { label: 'GitHub', href: 'https://github.com/aitezazdev' },
                 { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
