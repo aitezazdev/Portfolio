@@ -127,7 +127,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
             </span>
             <ScrollWordReveal
               text={project.description}
-              offset={['start 0.95', 'end 0.7']}
+              offset={['start 0.95', 'end 0.65']}
               className="text-sm sm:text-base md:text-lg text-light/80 font-sans leading-relaxed"
             />
           </div>
@@ -137,14 +137,18 @@ export default function ProjectDetails({ project }: { project: Project }) {
               <span className="font-mono text-xs uppercase tracking-widest text-warm block mb-3">
                 Key Contributions & Role
               </span>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3">
                 {project.myRole.map((role, i) => (
                   <li
                     key={i}
                     className="flex items-start gap-3 text-sm sm:text-base text-light/80 font-sans leading-relaxed"
                   >
-                    <span className="text-accent mt-1 text-xs">◆</span>
-                    <span>{role}</span>
+                    <span className="text-accent mt-1.5 text-xs flex-shrink-0">◆</span>
+                    <ScrollWordReveal
+                      text={role}
+                      offset={['start 0.95', 'end 0.7']}
+                      className="inline-flex flex-wrap flex-1"
+                    />
                   </li>
                 ))}
               </ul>
@@ -196,8 +200,12 @@ export default function ProjectDetails({ project }: { project: Project }) {
       </div>
 
       <div className="relative flex justify-center py-8">
-        <div className="text-center">
-          <p className="text-muted text-lg">Have a project in mind?</p>
+        <div className="text-center flex flex-col items-center">
+          <ScrollWordReveal
+            text="Have a project in mind?"
+            offset={['start 0.95', 'end 0.75']}
+            className="text-muted text-lg justify-center mb-1"
+          />
           <a
             href="mailto:aitezazsikandar@gmail.com"
             className="text-xl font-semibold text-[#bab6b3] hover:text-[#d4d2d0] transition"
