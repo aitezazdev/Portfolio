@@ -17,40 +17,26 @@ interface AnimatedHamburgerProps {
 }
 
 const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen }) => {
-  const line1Ref = useRef<HTMLSpanElement>(null);
-  const line2Ref = useRef<HTMLSpanElement>(null);
-  const hasInitRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    const l1 = line1Ref.current;
-    const l2 = line2Ref.current;
-    if (!l1 || !l2) return;
-
-    if (!hasInitRef.current) {
-      hasInitRef.current = true;
-      if (isOpen) {
-        gsap.set(l1, { y: 0, rotation: 45 });
-        gsap.set(l2, { y: 0, rotation: -45 });
-      } else {
-        gsap.set(l1, { y: -5, rotation: 0 });
-        gsap.set(l2, { y: 5, rotation: 0 });
-      }
-      return;
-    }
-
-    if (isOpen) {
-      gsap.to(l1, { y: 0, rotation: 45, duration: 0.35, ease: 'power3.inOut' });
-      gsap.to(l2, { y: 0, rotation: -45, duration: 0.35, ease: 'power3.inOut' });
-    } else {
-      gsap.to(l1, { y: -5, rotation: 0, duration: 0.35, ease: 'power3.inOut' });
-      gsap.to(l2, { y: 5, rotation: 0, duration: 0.35, ease: 'power3.inOut' });
-    }
-  }, [isOpen]);
-
   return (
-    <div className="relative w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
-      <span ref={line1Ref} className="absolute w-full h-[2px] bg-white rounded-full" style={{ transformOrigin: 'center' }} />
-      <span ref={line2Ref} className="absolute w-full h-[2px] bg-white rounded-full" style={{ transformOrigin: 'center' }} />
+    <div className="relative w-6 h-6 flex items-center justify-center pointer-events-none">
+      <div className="relative w-5 h-3 flex items-center justify-center">
+        <span
+          className={`absolute w-full h-[2px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            isOpen
+              ? 'top-1/2 -translate-y-1/2 rotate-45 bg-white'
+              : 'top-0 rotate-0 bg-cream group-hover:bg-accent-light'
+          }`}
+          style={{ transformOrigin: 'center' }}
+        />
+        <span
+          className={`absolute w-full h-[2px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            isOpen
+              ? 'bottom-1/2 translate-y-1/2 -rotate-45 bg-white'
+              : 'bottom-0 rotate-0 bg-cream group-hover:bg-accent-light'
+          }`}
+          style={{ transformOrigin: 'center' }}
+        />
+      </div>
     </div>
   );
 };
@@ -556,12 +542,9 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         </nav>
       )}
 
-      <button
+      <div
         ref={hamburgerRef}
-        onClick={toggleMenu}
-        className={`fixed top-5 md:top-6 right-6 z-[9982] w-10 h-10 md:w-12 md:h-12 rounded-full
-          bg-elevated ${!hamburgerOnly ? 'md:bg-gray-btn' : ''}
-          flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300`}
+        className="fixed top-5 md:top-6 right-6 z-[9982] pointer-events-auto"
         style={
           hamburgerOnly
             ? { opacity: 1, scale: 1 }
@@ -572,12 +555,25 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
                 transition: 'opacity 0.5s ease-in-out',
               }
         }
-        aria-label="Toggle menu"
-        aria-expanded={isMenuOpen}
-        aria-controls="fullscreen-menu"
       >
-        <AnimatedHamburger isOpen={isMenuOpen} />
-      </button>
+        <Magnetic strength={0.4}>
+          <button
+            onClick={toggleMenu}
+            className={`w-12 h-12 md:w-14 md:h-14 rounded-full
+              ${
+                isMenuOpen
+                  ? 'bg-accent text-white shadow-[0_0_24px_rgba(196,93,62,0.5)] border border-accent'
+                  : 'bg-[#181817] text-cream border border-white/10 hover:border-accent/60 hover:bg-[#242422] shadow-xl'
+              }
+              flex items-center justify-center transition-all duration-300 group cursor-pointer focus:outline-none`}
+            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="fullscreen-menu"
+          >
+            <AnimatedHamburger isOpen={isMenuOpen} />
+          </button>
+        </Magnetic>
+      </div>
 
       <AnimatePresence mode="wait">
         {isMenuOpen && !isTransitioning && (
