@@ -9,10 +9,7 @@ import AnimatedHeading from '@/components/ui/AnimateHeading';
 import { getAllProjects } from '@/lib/projects';
 import { Project } from '@/lib/projects';
 
-const useHoverPreview = (
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  onScrollLeave: () => void
-) => {
+const useHoverPreview = () => {
   const floatingRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -37,7 +34,7 @@ const useHoverPreview = (
       xPercent: -50,
       yPercent: -50,
       scale: 0,
-      opacity: 0,
+      opacity: 1,
       rotation: 0,
       transformOrigin: 'center center',
     });
@@ -122,15 +119,9 @@ const useHoverPreview = (
     if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     isHovering.current = true;
     if (!floatingRef.current) return;
-    delayedMouse.current.x = mouse.current.x;
-    delayedMouse.current.y = mouse.current.y;
-    gsap.set(floatingRef.current, { x: mouse.current.x, y: mouse.current.y });
-    dynamics.current.currentRotation = 0;
-    dynamics.current.targetRotation = 0;
     if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
       scale: 1,
-      opacity: 1,
       duration: 0.45,
       ease: 'power3.out',
       overwrite: 'auto',
@@ -143,28 +134,11 @@ const useHoverPreview = (
     if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
       scale: 0,
-      opacity: 0,
       duration: 0.4,
-      ease: 'power3.inOut',
+      ease: 'power3.in',
       overwrite: 'auto',
     });
   }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!isHovering.current) return;
-      if (containerRef?.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const cursorY = mouse.current.y;
-        if (cursorY < rect.top || cursorY > rect.bottom) {
-          hide();
-          onScrollLeave();
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [containerRef, onScrollLeave, hide]);
 
   return { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering, mouse };
 };
@@ -351,17 +325,8 @@ export default function ProjectsPage() {
   const sliderReelRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef<number>(-1);
 
-  const handleScrollLeave = useCallback(() => {
-    if (!containerRef.current) return;
-    const lines = containerRef.current.querySelectorAll('.hover-line-ref');
-    lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out', overwrite: 'auto' }));
-    const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
-    overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
-    activeIndexRef.current = -1;
-  }, []);
-
   const { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, mouse } =
-    useHoverPreview(containerRef, handleScrollLeave);
+    useHoverPreview();
 
   useEffect(() => {
     getAllProjects().slice(0, 4).forEach((project) => {
@@ -610,11 +575,11 @@ export default function ProjectsPage() {
 
         <div
           ref={setFloatingRef}
-          className="floating-preview-ref fixed pointer-events-none z-[100] opacity-0"
+          className="floating-preview-ref fixed pointer-events-none z-[100]"
           style={{
             top: 0,
             left: 0,
-            willChange: 'transform, opacity',
+            willChange: 'transform',
           }}
         >
           <div
