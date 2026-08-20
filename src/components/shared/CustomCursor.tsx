@@ -125,14 +125,37 @@ export default function CustomCursor() {
       }
     };
 
+    const checkElementUnderCursor = () => {
+      if (mouse.current.x === 0 && mouse.current.y === 0) return;
+      const elAtPoint = document.elementFromPoint(mouse.current.x, mouse.current.y) as HTMLElement | null;
+      const target = elAtPoint?.closest<HTMLElement>(
+        'a, button, [data-cursor], [role="button"]'
+      );
+      if (target !== currentHoveredEl) {
+        if (currentHoveredEl) cursorLeave();
+        currentHoveredEl = target || null;
+        if (target) cursorEnter(target);
+      }
+    };
+
     window.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseleave', handleMouseLeavePage);
+    window.addEventListener('scroll', checkElementUnderCursor, { passive: true });
+
+    const lenis = (window as any).__lenis;
+    if (lenis) {
+      lenis.on('scroll', checkElementUnderCursor);
+    }
 
     return () => {
       gsap.ticker.remove(tick);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeavePage);
+      window.removeEventListener('scroll', checkElementUnderCursor);
+      if (lenis) {
+        lenis.off('scroll', checkElementUnderCursor);
+      }
     };
   }, [enabled]);
 
