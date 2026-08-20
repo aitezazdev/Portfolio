@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant hover (@media (hover: hover) and (pointer: fine));
-
 @theme inline {
   --font-display: var(--font-space-grotesk), sans-serif;
   --font-sans: var(--font-geist-sans), sans-serif;
