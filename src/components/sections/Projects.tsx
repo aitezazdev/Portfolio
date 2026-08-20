@@ -36,7 +36,7 @@ const useHoverPreview = (
     gsap.set(el, {
       xPercent: -50,
       yPercent: -50,
-      scale: 0.7,
+      scale: 0,
       opacity: 0,
       rotation: 0,
       transformOrigin: 'center center',
@@ -57,7 +57,7 @@ const useHoverPreview = (
 
   useEffect(() => {
     const lerpFactor = 0.12;
-    const positionLerpFactor = 0.05;
+    const positionLerpFactor = 0.08;
     const maxRotation = 10;
     const maxParallax = 14;
 
@@ -142,9 +142,9 @@ const useHoverPreview = (
     if (!floatingRef.current) return;
     if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
-      scale: 0.7,
+      scale: 0,
       opacity: 0,
-      duration: 0.35,
+      duration: 0.4,
       ease: 'power3.inOut',
       overwrite: 'auto',
     });
