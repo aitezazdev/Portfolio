@@ -188,7 +188,7 @@ const HomeBanner = () => {
   }, [reduced]);
 
   const handleMouseEnter = () => {
-    if (reduced || !nameRef.current) return;
+    if (reduced || !nameRef.current || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
     const isDesktop = window.innerWidth >= 768;
     const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
     const letters = nameRef.current.querySelectorAll(selector);
@@ -215,7 +215,7 @@ const HomeBanner = () => {
   };
 
   const handleMouseLeave = () => {
-    if (reduced || !nameRef.current) return;
+    if (reduced || !nameRef.current || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
     const isDesktop = window.innerWidth >= 768;
     const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
     const letters = nameRef.current.querySelectorAll(selector);
@@ -242,7 +242,7 @@ const HomeBanner = () => {
   };
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();

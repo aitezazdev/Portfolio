@@ -106,6 +106,7 @@ const useHoverPreview = (
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      if (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) return;
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
     };
@@ -114,6 +115,7 @@ const useHoverPreview = (
   }, []);
 
   const show = useCallback(() => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     isHovering.current = true;
     if (!floatingRef.current) return;
     delayedMouse.current.x = mouse.current.x;
@@ -377,6 +379,7 @@ export default function ProjectsPage() {
 
   const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, imageUrl: string, index: number) => {
     router.prefetch(`/projects/${projects[index]?.slug || ''}`);
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.4, ease: 'power2.out' });
     const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
@@ -401,6 +404,7 @@ export default function ProjectsPage() {
   };
 
   const handleRowMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '0%', duration: 0.4, ease: 'power2.out' });
     const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;

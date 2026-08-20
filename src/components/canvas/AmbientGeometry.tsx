@@ -75,7 +75,7 @@ export default function AmbientGeometry() {
     window.addEventListener('resize', handleResize);
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isMobile || !cachedRect) return;
+      if (isMobile || !cachedRect || window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) return;
       mouseRef.current = {
         x: e.clientX - cachedRect.left,
         y: e.clientY - cachedRect.top,

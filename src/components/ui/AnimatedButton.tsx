@@ -68,6 +68,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   }
 
   const handleMouseEnter = (e: React.MouseEvent<any>) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const button = buttonRef.current;
     const ripple = rippleRef.current;
     if (!button || !ripple) return;
@@ -99,6 +100,9 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   useEffect(() => {
     const el = buttonRef.current;
     if (!el || disabled) return;
+
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches;
+    if (isTouch) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();

@@ -87,12 +87,14 @@ const TechStack = () => {
   );
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const img = e.currentTarget.querySelector('img');
     if (!img) return;
     gsap.to(img, { rotation: 360, scale: 1.1, duration: 0.6, ease: 'power2.out' });
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const img = e.currentTarget.querySelector('img');
     if (!img) return;
     gsap.to(img, { rotation: 0, scale: 1, duration: 0.5, ease: 'power2.inOut' });

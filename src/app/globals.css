@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant hover (@media (hover: hover) and (pointer: fine));
+
 @theme inline {
   --font-display: var(--font-space-grotesk), sans-serif;
   --font-sans: var(--font-geist-sans), sans-serif;
@@ -130,9 +132,29 @@ body {
   animation: marquee-right 30s linear infinite;
 }
 
-.marquee-row:hover .marquee-content-left,
-.marquee-row:hover .marquee-content-right {
-  animation-play-state: paused;
+@media (hover: hover) and (pointer: fine) {
+  .marquee-row:hover .marquee-content-left,
+  .marquee-row:hover .marquee-content-right {
+    animation-play-state: paused;
+  }
+}
+
+@media (hover: none) or (pointer: coarse) {
+  *,
+  *::before,
+  *::after {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .marquee-row:hover .marquee-content-left,
+  .marquee-row:hover .marquee-content-right {
+    animation-play-state: running !important;
+  }
+  .group:hover * {
+    transform: none !important;
+  }
+  .group:hover {
+    transform: none !important;
+  }
 }
 
 @keyframes marquee-left {

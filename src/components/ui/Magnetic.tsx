@@ -24,7 +24,7 @@ const Magnetic: React.FC<MagneticProps> = ({
     const target = targetRef.current;
     if (!trigger || !target || disabled) return;
 
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches;
     if (isTouch) return;
 
     const handleMouseMove = (e: MouseEvent) => {

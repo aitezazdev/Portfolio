@@ -23,6 +23,7 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
   const rippleRef = useRef<HTMLSpanElement>(null);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const button = buttonRef.current;
     const ripple = rippleRef.current;
     if (!button || !ripple) return;
@@ -53,7 +54,7 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
     const el = buttonRef.current;
     if (!el) return;
 
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches;
     if (isTouch) return;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -88,14 +89,12 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
         aria-expanded={isOpen}
         aria-controls="fullscreen-menu"
       >
-        {/* Exact Theme Ripple Wave from AnimatedButton */}
         <span
           ref={rippleRef}
           className="absolute pointer-events-none rounded-full w-[100px] h-[100px] -translate-x-1/2 -translate-y-1/2 bg-accent opacity-0"
           style={{ transformOrigin: 'center' }}
         />
 
-        {/* Dennis Snellenberg Morphing Lines / Cross */}
         <div className="relative z-10 w-5 h-3 flex items-center justify-center pointer-events-none">
           <span
             className={`absolute w-full h-[2px] rounded-full bg-[#f0ede6] transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
@@ -257,6 +256,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
   }, [onClose]);
 
   const handleMagneticMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const el = magnetRefs.current[index];
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -266,6 +266,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
   };
 
   const handleMagneticMouseLeave = (index: number) => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const el = magnetRefs.current[index];
     if (!el) return;
     gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
