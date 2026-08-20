@@ -36,7 +36,7 @@ const useHoverPreview = (
     gsap.set(el, {
       xPercent: -50,
       yPercent: -50,
-      scale: 0,
+      scale: 0.7,
       opacity: 0,
       rotation: 0,
       transformOrigin: 'center center',
@@ -57,7 +57,7 @@ const useHoverPreview = (
 
   useEffect(() => {
     const lerpFactor = 0.12;
-    const positionLerpFactor = 0.04;
+    const positionLerpFactor = 0.05;
     const maxRotation = 10;
     const maxParallax = 14;
 
@@ -140,11 +140,12 @@ const useHoverPreview = (
   const hide = useCallback(() => {
     isHovering.current = false;
     if (!floatingRef.current) return;
+    if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
-      scale: 0,
+      scale: 0.7,
       opacity: 0,
       duration: 0.35,
-      ease: 'power3.in',
+      ease: 'power3.inOut',
       overwrite: 'auto',
     });
   }, []);
@@ -165,7 +166,7 @@ const useHoverPreview = (
     return () => window.removeEventListener('scroll', handleScroll);
   }, [containerRef, onScrollLeave, hide]);
 
-  return { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering };
+  return { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering, mouse };
 };
 
 interface MobileSnapProjectsProps {
@@ -348,16 +349,18 @@ export default function ProjectsPage() {
   const isLoading = false;
   const containerRef = useRef<HTMLDivElement>(null);
   const sliderReelRef = useRef<HTMLDivElement>(null);
+  const activeIndexRef = useRef<number>(-1);
 
   const handleScrollLeave = useCallback(() => {
     if (!containerRef.current) return;
     const lines = containerRef.current.querySelectorAll('.hover-line-ref');
-    lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out' }));
+    lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out', overwrite: 'auto' }));
     const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
     overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
+    activeIndexRef.current = -1;
   }, []);
 
-  const { setFloatingRef, setInnerRef, setImageContainerRef, show, hide } =
+  const { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, mouse } =
     useHoverPreview(containerRef, handleScrollLeave);
 
   useEffect(() => {
@@ -385,43 +388,120 @@ export default function ProjectsPage() {
     { scope: containerRef, dependencies: [isLoading, projects] },
   );
 
-  const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
-    router.prefetch(`/projects/${projects[index]?.slug || ''}`);
-    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
-    const line = e.currentTarget.querySelector('.hover-line-ref');
-    if (line) gsap.to(line, { width: '100%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
-    if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 0% 0 0)';
+  const activateRow = useCallback(
+    (index: number) => {
+      if (
+        typeof window !== 'undefined' &&
+        (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)
+      )
+        return;
+      if (!containerRef.current) return;
 
-    if (sliderReelRef.current) {
-      gsap.to(sliderReelRef.current, {
-        yPercent: -index * 100,
-        duration: 0.55,
-        ease: 'power3.out',
-        overwrite: 'auto',
+      if (activeIndexRef.current === index) {
+        show();
+        return;
+      }
+      activeIndexRef.current = index;
+
+      router.prefetch(`/projects/${projects[index]?.slug || ''}`);
+
+      const rows = containerRef.current.querySelectorAll<HTMLAnchorElement>('.project-row-desktop');
+      rows.forEach((row, idx) => {
+        const line = row.querySelector('.hover-line-ref');
+        const titleOverlay = row.querySelector('.title-reveal-overlay') as HTMLElement | null;
+        if (idx === index) {
+          if (line) gsap.to(line, { width: '100%', duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
+          if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 0% 0 0)';
+        } else {
+          if (line) gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
+          if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 100% 0 0)';
+        }
       });
-    }
 
-    show();
-  };
+      if (sliderReelRef.current) {
+        gsap.to(sliderReelRef.current, {
+          yPercent: -index * 100,
+          duration: 0.55,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        });
+      }
 
-  const handleRowMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
-    const line = e.currentTarget.querySelector('.hover-line-ref');
-    if (line) gsap.to(line, { width: '0%', duration: 0.4, ease: 'power2.out' });
-    const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
-    if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 100% 0 0)';
-  };
+      show();
+    },
+    [projects, router, show],
+  );
 
-  const handleTableMouseLeave = () => {
-    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
+  const deactivateAll = useCallback(() => {
+    activeIndexRef.current = -1;
     if (containerRef.current) {
       const lines = containerRef.current.querySelectorAll('.hover-line-ref');
-      lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out' }));
+      lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out', overwrite: 'auto' }));
       const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
-      overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
+      overlays.forEach((ov) => {
+        (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
+      });
     }
     hide();
+  }, [hide]);
+
+  useEffect(() => {
+    const handleCheckScroll = () => {
+      if (
+        typeof window !== 'undefined' &&
+        (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)
+      )
+        return;
+      if (!containerRef.current) return;
+      const mx = mouse.current.x;
+      const my = mouse.current.y;
+      if (mx === 0 && my === 0) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      if (
+        my < containerRect.top ||
+        my > containerRect.bottom ||
+        mx < containerRect.left ||
+        mx > containerRect.right
+      ) {
+        if (activeIndexRef.current !== -1) {
+          deactivateAll();
+        }
+        return;
+      }
+
+      const rows = containerRef.current.querySelectorAll<HTMLAnchorElement>('.project-row-desktop');
+      let foundIndex = -1;
+      rows.forEach((row, idx) => {
+        const rect = row.getBoundingClientRect();
+        if (my >= rect.top && my <= rect.bottom && mx >= rect.left && mx <= rect.right) {
+          foundIndex = idx;
+        }
+      });
+
+      if (foundIndex !== -1) {
+        activateRow(foundIndex);
+      } else if (activeIndexRef.current !== -1) {
+        deactivateAll();
+      }
+    };
+
+    window.addEventListener('scroll', handleCheckScroll, { passive: true });
+    const lenis = (window as any).__lenis;
+    if (lenis) {
+      lenis.on('scroll', handleCheckScroll);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleCheckScroll);
+      if (lenis) {
+        lenis.off('scroll', handleCheckScroll);
+      }
+    };
+  }, [activateRow, deactivateAll, mouse]);
+
+  const handleTableMouseLeave = () => {
+    deactivateAll();
   };
 
   const handleRowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -478,8 +558,7 @@ export default function ProjectsPage() {
               key={project.id}
               href={`/projects/${project.slug}`}
               className="project-row-desktop relative flex items-stretch border-b border-border py-8 min-h-[120px] group cursor-pointer no-underline"
-              onMouseEnter={(e) => handleRowMouseEnter(e, index)}
-              onMouseLeave={handleRowMouseLeave}
+              onMouseEnter={() => activateRow(index)}
               data-cursor="view"
               onClick={handleRowClick}
             >
