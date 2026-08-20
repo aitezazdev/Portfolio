@@ -96,27 +96,37 @@ const HomeBanner = () => {
     const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
     if (isDone) {
       if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '0%', opacity: 1 });
+        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), {
+          y: '0%',
+          rotateX: 0,
+          opacity: 1,
+          transformPerspective: 800,
+          transformOrigin: '50% 100%',
+        });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
       }
-      [paragraphRef, tickerRef].forEach((ref) => {
-        if (ref.current) gsap.set(ref.current, { y: 0, opacity: 1 });
-      });
+      if (paragraphRef.current) gsap.set(paragraphRef.current, { y: 0, opacity: 1 });
+      if (tickerRef.current) gsap.set(tickerRef.current, { y: 0, opacity: 1 });
       if (buttonsRef.current) {
         gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
-        gsap.set(buttonsRef.current.children, { y: 0, opacity: 1 });
+        gsap.set(buttonsRef.current.children, { y: 0, opacity: 1, scale: 1 });
       }
     } else {
       if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), { y: '100%', opacity: 0 });
+        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), {
+          y: '115%',
+          rotateX: 85,
+          opacity: 0,
+          transformPerspective: 800,
+          transformOrigin: '50% 100%',
+        });
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
       }
-      [paragraphRef, tickerRef].forEach((ref) => {
-        if (ref.current) gsap.set(ref.current, { y: 40, opacity: 0 });
-      });
+      if (paragraphRef.current) gsap.set(paragraphRef.current, { y: 35, opacity: 0 });
+      if (tickerRef.current) gsap.set(tickerRef.current, { y: 30, opacity: 0 });
       if (buttonsRef.current) {
         gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
-        gsap.set(buttonsRef.current.children, { y: 25, opacity: 0 });
+        gsap.set(buttonsRef.current.children, { y: 30, opacity: 0, scale: 0.95 });
       }
     }
   }, [reduced]);
@@ -127,58 +137,66 @@ const HomeBanner = () => {
 
       if (nameRef.current) {
         gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-        const letters = nameRef.current.querySelectorAll('.letter-wrapper');
-        if (letters.length) {
-          gsap.to(letters, {
-            y: '0%',
-            opacity: 1,
-            duration: 0.75,
-            stagger: 0.035,
-            ease: 'power3.out',
-            delay: 0.1,
-          });
-        }
+      }
+
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+      const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
+      const letters = nameRef.current?.querySelectorAll(selector);
+
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+      if (letters && letters.length > 0) {
+        tl.to(letters, {
+          y: '0%',
+          rotateX: 0,
+          opacity: 1,
+          duration: 0.85,
+          stagger: 0.03,
+          ease: 'power4.out',
+        });
       }
 
       if (paragraphRef.current) {
-        gsap.to(paragraphRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: 'power3.out',
-          delay: 0.45,
-        });
+        tl.to(
+          paragraphRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            ease: 'power3.out',
+          },
+          '-=0.45'
+        );
       }
 
       if (tickerRef.current) {
-        gsap.to(tickerRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.65,
-          ease: 'power3.out',
-          delay: 0.65,
-        });
+        tl.to(
+          tickerRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: 'power3.out',
+          },
+          '-=0.4'
+        );
       }
 
       if (buttonsRef.current) {
         const btnElements = buttonsRef.current.children;
         if (btnElements.length) {
-          gsap.to(btnElements, {
-            y: 0,
-            opacity: 1,
-            duration: 0.65,
-            stagger: 0.1,
-            ease: 'power3.out',
-            delay: 0.85,
-          });
-        } else {
-          gsap.to(buttonsRef.current, {
-            y: 0,
-            opacity: 1,
-            duration: 0.65,
-            ease: 'power3.out',
-            delay: 0.85,
-          });
+          tl.to(
+            btnElements,
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.65,
+              stagger: 0.08,
+              ease: 'back.out(1.5)',
+            },
+            '-=0.35'
+          );
         }
       }
     };
@@ -317,6 +335,7 @@ const HomeBanner = () => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
+            style={{ perspective: '1000px' }}
           >
             <span aria-hidden="true" data-hero-name="mobile" className="block md:hidden">
               <span className="block">{splitText('Aitezaz')}</span>
