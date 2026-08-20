@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { Link } from 'next-transition-router';
 import { gsap, useGSAP } from '@/lib/gsap';
@@ -34,8 +34,12 @@ const useHoverPreview = (
     floatingRef.current = el;
     if (!el) return;
     gsap.set(el, {
-      xPercent: -50, yPercent: -50, scale: 0.6, opacity: 0, rotation: 0,
-      transformOrigin: 'center center', clipPath: 'circle(0% at 50% 50%)',
+      xPercent: -50,
+      yPercent: -50,
+      scale: 0,
+      opacity: 0,
+      rotation: 0,
+      transformOrigin: 'center center',
     });
     rotateTo.current = gsap.quickTo(el, 'rotation', { duration: 0.4, ease: 'power3' });
   }, []);
@@ -53,9 +57,9 @@ const useHoverPreview = (
 
   useEffect(() => {
     const lerpFactor = 0.12;
-    const positionLerpFactor = 0.03;
-    const maxRotation = 12;
-    const maxParallax = 15;
+    const positionLerpFactor = 0.04;
+    const maxRotation = 10;
+    const maxParallax = 14;
 
     const tick = () => {
       const m = mouse.current;
@@ -79,8 +83,8 @@ const useHoverPreview = (
       if (isHovering.current) {
         d.targetRotation = gsap.utils.clamp(-maxRotation, maxRotation, d.velocityX * 0.35);
         if (imgXTo.current && imgYTo.current) {
-          imgXTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityX * 1.2));
-          imgYTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityY * 1.2));
+          imgXTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityX * 1.1));
+          imgYTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityY * 1.1));
         }
       } else {
         d.targetRotation = 0;
@@ -125,8 +129,11 @@ const useHoverPreview = (
     dynamics.current.targetRotation = 0;
     if (rotateTo.current) rotateTo.current(0);
     gsap.to(floatingRef.current, {
-      clipPath: 'circle(75% at 50% 50%)', opacity: 1, scale: 1,
-      duration: 0.6, ease: 'power4.out', overwrite: 'auto',
+      scale: 1,
+      opacity: 1,
+      duration: 0.45,
+      ease: 'power3.out',
+      overwrite: 'auto',
     });
   }, []);
 
@@ -134,8 +141,11 @@ const useHoverPreview = (
     isHovering.current = false;
     if (!floatingRef.current) return;
     gsap.to(floatingRef.current, {
-      clipPath: 'circle(0% at 50% 50%)', opacity: 0, scale: 0.6,
-      duration: 0.4, ease: 'power3.in', overwrite: 'auto',
+      scale: 0,
+      opacity: 0,
+      duration: 0.35,
+      ease: 'power3.in',
+      overwrite: 'auto',
     });
   }, []);
 
@@ -337,8 +347,7 @@ export default function ProjectsPage() {
   const projects = getAllProjects();
   const isLoading = false;
   const containerRef = useRef<HTMLDivElement>(null);
-  const [hoveredImage, setHoveredImage] = useState<string>('');
-  const lastHoveredImgRef = useRef<string>('');
+  const sliderReelRef = useRef<HTMLDivElement>(null);
 
   const handleScrollLeave = useCallback(() => {
     if (!containerRef.current) return;
@@ -346,10 +355,9 @@ export default function ProjectsPage() {
     lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out' }));
     const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
     overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
-    lastHoveredImgRef.current = '';
   }, []);
 
-  const { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering } =
+  const { setFloatingRef, setInnerRef, setImageContainerRef, show, hide } =
     useHoverPreview(containerRef, handleScrollLeave);
 
   useEffect(() => {
@@ -377,30 +385,24 @@ export default function ProjectsPage() {
     { scope: containerRef, dependencies: [isLoading, projects] },
   );
 
-  const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, imageUrl: string, index: number) => {
+  const handleRowMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
     router.prefetch(`/projects/${projects[index]?.slug || ''}`);
     if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     const line = e.currentTarget.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.4, ease: 'power2.out' });
     const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 0% 0 0)';
-    const isNewImage = lastHoveredImgRef.current !== imageUrl;
-    lastHoveredImgRef.current = imageUrl;
-    if (isNewImage && isHovering.current) {
-      const floatingEl = document.querySelector('.floating-preview-ref');
-      if (floatingEl) {
-        gsap.to(floatingEl, {
-          scale: 0.92, clipPath: 'circle(40% at 50% 50%)', duration: 0.15, ease: 'power2.in',
-          onComplete: () => {
-            setHoveredImage(imageUrl);
-            gsap.to(floatingEl, { scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.35, ease: 'power3.out' });
-          },
-        });
-      }
-    } else {
-      setHoveredImage(imageUrl);
-      show();
+
+    if (sliderReelRef.current) {
+      gsap.to(sliderReelRef.current, {
+        yPercent: -index * 100,
+        duration: 0.55,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
     }
+
+    show();
   };
 
   const handleRowMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -409,6 +411,16 @@ export default function ProjectsPage() {
     if (line) gsap.to(line, { width: '0%', duration: 0.4, ease: 'power2.out' });
     const titleOverlay = e.currentTarget.querySelector('.title-reveal-overlay') as HTMLElement | null;
     if (titleOverlay) titleOverlay.style.clipPath = 'inset(0 100% 0 0)';
+  };
+
+  const handleTableMouseLeave = () => {
+    if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
+    if (containerRef.current) {
+      const lines = containerRef.current.querySelectorAll('.hover-line-ref');
+      lines.forEach((line) => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.out' }));
+      const overlays = containerRef.current.querySelectorAll('.title-reveal-overlay');
+      overlays.forEach((ov) => { (ov as HTMLElement).style.clipPath = 'inset(0 100% 0 0)'; });
+    }
     hide();
   };
 
@@ -460,13 +472,13 @@ export default function ProjectsPage() {
         </div>
         <hr className="border-t border-border w-full mb-4" />
 
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full" onMouseLeave={handleTableMouseLeave}>
           {projects.map((project, index) => (
             <Link
               key={project.id}
               href={`/projects/${project.slug}`}
               className="project-row-desktop relative flex items-stretch border-b border-border py-8 min-h-[120px] group cursor-pointer no-underline"
-              onMouseEnter={(e) => handleRowMouseEnter(e, project.hoverImage || project.images[0], index)}
+              onMouseEnter={(e) => handleRowMouseEnter(e, index)}
               onMouseLeave={handleRowMouseLeave}
               data-cursor="view"
               onClick={handleRowClick}
@@ -521,47 +533,50 @@ export default function ProjectsPage() {
           ref={setFloatingRef}
           className="floating-preview-ref fixed pointer-events-none z-[100] opacity-0"
           style={{
-            top: 0, left: 0, willChange: 'transform, clip-path, opacity',
-            clipPath: 'circle(0% at 50% 50%)',
+            top: 0,
+            left: 0,
+            willChange: 'transform, opacity',
           }}
         >
           <div
             ref={setInnerRef}
-            className="w-[500px] rounded-2xl overflow-hidden"
+            className="w-[450px] lg:w-[480px] rounded-2xl overflow-hidden shadow-2xl bg-surface-mid"
             style={{
-              aspectRatio: '1919 / 923', willChange: 'transform',
-              boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 8px 20px -8px rgba(0, 0, 0, 0.2)',
+              aspectRatio: '16 / 10',
+              willChange: 'transform',
+              boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.4), 0 12px 24px -8px rgba(0, 0, 0, 0.25)',
             }}
           >
             <div
               ref={setImageContainerRef}
-              className="w-full h-full relative"
+              className="w-full h-full relative overflow-hidden"
               style={{ willChange: 'transform', transform: 'scale(1.12)' }}
             >
               <div
-                className="absolute inset-0 z-10 pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.15) 100%)' }}
-              />
-              {projects.map((project) => {
-                const imgUrl = project.hoverImage || project.images[0];
-                const isActive = hoveredImage === imgUrl;
-                return (
-                  <div
-                    key={project.id}
-                    className="absolute inset-0 transition-opacity duration-300 ease-out"
-                    style={{ opacity: isActive ? 1 : 0 }}
-                  >
-                    <Image
-                      src={imgUrl}
-                      alt={project.title}
-                      fill
-                      sizes="500px"
-                      priority
-                      className="object-cover object-top"
-                    />
-                  </div>
-                );
-              })}
+                ref={sliderReelRef}
+                className="w-full h-full relative"
+                style={{ willChange: 'transform', transform: 'translateY(0%)' }}
+              >
+                {projects.map((project, idx) => {
+                  const imgUrl = project.hoverImage || project.images[0];
+                  return (
+                    <div
+                      key={project.id}
+                      className="w-full h-full absolute inset-0"
+                      style={{ top: `${idx * 100}%` }}
+                    >
+                      <Image
+                        src={imgUrl}
+                        alt={project.title}
+                        fill
+                        sizes="500px"
+                        priority={idx < 2}
+                        className="object-cover object-top"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
