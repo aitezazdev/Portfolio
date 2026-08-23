@@ -44,6 +44,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const finishPreloader = useCallback(() => {
     setIsLoading(false);
+  }, []);
+
+  const handleExitComplete = useCallback(() => {
     document.body.classList.remove('preloader-active');
     window.scrollTo(0, 0);
     setShowCursor(true);
@@ -57,7 +60,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {showCursor && <CustomCursor />}
 
       {!instantDone && (
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
           {isLoading && (
             <GlobalPreloader key="preloader" onComplete={finishPreloader} />
           )}

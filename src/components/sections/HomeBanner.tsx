@@ -126,7 +126,7 @@ const HomeBanner = () => {
     gsap.set(buttonsRef.current?.children ?? [], { y: 26, opacity: 0, scale: 0.96 });
     gsap.set(stampRef.current, { scale: 0, rotate: -30, opacity: 0 });
 
-    const tl = gsap.timeline({ defaults: { ease: EASE.outQuart }, delay: 0.15 });
+    const tl = gsap.timeline({ defaults: { ease: EASE.outQuart }, delay: 0.05 });
     tl.to(chars, {
       yPercent: 0,
       rotateX: 0,
@@ -137,7 +137,7 @@ const HomeBanner = () => {
       .to(paragraphRef.current, { y: 0, opacity: 1, duration: 0.75, ease: EASE.outCubic }, '-=0.55')
       .to(tickerRef.current, { y: 0, opacity: 1, duration: 0.6, ease: EASE.outCubic }, '-=0.5')
       .to(
-        buttonsRef.current.children,
+        buttonsRef.current?.children ?? [],
         { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.08, ease: 'back.out(1.6)' },
         '-=0.45'
       )
@@ -156,14 +156,37 @@ const HomeBanner = () => {
   }, [reduced]);
 
   useEffect(() => {
-    if (reduced) {
-      gsap.set([paragraphRef.current, tickerRef.current], { clearProps: 'all' });
+    if (reduced || !nameRef.current) {
+      if (reduced) {
+        gsap.set([paragraphRef.current, tickerRef.current], { clearProps: 'all' });
+      }
       return;
     }
     if (typeof window !== 'undefined' && window.__preloaderDone === true) {
       const cleanup = playIntro();
       return cleanup;
     }
+
+    const lines = nameRef.current.querySelectorAll<HTMLElement>('[data-hero-line]');
+    const chars: HTMLElement[] = [];
+    splitsRef.current.forEach((s) => s.revert());
+    splitsRef.current = [];
+    lines.forEach((line) => {
+      const split = SplitText.create(line, { type: 'chars', charsClass: 'hero-char' });
+      splitsRef.current.push(split);
+      chars.push(...(split.chars as HTMLElement[]));
+    });
+
+    gsap.set(chars, {
+      yPercent: 125,
+      rotateX: -70,
+      opacity: 0,
+      transformPerspective: 900,
+      transformOrigin: '50% 100%',
+    });
+    gsap.set([paragraphRef.current, tickerRef.current], { y: 34, opacity: 0 });
+    gsap.set(buttonsRef.current?.children ?? [], { y: 26, opacity: 0, scale: 0.96 });
+    gsap.set(stampRef.current, { scale: 0, rotate: -30, opacity: 0 });
   }, [reduced, playIntro]);
 
   useEffect(() => {
