@@ -13,19 +13,20 @@ const useHoverPreview = () => {
   const floatingRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
-  const rotateTo = useRef<any>(null);
   const imgXTo = useRef<any>(null);
   const imgYTo = useRef<any>(null);
   const mouse = useRef({ x: 0, y: 0, prevX: 0, prevY: 0 });
   const delayedMouse = useRef({ x: 0, y: 0 });
   const isHovering = useRef<boolean>(false);
   const rafId = useRef<number | null>(null);
-  const dynamics = useRef({
-    velocityX: 0,
-    velocityY: 0,
-    currentRotation: 0,
-    targetRotation: 0,
-  });
+  const dynamics = useRef({ velocityX: 0, velocityY: 0, rotation: 0 });
+  /**
+   * Snellenberg-style single-writer architecture: scale/opacity are NOT
+   * tweened on enter/exit. One rAF loop lerps EVERYTHING (position, scale,
+   * opacity, rotation, inner zoom) and emits exactly one transform per
+   * frame. No tween-vs-rAF races, no blur repaints -> perfectly fluid.
+   */
+  const vis = useRef({ scale: 0, opacity: 0 });
 
   const setFloatingRef = useCallback((el: HTMLDivElement | null) => {
     floatingRef.current = el;
@@ -33,12 +34,14 @@ const useHoverPreview = () => {
     gsap.set(el, {
       xPercent: -50,
       yPercent: -50,
+      x: -1000,
+      y: -1000,
       scale: 0,
-      opacity: 1,
+      opacity: 0,
       rotation: 0,
       transformOrigin: 'center center',
     });
-    rotateTo.current = gsap.quickTo(el, 'rotation', { duration: 0.4, ease: 'power3' });
+    el.style.visibility = 'hidden';
   }, []);
 
   const setInnerRef = useCallback((el: HTMLDivElement | null) => {
@@ -48,52 +51,71 @@ const useHoverPreview = () => {
   const setImageContainerRef = useCallback((el: HTMLDivElement | null) => {
     imageContainerRef.current = el;
     if (!el) return;
-    imgXTo.current = gsap.quickTo(el, 'x', { duration: 0.2, ease: 'power2' });
-    imgYTo.current = gsap.quickTo(el, 'y', { duration: 0.2, ease: 'power2' });
+    imgXTo.current = gsap.quickTo(el, 'x', { duration: 0.25, ease: 'power2' });
+    imgYTo.current = gsap.quickTo(el, 'y', { duration: 0.25, ease: 'power2' });
   }, []);
 
   useEffect(() => {
-    const lerpFactor = 0.12;
-    const positionLerpFactor = 0.08;
-    const maxRotation = 10;
-    const maxParallax = 14;
+    if (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) return;
+
+    const POSITION_LERP = 0.115;
+    const SCALE_LERP = 0.13;
+    const OPACITY_LERP = 0.17;
+    const ROT_LERP = 0.09;
+    const MAX_ROT = 6;
+    const MAX_PARALLAX = 12;
 
     const tick = () => {
       const m = mouse.current;
       const d = dynamics.current;
-      const rawVx = m.x - m.prevX;
-      const rawVy = m.y - m.prevY;
-      d.velocityX += (rawVx - d.velocityX) * 0.2;
-      d.velocityY += (rawVy - d.velocityY) * 0.2;
+
+      // Smoothed cursor velocity (for tilt + parallax)
+      d.velocityX += (m.x - m.prevX - d.velocityX) * 0.18;
+      d.velocityY += (m.y - m.prevY - d.velocityY) * 0.18;
       m.prevX = m.x;
       m.prevY = m.y;
-      delayedMouse.current.x += (m.x - delayedMouse.current.x) * positionLerpFactor;
-      delayedMouse.current.y += (m.y - delayedMouse.current.y) * positionLerpFactor;
 
-      if (floatingRef.current) {
-        gsap.set(floatingRef.current, {
-          x: delayedMouse.current.x,
-          y: delayedMouse.current.y,
+      delayedMouse.current.x += (m.x - delayedMouse.current.x) * POSITION_LERP;
+      delayedMouse.current.y += (m.y - delayedMouse.current.y) * POSITION_LERP;
+
+      const target = isHovering.current ? 1 : 0;
+      vis.current.scale += (target - vis.current.scale) * SCALE_LERP;
+      vis.current.opacity += (target - vis.current.opacity) * OPACITY_LERP;
+
+      const targetR = isHovering.current
+        ? gsap.utils.clamp(-MAX_ROT, MAX_ROT, d.velocityX * 0.3)
+        : 0;
+      d.rotation += (targetR - d.rotation) * ROT_LERP;
+
+      if (imageContainerRef.current) {
+        gsap.set(imageContainerRef.current, {
+          scale: 1.12 + (1 - vis.current.scale) * 0.26,
         });
-      }
-
-      if (isHovering.current) {
-        d.targetRotation = gsap.utils.clamp(-maxRotation, maxRotation, d.velocityX * 0.35);
         if (imgXTo.current && imgYTo.current) {
-          imgXTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityX * 1.1));
-          imgYTo.current(gsap.utils.clamp(-maxParallax, maxParallax, -d.velocityY * 1.1));
-        }
-      } else {
-        d.targetRotation = 0;
-        if (imgXTo.current && imgYTo.current) {
-          imgXTo.current(0);
-          imgYTo.current(0);
+          if (isHovering.current) {
+            imgXTo.current(gsap.utils.clamp(-MAX_PARALLAX, MAX_PARALLAX, -d.velocityX));
+            imgYTo.current(gsap.utils.clamp(-MAX_PARALLAX, MAX_PARALLAX, -d.velocityY));
+          } else {
+            imgXTo.current(0);
+            imgYTo.current(0);
+          }
         }
       }
 
-      d.currentRotation += (d.targetRotation - d.currentRotation) * lerpFactor;
-      if (rotateTo.current && Math.abs(d.currentRotation) > 0.01) {
-        rotateTo.current(d.currentRotation);
+      const el = floatingRef.current;
+      if (el) {
+        if (vis.current.opacity < 0.02) {
+          el.style.visibility = 'hidden';
+        } else {
+          if (el.style.visibility !== 'visible') el.style.visibility = 'visible';
+          gsap.set(el, {
+            x: delayedMouse.current.x,
+            y: delayedMouse.current.y,
+            scale: Math.max(vis.current.scale, 0.0001),
+            opacity: vis.current.opacity,
+            rotation: d.rotation,
+          });
+        }
       }
 
       rafId.current = requestAnimationFrame(tick);
@@ -118,26 +140,10 @@ const useHoverPreview = () => {
   const show = useCallback(() => {
     if (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches)) return;
     isHovering.current = true;
-    if (!floatingRef.current) return;
-    if (rotateTo.current) rotateTo.current(0);
-    gsap.to(floatingRef.current, {
-      scale: 1,
-      duration: 0.45,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    });
   }, []);
 
   const hide = useCallback(() => {
     isHovering.current = false;
-    if (!floatingRef.current) return;
-    if (rotateTo.current) rotateTo.current(0);
-    gsap.to(floatingRef.current, {
-      scale: 0,
-      duration: 0.4,
-      ease: 'power3.in',
-      overwrite: 'auto',
-    });
   }, []);
 
   return { setFloatingRef, setInnerRef, setImageContainerRef, show, hide, isHovering, mouse };
@@ -212,8 +218,8 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
     <div ref={sectionRef} className="md:hidden bg-cream pb-12">
       <div className="px-6 pt-16 pb-8">
         <AnimatedHeading
-          text="PROJECTS"
-          className="text-[clamp(3rem,14vw,5rem)] font-black leading-none uppercase text-charcoal"
+          words={[{ t: 'SELECTED' }, { t: 'works', serif: true }]}
+          className="text-[clamp(3rem,14vw,5rem)] leading-none text-charcoal"
         />
       </div>
 
@@ -237,7 +243,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
             <div className="p-3 pb-0">
               <div
                 className="mc-img-wrap relative overflow-hidden rounded-2xl"
-                style={{ aspectRatio: '1919 / 923', clipPath: 'inset(100% 0 0 0 round 14px)' }}
+                style={{ aspectRatio: '21 / 9', clipPath: 'inset(100% 0 0 0 round 14px)' }}
               >
                 <Image
                   src={project.hoverImage || project.images[0]}
@@ -259,7 +265,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
                 <span
                   className="mc-num font-mono font-black leading-none"
                   style={{
-                    fontSize: 'clamp(2.4rem,11vw,3.2rem)',
+                    fontSize: 'clamp(2rem, 9vw, 2.6rem)',
                     color: '#C45D3E',
                     letterSpacing: '-0.03em',
                   }}
@@ -286,8 +292,8 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
               </div>
 
               <h3
-                className="mc-title font-black uppercase leading-tight text-white mb-5"
-                style={{ fontSize: 'clamp(1.5rem,6.5vw,2.4rem)', letterSpacing: '-0.025em' }}
+                className="mc-title font-black uppercase leading-tight text-white mb-4"
+                style={{ fontSize: 'clamp(1.3rem, 5.5vw, 2rem)', letterSpacing: '-0.025em' }}
               >
                 {project.title}
               </h3>
@@ -508,11 +514,11 @@ export default function ProjectsPage() {
       ref={containerRef}
       className="relative w-full bg-cream text-charcoal overflow-hidden"
     >
-      <div className="hidden md:block py-24 md:py-32 px-6 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
+      <div className="hidden md:block pt-16 pb-20 md:pt-20 md:pb-24 px-6 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
         <div className="mb-12">
           <AnimatedHeading
-            text="PROJECTS"
-            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black leading-none uppercase text-charcoal"
+            words={[{ t: 'SELECTED' }, { t: 'works', serif: true }]}
+            className="text-[clamp(2.5rem,7vw,6.5rem)] leading-none text-charcoal"
           />
         </div>
         <hr className="border-t border-border w-full mb-4" />
@@ -584,11 +590,11 @@ export default function ProjectsPage() {
         >
           <div
             ref={setInnerRef}
-            className="w-[450px] lg:w-[480px] rounded-2xl overflow-hidden shadow-2xl bg-surface-mid"
+            className="w-[400px] xl:w-[440px] rounded-2xl overflow-hidden shadow-2xl bg-surface-mid"
             style={{
               aspectRatio: '16 / 10',
               willChange: 'transform',
-              boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.4), 0 12px 24px -8px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.38), 0 10px 20px -8px rgba(0, 0, 0, 0.22)',
             }}
           >
             <div
@@ -609,14 +615,14 @@ export default function ProjectsPage() {
                       className="w-full h-full absolute inset-0"
                       style={{ top: `${idx * 100}%` }}
                     >
-                      <Image
-                        src={imgUrl}
-                        alt={project.title}
-                        fill
-                        sizes="500px"
-                        priority={idx < 2}
-                        className="object-cover object-top"
-                      />
+                  <Image
+                    src={imgUrl}
+                    alt={project.title}
+                    fill
+                    sizes="460px"
+                    priority={idx < 2}
+                    className="object-cover object-top"
+                  />
                     </div>
                   );
                 })}
