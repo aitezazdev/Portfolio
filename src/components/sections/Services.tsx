@@ -28,7 +28,11 @@ const Services = () => {
     return () => ctx.revert();
   }, []);
 
-  const headingText = 'What I Do';
+  const headingWords = [
+    { t: 'WHAT' },
+    { t: 'i', serif: true },
+    { t: 'DO' },
+  ];
   const descriptionText =
     "I specialize in building full-stack web applications that are fast, reliable, and user-friendly. With a solid foundation in both frontend and backend technologies, I help bring ideas to life whether it's for a business, a startup, or a product team.";
 
@@ -72,13 +76,13 @@ const Services = () => {
     <section
       id="services"
       ref={sectionRef}
-      className="min-h-screen bg-ink text-light py-24 md:py-32 px-6 sm:px-8 md:px-12 lg:px-16 overflow-hidden"
+      className="min-h-screen bg-ink text-light pt-24 pb-16 md:pt-32 md:pb-20 px-6 sm:px-8 md:px-12 lg:px-16 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 md:mb-20">
           <AnimatedHeading
-            text={headingText}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+            words={headingWords}
+            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
           />
 
           <div className="grid md:grid-cols-12 gap-4 md:gap-8">
@@ -103,7 +107,7 @@ const Services = () => {
               ref={(el) => {
                 servicesRef.current[index] = el;
               }}
-              className="bg-ink pb-16 md:pb-32"
+              className="bg-ink pb-12 md:pb-20"
               style={{ zIndex: index + 1 }}
             >
               <div className="grid md:grid-cols-12 gap-4 items-center py-4 md:py-8 border-t border-border-subtle">

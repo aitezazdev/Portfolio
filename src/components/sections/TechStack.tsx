@@ -54,7 +54,11 @@ const TechStack = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
-  const headingText = 'My Tech Stack';
+  const headingWords = [
+    { t: 'MY' },
+    { t: 'TECH' },
+    { t: 'stack', serif: true },
+  ];
   const descriptionText =
     'A selection of technologies I use to design, build, and deploy full-stack web applications.';
 
@@ -104,13 +108,13 @@ const TechStack = () => {
     <section
       ref={containerRef}
       id="TechStack"
-      className="bg-ink text-light py-24 md:py-32 rounded-b-4xl overflow-hidden"
+      className="bg-ink text-light pt-24 pb-16 md:pt-32 md:pb-20 rounded-b-4xl overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
         <div className="mb-14 hidden md:block">
           <AnimatedHeading
-            text={headingText}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+            words={headingWords}
+            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
           />
           <ScrollWordReveal
             text={descriptionText}
@@ -121,8 +125,8 @@ const TechStack = () => {
 
         <div className="mb-10 md:hidden">
           <AnimatedHeading
-            text="My Stack"
-            className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+            words={[{ t: 'MY' }, { t: 'stack', serif: true }]}
+            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
           />
         </div>
 

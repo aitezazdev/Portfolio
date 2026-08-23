@@ -1,13 +1,17 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
-import Image from 'next/image';
 import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
+import FlowField from '@/components/canvas/FlowField';
 
 const About = () => {
-  const headingText = 'Who Am I';
+  const headingWords = [
+    { t: 'WHO' },
+    { t: 'am', serif: true },
+    { t: 'i?' },
+  ];
   const descriptionText =
     "I am a software engineer driven by a passion for building clean, intuitive, and reliable digital experiences.";
   const aboutMeText = `I build web applications that bridge thoughtful frontend interfaces with robust backend systems. To me, software is more than code on a screen; it is about making technology feel effortless and genuinely useful to real people.
@@ -17,33 +21,6 @@ My journey began with a simple curiosity for how things work under the hood. Ove
 Whether I am polishing micro-interactions or engineering full-stack systems, my core focus remains unchanged: creating software that brings people joy, solves real problems, and leaves a lasting positive impact.`;
   
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const container = containerRef.current;
-    if (!video || !container) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
-        });
-      },
-      { rootMargin: '100px', threshold: 0.15 },
-    );
-
-    observer.observe(container);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   useGSAP(
     () => {
@@ -92,8 +69,8 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
           <div className="mb-10 md:mb-20">
             <AnimatedHeading
-              text={headingText}
-              className="text-[clamp(2.5rem,7vw,6.5rem)] font-black tracking-tight leading-none uppercase mb-4"
+              words={headingWords}
+              className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
             />
             <ScrollWordReveal
               text={descriptionText}
@@ -102,34 +79,12 @@ Whether I am polishing micro-interactions or engineering full-stack systems, my 
             />
           </div>
 
-          <div className="grid grid-cols-12 gap-6 md:gap-8 pb-20 items-center">
+          <div className="grid grid-cols-12 gap-6 md:gap-8 pb-6 md:pb-10 items-center">
             <div className="col-span-12 md:col-span-5 lg:col-span-5 flex items-center justify-center">
               <div
-                ref={containerRef}
                 className="about-image-wrapper relative group w-full max-w-[350px] md:max-w-[380px] h-[360px] md:h-[480px] bg-elevated-dark rounded-2xl overflow-hidden border border-border-subtler shadow-2xl [will-change:transform,opacity]"
               >
-                <video
-                  ref={videoRef}
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  poster="/nature-poster.webp"
-                  aria-label="Ambient nature scenery"
-                  className="w-full h-full object-cover transition-opacity duration-700"
-                >
-                  <source src="/nature-live.webm" type="video/webm" />
-                  <source src="/nature-live.mp4" type="video/mp4" />
-                  <Image
-                    src="/nature-poster.webp"
-                    alt="Ambient nature scenery fallback"
-                    fill
-                    sizes="(max-width: 768px) 350px, 380px"
-                    className="object-cover"
-                  />
-                </video>
-
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent pointer-events-none" />
+                <FlowField />
               </div>
             </div>
 
