@@ -74,11 +74,11 @@ const StampBadge = ({ onClick }: { onClick: () => void }) => (
           <path id="stamp-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
         </defs>
         <text
-          className="fill-charcoal font-mono uppercase font-semibold"
-          style={{ fontSize: '15px', letterSpacing: '0.28em' }}
+          className="fill-charcoal font-mono uppercase"
+          style={{ fontSize: '15.5px', letterSpacing: '0.32em' }}
         >
           <textPath href="#stamp-circle">
-            AVAILABLE FOR WORK • LET&apos;S BUILD • 
+            open to work • worldwide • 
           </textPath>
         </text>
       </svg>
