@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 
 export const getSectionElement = (targetId: string): HTMLElement | null => {
   if (!targetId || targetId === 'top' || targetId === 'home') return null;
