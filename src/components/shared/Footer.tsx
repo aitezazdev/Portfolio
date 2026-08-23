@@ -6,7 +6,8 @@ import Magnetic from '@/components/ui/Magnetic';
 import { FaArrowUp } from 'react-icons/fa';
 import { useHandleLinkClick } from '@/lib/navigation';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
-import Lenis from '@studio-freight/lenis';
+import { site, socialList } from '@/lib/site';
+import Lenis from 'lenis';
 
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState('');
@@ -22,7 +23,7 @@ const Footer = () => {
     const updateTime = () => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Karachi',
+        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: site.timeZone,
       });
       setCurrentTime(timeString);
     };
@@ -93,12 +94,7 @@ const Footer = () => {
               Socials
             </h3>
             <ul className="flex flex-col gap-3 sm:gap-4 text-gray-soft text-xs sm:text-sm font-sans font-medium uppercase tracking-wide">
-              {[
-                { label: 'Linkedin', href: 'https://linkedin.com/in/aitezaz-sikandar' },
-                { label: 'Instagram', href: 'https://instagram.com/ur_zaz' },
-                { label: 'Github', href: 'https://github.com/aitezazdev' },
-                { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
-              ].map((s) => (
+              {socialList.map((s) => (
                 <AnimatedLink key={s.label}>
                   <a href={s.href} target="_blank" rel="noopener noreferrer">
                     {s.label}
@@ -113,7 +109,7 @@ const Footer = () => {
               Local Time
             </h3>
             <p className="text-gray-soft text-sm sm:text-base font-sans font-medium tracking-wide">
-              {isMounted && currentTime ? `${currentTime} PKT` : 'Loading local time...'}
+              {isMounted && currentTime ? `${currentTime} ${site.timeZoneLabel}` : 'Loading local time...'}
             </p>
           </div>
         </div>

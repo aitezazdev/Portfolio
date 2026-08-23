@@ -7,8 +7,9 @@ import { useTransitionState } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
+import { site, socials } from '@/lib/site';
 import Link from 'next/link';
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 import { Copyright } from 'lucide-react';
 import Magnetic from '@/components/ui/Magnetic';
 
@@ -350,21 +351,17 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ onClose, handleLinkClic
               <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-1.5">Get in Touch</p>
               <Magnetic strength={0.3}>
                 <a
-                  href="mailto:aitezazsikandar@gmail.com"
+                  href={`mailto:${site.email}`}
                   className="group relative inline-block text-muted hover:text-white text-xs sm:text-sm transition-colors duration-300 py-0.5"
                 >
-                  <span>aitezazsikandar@gmail.com</span>
+                  <span>{site.email}</span>
                   <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none block" />
                 </a>
               </Magnetic>
             </div>
 
             <div className="flex gap-4 md:gap-6 justify-start flex-wrap">
-              {[
-                { label: 'GitHub', href: 'https://github.com/aitezazdev' },
-                { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
-                { label: 'LinkedIn', href: 'https://linkedin.com/in/aitezaz-sikandar' },
-              ].map((s) => (
+              {[socials.github, socials.source, socials.linkedin].map((s) => (
                 <Magnetic key={s.label} strength={0.3}>
                   <a
                     href={s.href}

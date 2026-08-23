@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, Variants } from 'framer-motion';
 
 export const preloaderWords = [
@@ -24,22 +24,78 @@ export const slideUp: Variants = {
   },
 };
 
-export const fade: Variants = {
-  initial: {
-    opacity: 0,
-  },
-  enter: {
-    opacity: 0.75,
-    transition: { duration: 1, delay: 0.2 },
-  },
-};
+const MIN_DISPLAY_MS = 1400;
+const HARD_CAP_MS = 3200;
 
-export default function GlobalPreloader() {
+export default function GlobalPreloader({ onComplete }: { onComplete?: () => void }) {
   const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [dimension, setDimension] = useState<{ width: number; height: number }>({
     width: 1920,
     height: 1080,
   });
+
+  const targetRef = useRef(0);
+  const displayedRef = useRef(0);
+  const fontsResolvedRef = useRef(false);
+  const loadedRef = useRef(false);
+  const startedAtRef = useRef(0);
+  const finishedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  useEffect(() => {
+    startedAtRef.current = performance.now();
+    document.fonts?.ready.then(() => {
+      fontsResolvedRef.current = true;
+    });
+    const onLoad = () => {
+      loadedRef.current = true;
+    };
+    if (document.readyState === 'complete') loadedRef.current = true;
+    window.addEventListener('load', onLoad);
+
+    const capTimer = setTimeout(() => {
+      fontsResolvedRef.current = true;
+      loadedRef.current = true;
+    }, HARD_CAP_MS - MIN_DISPLAY_MS);
+
+    return () => {
+      window.removeEventListener('load', onLoad);
+      clearTimeout(capTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let rafId: number;
+    const tick = () => {
+      const elapsed = performance.now() - startedAtRef.current;
+
+      let target = Math.min(90, (elapsed / MIN_DISPLAY_MS) * 88);
+      if (fontsResolvedRef.current) target = Math.max(target, 55);
+      if (loadedRef.current) target = Math.max(target, 80);
+      if (fontsResolvedRef.current && loadedRef.current && elapsed >= MIN_DISPLAY_MS) {
+        target = 100;
+      }
+
+      targetRef.current = target;
+      displayedRef.current += (targetRef.current - displayedRef.current) * 0.09;
+      const shown = displayedRef.current >= 99.5 ? 100 : displayedRef.current;
+      setProgress(shown);
+
+      if (shown === 100 && !finishedRef.current) {
+        finishedRef.current = true;
+        try {
+          sessionStorage.setItem('preloader-seen', '1');
+        } catch {}
+        setTimeout(() => onCompleteRef.current?.(), 220);
+        return;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,12 +110,13 @@ export default function GlobalPreloader() {
   }, []);
 
   useEffect(() => {
+    if (finishedRef.current) return;
     if (index === preloaderWords.length - 1) return;
     const timeout = setTimeout(
       () => {
         setIndex((prev) => prev + 1);
       },
-      index === 0 ? 400 : 300
+      index === 0 ? 380 : 280,
     );
     return () => clearTimeout(timeout);
   }, [index]);
@@ -91,13 +148,23 @@ export default function GlobalPreloader() {
       className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#141516] cursor-wait text-cream select-none pointer-events-auto"
     >
       <motion.div
-        variants={fade}
-        initial="initial"
-        animate="enter"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.75, transition: { duration: 1, delay: 0.15 } }}
         className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10"
       >
         <p className="tracking-wide">{preloaderWords[index]}</p>
       </motion.div>
+
+      <div className="absolute bottom-8 left-8 z-10 flex items-baseline gap-3 font-mono" aria-hidden="true">
+        <span className="text-accent text-sm uppercase tracking-widest">loading</span>
+        <span className="text-[#f0ede6] text-lg tabular-nums">{Math.round(progress)}%</span>
+      </div>
+
+      <div
+        className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent z-10"
+        style={{ transform: `scaleX(${progress / 100})` }}
+        aria-hidden="true"
+      />
 
       <svg className="absolute top-0 -z-10 h-[calc(100%+300px)] w-full pointer-events-none">
         <motion.path
