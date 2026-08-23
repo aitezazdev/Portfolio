@@ -104,20 +104,16 @@ export default function ProjectDetails({ project }: { project: Project }) {
             </span>
           </h1>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/[0.08] pt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 border-t border-white/[0.08] pt-6 items-start">
             <div className="pd-meta-item">
               <p className="font-mono text-[11px] uppercase tracking-widest text-warm mb-1.5">Role</p>
               <p className="text-sm md:text-base font-medium">{project.role}</p>
             </div>
             <div className="pd-meta-item">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-warm mb-1.5">Year</p>
-              <p className="text-sm md:text-base font-medium">{project.year}</p>
-            </div>
-            <div className="pd-meta-item">
               <p className="font-mono text-[11px] uppercase tracking-widest text-warm mb-1.5">Type</p>
               <p className="text-sm md:text-base font-medium">{project.type}</p>
             </div>
-            <div className="pd-meta-item flex flex-wrap items-start gap-2.5">
+            <div className="pd-meta-item col-span-2 sm:col-span-1 flex flex-wrap items-start sm:justify-end gap-2.5">
               {project.liveUrl && (
                 <AnimatedButton
                   as="a"

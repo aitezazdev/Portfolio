@@ -7,7 +7,6 @@ export interface Project {
   id: number;
   slug: string;
   title: string;
-  year: string;
   type: string;
   role: string;
   tech: string[];
@@ -29,7 +28,6 @@ const projects: Project[] = [
     id: 1,
     slug: 'c-study',
     title: 'Collaborative Study Platform',
-    year: '2026',
     type: 'Real-time Web App',
     role: 'Full Stack Developer',
     tech: ['React', 'Node.js', 'Express', 'Socket.io', 'MongoDB', 'Study Assistant', 'Tailwind CSS'],
@@ -70,7 +68,6 @@ const projects: Project[] = [
     id: 2,
     slug: 'hms',
     title: 'Hospital Management System',
-    year: '2025',
     type: 'Full Stack Platform',
     role: 'Full Stack Developer',
     tech: ['React', 'Express', 'Node.js', 'MongoDB', 'Clinical Assessment', 'Redux Toolkit', 'Tailwind CSS'],
@@ -114,7 +111,6 @@ const projects: Project[] = [
     id: 3,
     slug: 'ecommerce',
     title: 'E-Commerce Store',
-    year: '2026',
     type: 'SSR Commerce App',
     role: 'Full Stack Developer',
     tech: ['Next.js 16', 'React 19', 'TypeScript', 'Redux Toolkit', 'Stripe', 'MongoDB', 'Tailwind CSS'],
@@ -156,7 +152,6 @@ const projects: Project[] = [
     id: 4,
     slug: 'finance',
     title: 'Personal Finance Tracker',
-    year: '2025',
     type: 'Analytics Dashboard',
     role: 'Full Stack Developer',
     tech: ['React', 'Express', 'Node.js', 'MongoDB', 'JWT Auth', 'Recharts.js', 'Tailwind CSS'],
@@ -198,7 +193,6 @@ const projects: Project[] = [
     id: 5,
     slug: 'blog',
     title: 'Modern Blog Space',
-    year: '2025',
     type: 'Content Platform',
     role: 'Full Stack Developer',
     tech: ['React', 'Express', 'Node.js', 'MongoDB', 'JWT Auth', 'Cloudinary', 'Tailwind CSS'],
