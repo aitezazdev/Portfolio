@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useRef } from 'react';
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 
 declare global {
@@ -39,8 +39,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      smoothTouch: false,
-    } as any);
+    });
 
     lenisRef.current = lenis;
     window.__lenis = lenis;
@@ -60,6 +59,16 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       if (aliveRef.current) ScrollTrigger.refresh();
     }, 500);
 
+    document.fonts?.ready.then(() => {
+      if (aliveRef.current) ScrollTrigger.refresh();
+    });
+    const onLoad = () => {
+      if (aliveRef.current) ScrollTrigger.refresh();
+    };
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', onLoad);
+    }
+
     return () => {
       aliveRef.current = false;
       lenis.off('scroll', ScrollTrigger.update);
@@ -67,6 +76,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       delete window.__lenis;
       lenis.destroy();
       clearTimeout(refreshTimer);
+      window.removeEventListener('load', onLoad);
     };
   }, []);
 

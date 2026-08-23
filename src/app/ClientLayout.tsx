@@ -15,6 +15,7 @@ declare global {
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [instantDone, setInstantDone] = useState(false);
   const [showCursor, setShowCursor] = useState(false);
 
   useEffect(() => {
@@ -24,48 +25,45 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
     );
 
-    if (typeof window !== 'undefined') {
-      window.__preloaderDone = false;
-      document.body.classList.add('preloader-active');
-    }
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem('preloader-seen') === '1';
+    } catch {}
 
-    const timer = setTimeout(() => {
+    if (seen) {
+      window.__preloaderDone = true;
+      document.body.classList.remove('preloader-active');
+      setInstantDone(true);
       setIsLoading(false);
-      if (typeof document !== 'undefined') {
-        document.body.classList.remove('preloader-active');
-      }
-      window.scrollTo(0, 0);
-    }, 2000);
-
-    return () => {
-      clearTimeout(timer);
-      if (typeof document !== 'undefined') {
-        document.body.classList.remove('preloader-active');
-      }
-    };
+      setShowCursor(true);
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new CustomEvent('preloaderComplete'));
+      });
+    }
   }, []);
 
-  const handleExitComplete = useCallback(() => {
-    if (typeof document !== 'undefined') {
-      document.body.classList.remove('preloader-active');
-    }
+  const finishPreloader = useCallback(() => {
+    setIsLoading(false);
+    document.body.classList.remove('preloader-active');
+    window.scrollTo(0, 0);
     setShowCursor(true);
-    if (typeof window !== 'undefined') {
-      window.__preloaderDone = true;
-    }
+    window.__preloaderDone = true;
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
   }, []);
 
   return (
     <>
-      <div className="film-grain pointer-events-none" />
+      <div className="film-grain pointer-events-none" aria-hidden="true" />
       {showCursor && <CustomCursor />}
 
-      <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
-        {isLoading && <GlobalPreloader key="preloader" />}
-      </AnimatePresence>
+      {!instantDone && (
+        <AnimatePresence mode="wait">
+          {isLoading && (
+            <GlobalPreloader key="preloader" onComplete={finishPreloader} />
+          )}
+        </AnimatePresence>
+      )}
 
-      <div className="page-overlay" />
       <Providers>
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </Providers>

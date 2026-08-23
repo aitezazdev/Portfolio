@@ -4,6 +4,17 @@
   --font-display: var(--font-space-grotesk), sans-serif;
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+
+  /* Editorial fluid type scale */
+  --text-hero: clamp(3.4rem, 13vw, 12rem);
+  --text-hero-sm: clamp(3rem, 11vw, 9.5rem);
+  --text-section-xl: clamp(2.75rem, 8.5vw, 7.5rem);
+  --text-section: clamp(2.25rem, 6.5vw, 5.5rem);
+  --text-stat: clamp(2.5rem, 6vw, 4.75rem);
+
+  /* Rhythm */
+  --spacing-section: clamp(6rem, 12vw, 11rem);
 
   --color-cream: #E8E4DE;
   --color-ink: #0F0E0C;
@@ -229,4 +240,61 @@ html {
 }
 html::-webkit-scrollbar {
   display: none;
+}
+
+/* ---------- Accessibility ---------- */
+
+:focus-visible {
+  outline: 2px solid #c45d3e;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 10002;
+  padding: 0.75rem 1.25rem;
+  background: #0f0e0c;
+  color: #e8e4de;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: top 0.25s ease;
+}
+.skip-link:focus-visible {
+  top: 1rem;
+}
+
+/* ---------- Editorial helpers ---------- */
+
+.serif-accent {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+}
+
+@keyframes stamp-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.stamp-disc {
+  animation: stamp-spin 14s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-disc {
+    animation: none !important;
+  }
 }

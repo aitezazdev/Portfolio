@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { TransitionRouter } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 import { safeSessionStorage } from '@/utils/storage';
 
 declare global {
@@ -260,7 +260,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         };
       }}
     >
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
 
       <div
         ref={firstLayer}
