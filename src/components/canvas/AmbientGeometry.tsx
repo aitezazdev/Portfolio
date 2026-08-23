@@ -35,7 +35,7 @@ export default function AmbientGeometry() {
 
     const initNodes = () => {
       isMobile = window.innerWidth < 768;
-      const count = isMobile ? 50 : 100;
+      const count = isMobile ? 18 : 90;
       const nodes: NodeItem[] = [];
       for (let i = 0; i < count; i++) {
         nodes.push({
@@ -54,7 +54,8 @@ export default function AmbientGeometry() {
       cachedRect = containerRef.current.getBoundingClientRect();
       width = cachedRect.width;
       height = cachedRect.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      isMobile = window.innerWidth < 768;
+      dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
 
       canvas.width = width * dpr;
       canvas.height = height * dpr;

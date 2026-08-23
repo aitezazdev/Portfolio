@@ -7,8 +7,8 @@
   --font-serif: var(--font-instrument-serif), Georgia, serif;
 
   /* Editorial fluid type scale */
-  --text-hero: clamp(3.4rem, 13vw, 12rem);
-  --text-hero-sm: clamp(3rem, 11vw, 9.5rem);
+  --text-hero: clamp(4.25rem, 18vw, 12rem);
+  --text-hero-sm: clamp(3.6rem, 15.5vw, 9.5rem);
   --text-section-xl: clamp(2.75rem, 8.5vw, 7.5rem);
   --text-section: clamp(2.25rem, 6.5vw, 5.5rem);
   --text-stat: clamp(2.5rem, 6vw, 4.75rem);

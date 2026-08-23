@@ -61,12 +61,13 @@ export default function FlowField() {
       const rect = container.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobile = width < 768;
+      const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = width < 500 ? 150 : 300;
+      const count = isMobile ? 40 : 220;
       particles = Array.from({ length: count }, () => {
         const p = spawn();
         p.px = p.x;

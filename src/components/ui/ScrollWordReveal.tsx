@@ -69,10 +69,14 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
       const wordEls = el.querySelectorAll<HTMLSpanElement>('.swr-word');
       if (!wordEls.length) return;
 
+      const isTouch =
+        typeof window !== 'undefined' &&
+        ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
+
       gsap.set(wordEls, {
         opacity: dimOpacity,
-        y: 10,
-        filter: 'blur(4px)',
+        y: isTouch ? 0 : 10,
+        filter: isTouch ? 'none' : 'blur(4px)',
         color: (i: number, target: Element) =>
           (target as HTMLElement).dataset.accent === 'true'
             ? hexToRgba(accentColor, Math.max(dimOpacity, 0.3))
@@ -82,7 +86,7 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
       gsap.to(wordEls, {
         opacity: 1,
         y: 0,
-        filter: 'blur(0px)',
+        filter: isTouch ? 'none' : 'blur(0px)',
         color: (i: number, target: Element) =>
           (target as HTMLElement).dataset.accent === 'true' ? accentColor : highlightColor,
         ease: 'none',
