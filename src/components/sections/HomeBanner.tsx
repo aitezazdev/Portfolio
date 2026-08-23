@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { gsap, ScrollTrigger, SplitText, useGSAP } from '@/lib/gsap';
 import dynamic from 'next/dynamic';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import Magnetic from '@/components/ui/Magnetic';
+import { EASE } from '@/lib/motion';
+import { site } from '@/lib/site';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometry'), {
@@ -11,12 +14,7 @@ const AmbientGeometry = dynamic(() => import('@/components/canvas/AmbientGeometr
 });
 
 const RoleTicker = () => {
-  const roles = [
-    'Full Stack Developer',
-    'React & Next.js Engineer',
-    'MERN Stack Developer',
-    'Open to Work Worldwide',
-  ];
+  const roles = site.roles;
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -30,15 +28,11 @@ const RoleTicker = () => {
       const nextWord = wrapper.querySelector('.ticker-word-next');
       if (currentWord && nextWord) {
         gsap.set(nextWord, { yPercent: 100 });
-        gsap.to(currentWord, {
-          yPercent: -100,
-          duration: 0.4,
-          ease: 'power3.out',
-        });
+        gsap.to(currentWord, { yPercent: -100, duration: 0.4, ease: EASE.outCubic });
         gsap.to(nextWord, {
           yPercent: 0,
           duration: 0.4,
-          ease: 'power3.out',
+          ease: EASE.outCubic,
           onComplete: () => {
             setCurrentIdx((prev) => (prev + 1) % roles.length);
             gsap.set(currentWord, { yPercent: 0 });
@@ -67,200 +61,121 @@ const RoleTicker = () => {
   );
 };
 
+const StampBadge = ({ onClick }: { onClick: () => void }) => (
+  <Magnetic strength={0.35}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Scroll to contact section"
+      className="group relative w-28 h-28 lg:w-36 lg:h-36 rounded-full grid place-items-center select-none"
+    >
+      <svg viewBox="0 0 200 200" className="stamp-disc absolute inset-0 w-full h-full" aria-hidden="true">
+        <defs>
+          <path id="stamp-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
+        </defs>
+        <text className="fill-charcoal font-mono uppercase" style={{ fontSize: '15.5px', letterSpacing: '0.32em' }}>
+          <textPath href="#stamp-circle">
+            open to work • worldwide • let&apos;s talk •
+          </textPath>
+        </text>
+      </svg>
+      <span className="grid place-items-center w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-accent text-white transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-45">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M7 7l10 10M17 7v10H7" />
+        </svg>
+      </span>
+    </button>
+  </Magnetic>
+);
+
 const HomeBanner = () => {
   const nameRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const stampRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const innerContentRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const splitsRef = useRef<SplitText[]>([]);
+  const hasPlayedRef = useRef(false);
   const reduced = useReducedMotion();
 
-  const splitText = (text: string) =>
-    text.split('').map((char, idx) => (
-      <span
-        key={idx}
-        className="letter-wrapper inline-block relative overflow-hidden"
-        style={{ display: 'inline-block', ['--idx' as any]: idx }}
-      >
-        <span className="letter-original block">{char === ' ' ? '\u00A0' : char}</span>
-        <span aria-hidden="true" className="letter-duplicate block absolute top-full left-0 w-full select-none">
-          {char === ' ' ? '\u00A0' : char}
-        </span>
-      </span>
-    ));
+  const playIntro = useCallback(() => {
+    if (reduced || !nameRef.current || hasPlayedRef.current) return;
+    hasPlayedRef.current = true;
+
+    const lines = nameRef.current.querySelectorAll<HTMLElement>('[data-hero-line]');
+    const chars: HTMLElement[] = [];
+    splitsRef.current.forEach((s) => s.revert());
+    splitsRef.current = [];
+    lines.forEach((line) => {
+      const split = SplitText.create(line, { type: 'chars', charsClass: 'hero-char' });
+      splitsRef.current.push(split);
+      chars.push(...(split.chars as HTMLElement[]));
+    });
+
+    gsap.set(chars, {
+      yPercent: 125,
+      rotateX: -70,
+      opacity: 0,
+      transformPerspective: 900,
+      transformOrigin: '50% 100%',
+    });
+    gsap.set([paragraphRef.current, tickerRef.current], { y: 34, opacity: 0 });
+    gsap.set(buttonsRef.current?.children ?? [], { y: 26, opacity: 0, scale: 0.96 });
+    gsap.set(stampRef.current, { scale: 0, rotate: -30, opacity: 0 });
+
+    const tl = gsap.timeline({ defaults: { ease: EASE.outQuart }, delay: 0.15 });
+    tl.to(chars, {
+      yPercent: 0,
+      rotateX: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: { each: 0.026, from: 'start' },
+    })
+      .to(paragraphRef.current, { y: 0, opacity: 1, duration: 0.75, ease: EASE.outCubic }, '-=0.55')
+      .to(tickerRef.current, { y: 0, opacity: 1, duration: 0.6, ease: EASE.outCubic }, '-=0.5')
+      .to(
+        buttonsRef.current.children,
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.08, ease: 'back.out(1.6)' },
+        '-=0.45'
+      )
+      .to(stampRef.current, { scale: 1, rotate: 0, opacity: 1, duration: 0.9, ease: 'elastic.out(1, 0.55)' }, '-=0.6');
+
+    const enterHandler = () => {
+      gsap.to(chars, {
+        keyframes: [{ yPercent: -9, duration: 0.22 }, { yPercent: 0, duration: 0.5 }],
+        ease: EASE.outQuad,
+        stagger: { each: 0.016, from: 'center' },
+        overwrite: 'auto',
+      });
+    };
+    nameRef.current.addEventListener('mouseenter', enterHandler);
+    return () => nameRef.current?.removeEventListener('mouseenter', enterHandler);
+  }, [reduced]);
 
   useEffect(() => {
-    if (reduced) return;
-    const isDone = typeof window !== 'undefined' && window.__preloaderDone === true;
-    if (isDone) {
-      if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), {
-          y: '0%',
-          rotateX: 0,
-          opacity: 1,
-          transformPerspective: 800,
-          transformOrigin: '50% 100%',
-        });
-        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-      }
-      if (paragraphRef.current) gsap.set(paragraphRef.current, { y: 0, opacity: 1 });
-      if (tickerRef.current) gsap.set(tickerRef.current, { y: 0, opacity: 1 });
-      if (buttonsRef.current) {
-        gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
-        gsap.set(buttonsRef.current.children, { y: 0, opacity: 1, scale: 1 });
-      }
-    } else {
-      if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-wrapper'), {
-          y: '115%',
-          rotateX: 85,
-          opacity: 0,
-          transformPerspective: 800,
-          transformOrigin: '50% 100%',
-        });
-        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-      }
-      if (paragraphRef.current) gsap.set(paragraphRef.current, { y: 35, opacity: 0 });
-      if (tickerRef.current) gsap.set(tickerRef.current, { y: 30, opacity: 0 });
-      if (buttonsRef.current) {
-        gsap.set(buttonsRef.current, { y: 0, opacity: 1 });
-        gsap.set(buttonsRef.current.children, { y: 30, opacity: 0, scale: 0.95 });
-      }
+    if (reduced) {
+      gsap.set([paragraphRef.current, tickerRef.current], { clearProps: 'all' });
+      return;
     }
-  }, [reduced]);
+    if (typeof window !== 'undefined' && window.__preloaderDone === true) {
+      const cleanup = playIntro();
+      return cleanup;
+    }
+  }, [reduced, playIntro]);
 
   useEffect(() => {
     const handlePreloaderComplete = () => {
-      if (reduced) return;
-
-      if (nameRef.current) {
-        gsap.set(nameRef.current.querySelectorAll('.letter-original, .letter-duplicate'), { y: '0%' });
-      }
-
-      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
-      const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
-      const letters = nameRef.current?.querySelectorAll(selector);
-
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-      if (letters && letters.length > 0) {
-        tl.to(letters, {
-          y: '0%',
-          rotateX: 0,
-          opacity: 1,
-          duration: 0.85,
-          stagger: 0.03,
-          ease: 'power4.out',
-        });
-      }
-
-      if (paragraphRef.current) {
-        tl.to(
-          paragraphRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            ease: 'power3.out',
-          },
-          '-=0.45'
-        );
-      }
-
-      if (tickerRef.current) {
-        tl.to(
-          tickerRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: 'power3.out',
-          },
-          '-=0.4'
-        );
-      }
-
-      if (buttonsRef.current) {
-        const btnElements = buttonsRef.current.children;
-        if (btnElements.length) {
-          tl.to(
-            btnElements,
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration: 0.65,
-              stagger: 0.08,
-              ease: 'back.out(1.5)',
-            },
-            '-=0.35'
-          );
-        }
-      }
+      playIntro();
     };
-
     window.addEventListener('preloaderComplete', handlePreloaderComplete);
     return () => window.removeEventListener('preloaderComplete', handlePreloaderComplete);
-  }, [reduced]);
-
-  const handleMouseEnter = () => {
-    if (reduced || !nameRef.current || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.to(original, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '-100%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-      }
-    });
-  };
-
-  const handleMouseLeave = () => {
-    if (reduced || !nameRef.current || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
-    const isDesktop = window.innerWidth >= 768;
-    const selector = isDesktop ? '[data-hero-name="desktop"] .letter-wrapper' : '[data-hero-name="mobile"] .letter-wrapper';
-    const letters = nameRef.current.querySelectorAll(selector);
-    letters.forEach((wrapper, idx) => {
-      const original = wrapper.querySelector('.letter-original');
-      const duplicate = wrapper.querySelector('.letter-duplicate');
-      if (original && duplicate) {
-        gsap.to(original, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-        gsap.to(duplicate, {
-          y: '0%',
-          duration: 0.45,
-          ease: 'power2.out',
-          delay: idx * 0.03,
-          overwrite: 'auto',
-        });
-      }
-    });
-  };
+  }, [playIntro]);
 
   useEffect(() => {
-    if (reduced || (typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches))) return;
+    if (reduced) return;
     const handleMouseMove = (e: MouseEvent) => {
       if (!spotlightRef.current || !sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
@@ -328,23 +243,31 @@ const HomeBanner = () => {
       )}
 
       <div ref={innerContentRef} className="max-w-7xl mx-auto w-full relative z-10">
-        <div className="text-center">
+        <div className="relative text-center">
           <h1
             ref={nameRef}
-            aria-label="Aitezaz Sikandar"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className="name-heading font-display text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] select-none font-bold leading-none uppercase cursor-pointer overflow-hidden mb-5"
-            style={{ perspective: '1000px' }}
+            aria-label={site.name}
+            className="select-none leading-none cursor-default mb-6 md:mb-4"
           >
-            <span aria-hidden="true" data-hero-name="mobile" className="block md:hidden">
-              <span className="block">{splitText('Aitezaz')}</span>
-              <span className="block">{splitText('Sikandar')}</span>
-            </span>
-            <span aria-hidden="true" data-hero-name="desktop" className="hidden md:block">
-              {splitText('Aitezaz Sikandar')}
+            <span aria-hidden="true" className="block">
+              <span
+                data-hero-line
+                className="block font-display font-black uppercase text-hero tracking-tight"
+              >
+                AITEZAZ
+              </span>
+              <span
+                data-hero-line
+                className="serif-accent block text-hero-sm leading-[0.85] md:ml-[14vw]"
+              >
+                sikandar
+              </span>
             </span>
           </h1>
+
+          <div ref={stampRef} className="absolute -top-6 right-0 lg:right-4 xl:right-10 hidden sm:block opacity-0">
+            <StampBadge onClick={() => handleScroll('contact')} />
+          </div>
         </div>
 
         <div className="flex justify-center items-center py-1 md:py-3 px-4 sm:px-6 w-full">

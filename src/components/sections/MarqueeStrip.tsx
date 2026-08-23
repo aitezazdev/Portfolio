@@ -1,65 +1,136 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { gsap } from '@/lib/gsap';
-import { useLenis } from '@/components/providers/SmoothScrollProvider';
-import Lenis from '@studio-freight/lenis';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { hasFinePointer } from '@/lib/pointer';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 export default function MarqueeStrip() {
   const track1Ref = useRef<HTMLDivElement>(null);
-  const tween1Ref = useRef<gsap.core.Tween | null>(null);
-  const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
   const reduced = useReducedMotion();
 
   const items = ['Available for Work', 'Open to Opportunities', "Let's Build", 'MERN Stack'];
 
   useEffect(() => {
     if (reduced) return;
-    const track1 = track1Ref.current;
-    if (!track1) return;
-    const totalWidth1 = track1.scrollWidth;
-    const wrap = (val: string | number, max: number): number => {
-      const modulus = parseFloat(val as string) % max;
-      return modulus <= 0 ? modulus : modulus - max;
-    };
-    tween1Ref.current = gsap.to(track1, {
-      x: `-=${totalWidth1 / 2}`,
-      duration: 45,
-      ease: 'none',
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((x) => wrap(x, totalWidth1 / 2)),
-      },
-    });
-    return () => {
-      if (tween1Ref.current) tween1Ref.current.kill();
-    };
-  }, [reduced]);
+    const track = track1Ref.current;
+    if (!track) return;
 
-  useEffect(() => {
-    if (reduced) return;
-    const lenis = lenisRef?.current;
-    if (!lenis) return;
-    const handleScroll = ({ velocity }: { velocity: number }) => {
-      if (tween1Ref.current) {
-        const multiplier = Math.min(3, Math.max(1, 1 + Math.abs(velocity) * 0.5));
-        tween1Ref.current.timeScale(velocity < -0.5 ? -multiplier : multiplier);
+    // Measure half-width for seamless modulo wrapping
+    let totalWidth = track.scrollWidth;
+    let halfWidth = totalWidth / 2;
+
+    const handleResize = () => {
+      if (track) {
+        totalWidth = track.scrollWidth;
+        halfWidth = totalWidth / 2;
       }
     };
-    lenis.on('scroll', handleScroll);
-    return () => {
-      lenis.off('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+
+    const finePointer = hasFinePointer();
+
+    let x = 0;
+    const baseSpeed = 0.85;
+    let currentVelocity = 0;
+    let targetVelocity = 0;
+    let currentSkew = 0;
+
+    const onTick = () => {
+      currentVelocity += (targetVelocity - currentVelocity) * 0.08;
+      targetVelocity *= 0.93;
+      x -= baseSpeed + currentVelocity;
+
+      if (halfWidth > 0) {
+        if (x <= -halfWidth) {
+          x += halfWidth;
+        } else if (x > 0) {
+          x -= halfWidth;
+        }
+      }
+
+      const targetSkew = finePointer ? gsap.utils.clamp(-6, 6, currentVelocity * 0.45) : 0;
+      currentSkew += (targetSkew - currentSkew) * 0.1;
+
+      if (track) {
+        if (finePointer && Math.abs(currentSkew) > 0.01) {
+          track.style.transform = `translate3d(${x}px, 0, 0) skewX(${currentSkew}deg)`;
+        } else {
+          track.style.transform = `translate3d(${x}px, 0, 0)`;
+        }
+      }
     };
-  }, [lenisRef, reduced]);
+
+    gsap.ticker.add(onTick);
+
+    // Feed scroll velocity into the flywheel
+    const onScrollUpdate = (vel: number) => {
+      // vel: px per second from ScrollTrigger/Lenis
+      // Convert to per-frame velocity delta with progressive scaling
+      const sign = vel >= 0 ? 1 : -1;
+      const absV = Math.abs(vel);
+
+      if (absV > 5) {
+        const frameBoost = sign * Math.min(18, Math.pow(absV, 0.72) * 0.14);
+        targetVelocity = frameBoost;
+      }
+    };
+
+    // Universal ScrollTrigger
+    const trigger = ScrollTrigger.create({
+      onUpdate: (self) => {
+        onScrollUpdate(self.getVelocity());
+      },
+    });
+
+    // Lenis listener for micro-scroll delta fidelity
+    const attachLenis = () => {
+      const lenis = (window as any).__lenis;
+      if (lenis) {
+        const handleLenis = ({ velocity }: { velocity: number }) => {
+          // Lenis velocity is typically between -10 and +10
+          if (Math.abs(velocity) > 0.02) {
+            onScrollUpdate(velocity * 80);
+          }
+        };
+        lenis.on('scroll', handleLenis);
+        return () => lenis.off('scroll', handleLenis);
+      }
+      return null;
+    };
+
+    let cleanupLenis = attachLenis();
+    const poll = setInterval(() => {
+      if (!cleanupLenis && (window as any).__lenis) {
+        cleanupLenis = attachLenis();
+        clearInterval(poll);
+      }
+    }, 100);
+
+    return () => {
+      clearInterval(poll);
+      if (cleanupLenis) cleanupLenis();
+      trigger.kill();
+      gsap.ticker.remove(onTick);
+      window.removeEventListener('resize', handleResize);
+      if (track) {
+        track.style.transform = '';
+      }
+    };
+  }, [reduced]);
 
   return (
     <div
       className="w-full relative z-20 overflow-hidden select-none border-t border-b border-border-dark"
       style={{ willChange: 'transform' }}
+      aria-hidden="true"
     >
       <div className="overflow-hidden bg-cream py-3">
-        <div ref={track1Ref} className="inline-flex items-center gap-0 whitespace-nowrap">
+        <div
+          ref={track1Ref}
+          className="inline-flex items-center gap-0 whitespace-nowrap"
+          style={{ willChange: 'transform' }}
+        >
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="inline-flex items-center gap-6 pr-6">
               {items.map((item, idx) => (
