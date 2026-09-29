@@ -176,16 +176,16 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
   const magnetRefs = useRef<(HTMLDivElement | null)[]>([]);
   const curveStateRef = useRef({ cx: 100 });
   const activeTimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const isFirstRender = useRef(true);
+  const prevOpenRef = useRef(false);
 
   useEffect(() => {
     const validLinks = linkRowRefs.current.filter(Boolean);
-    gsap.set(backdropRef.current, { opacity: 0 });
-    gsap.set(menuRef.current, { xPercent: 100, x: 100 });
-    gsap.set(lineTopRef.current, { scaleX: 0, transformOrigin: 'left' });
-    gsap.set(lineBotRef.current, { scaleX: 0, transformOrigin: 'right' });
-    gsap.set(metaRef.current, { y: 20, opacity: 0 });
-    gsap.set(validLinks, { x: 80, opacity: 0 });
+    gsap.set(backdropRef.current, { opacity: 0, force3D: true });
+    gsap.set(menuRef.current, { xPercent: 100, x: 100, force3D: true });
+    gsap.set(lineTopRef.current, { scaleX: 0, transformOrigin: 'left', force3D: true });
+    gsap.set(lineBotRef.current, { scaleX: 0, transformOrigin: 'right', force3D: true });
+    gsap.set(metaRef.current, { y: 20, opacity: 0, force3D: true });
+    gsap.set(validLinks, { x: 80, opacity: 0, force3D: true });
     if (curvePathRef.current) {
       curvePathRef.current.setAttribute('d', 'M100 0 L200 0 L200 100 L100 100 Q100 50 100 0');
     }
@@ -200,10 +200,8 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    if (isOpen === prevOpenRef.current) return;
+    prevOpenRef.current = isOpen;
 
     if (activeTimelineRef.current) {
       activeTimelineRef.current.kill();
@@ -211,26 +209,32 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
     }
 
     const validLinks = linkRowRefs.current.filter(Boolean);
+    const curvePath = curvePathRef.current;
 
     if (isOpen) {
       if (containerRef.current) {
         containerRef.current.style.visibility = 'visible';
+        containerRef.current.style.pointerEvents = 'auto';
       }
 
-      const isClosed = !curveStateRef.current || Math.abs(curveStateRef.current.cx - 100) < 1;
-      if (isClosed) {
-        curveStateRef.current.cx = -100;
-        if (curvePathRef.current) {
-          curvePathRef.current.setAttribute('d', 'M100 0 L200 0 L200 100 L100 100 Q-100 50 100 0');
-        }
+      curveStateRef.current.cx = -100;
+      if (curvePath) {
+        curvePath.setAttribute('d', 'M100 0 L200 0 L200 100 L100 100 Q-100 50 100 0');
       }
 
-      const tl = gsap.timeline();
+      gsap.set(backdropRef.current, { opacity: 0 });
+      gsap.set(menuRef.current, { xPercent: 100, x: 100 });
+      gsap.set(lineTopRef.current, { scaleX: 0 });
+      gsap.set(lineBotRef.current, { scaleX: 0 });
+      gsap.set(metaRef.current, { y: 20, opacity: 0 });
+      gsap.set(validLinks, { x: 80, opacity: 0 });
+
+      const tl = gsap.timeline({ defaults: { force3D: true } });
       activeTimelineRef.current = tl;
 
       tl.to(backdropRef.current, {
         opacity: 1,
-        duration: 0.35,
+        duration: 0.5,
         ease: 'power2.out',
       }, 0)
         .to(menuRef.current, {
@@ -244,10 +248,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
           duration: 0.8,
           ease: 'menuEase',
           onUpdate: () => {
-            if (curvePathRef.current) {
-              curvePathRef.current.setAttribute(
+            if (curvePath) {
+              curvePath.setAttribute(
                 'd',
-                `M100 0 L200 0 L200 100 L100 100 Q${curveStateRef.current.cx} 50 100 0`
+                `M100 0 L200 0 L200 100 L100 100 Q${curveStateRef.current.cx | 0} 50 100 0`
               );
             }
           },
@@ -279,43 +283,54 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
       });
     } else {
       const tl = gsap.timeline({
+        defaults: { force3D: true },
         onComplete: () => {
           if (containerRef.current) {
             containerRef.current.style.visibility = 'hidden';
+            containerRef.current.style.pointerEvents = 'none';
           }
           activeTimelineRef.current = null;
         },
       });
       activeTimelineRef.current = tl;
 
+      validLinks.forEach((link, i) => {
+        tl.to(link, {
+          x: 80,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power3.in',
+        }, 0.02 * i);
+      });
+
       tl.to(menuRef.current, {
         xPercent: 100,
         x: 100,
         duration: 0.8,
         ease: 'menuEase',
-      }, 0)
+      }, 0.1)
         .to(curveStateRef.current, {
           cx: -100,
           duration: 0.8,
           ease: 'menuEase',
           onUpdate: () => {
-            if (curvePathRef.current) {
-              curvePathRef.current.setAttribute(
+            if (curvePath) {
+              curvePath.setAttribute(
                 'd',
-                `M100 0 L200 0 L200 100 L100 100 Q${curveStateRef.current.cx} 50 100 0`
+                `M100 0 L200 0 L200 100 L100 100 Q${curveStateRef.current.cx | 0} 50 100 0`
               );
             }
           },
-        }, 0)
+        }, 0.1)
         .to(lineTopRef.current, {
           scaleX: 0,
           duration: 0.4,
-          ease: 'menuEase',
+          ease: 'power3.in',
         }, 0)
         .to(lineBotRef.current, {
           scaleX: 0,
           duration: 0.4,
-          ease: 'menuEase',
+          ease: 'power3.in',
         }, 0)
         .to(metaRef.current, {
           y: 20,
@@ -325,18 +340,9 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
         }, 0)
         .to(backdropRef.current, {
           opacity: 0,
-          duration: 0.35,
-          ease: 'power2.out',
-        }, 0.25);
-
-      validLinks.forEach((link, i) => {
-        tl.to(link, {
-          x: 80,
-          opacity: 0,
-          duration: 0.5,
-          ease: 'menuEase',
-        }, 0.03 * i);
-      });
+          duration: 0.4,
+          ease: 'power2.inOut',
+        }, 0.2);
     }
   }, [isOpen]);
 
@@ -360,25 +366,27 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
   return (
     <div
       ref={containerRef}
-      style={{ visibility: 'hidden' }}
-      className="fixed inset-0 z-[9980] pointer-events-none"
+      style={{ visibility: 'hidden', pointerEvents: 'none' }}
+      className="fixed inset-0 z-[9980]"
       aria-hidden={!isOpen}
     >
       <div
         ref={backdropRef}
-        className="fixed inset-0 bg-black/65 pointer-events-auto"
+        className="fixed inset-0 bg-black/65"
+        style={{ willChange: 'opacity' }}
         onClick={onClose}
       />
 
       <div
         ref={menuRef}
-        className="fixed top-0 right-0 h-screen w-full md:w-[46%] lg:w-[45%] xl:w-[42%] z-[9981] bg-surface flex flex-col pointer-events-auto shadow-2xl"
+        className="fixed top-0 right-0 h-screen w-full md:w-[46%] lg:w-[45%] xl:w-[42%] z-[9981] bg-surface flex flex-col shadow-2xl"
+        style={{ willChange: 'transform' }}
         onClick={(e) => e.stopPropagation()}
       >
         <svg
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
-          className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible will-change-transform"
+          className="absolute top-0 -left-[99px] h-full w-[100px] pointer-events-none fill-surface stroke-none overflow-visible"
         >
           <path
             ref={curvePathRef}
@@ -634,8 +642,10 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         lenis.start();
       }
     }
-    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
-    document.body.classList.toggle('menu-open', isMenuOpen);
+    requestAnimationFrame(() => {
+      document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+      document.body.classList.toggle('menu-open', isMenuOpen);
+    });
   }, [isMenuOpen, lenis]);
 
   useEffect(() => {

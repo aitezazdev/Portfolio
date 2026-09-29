@@ -74,10 +74,12 @@ export const useHandleLinkClick = (setIsMenuOpen?: (isOpen: boolean) => void) =>
     if (setIsMenuOpen) {
       setIsMenuOpen(false);
     }
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = '';
-      document.body.classList.remove('menu-open');
-    }
+    requestAnimationFrame(() => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+        document.body.classList.remove('menu-open');
+      }
+    });
 
     let targetPath = '/';
     let targetId = '';
