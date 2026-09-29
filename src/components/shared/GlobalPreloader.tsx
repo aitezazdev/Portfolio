@@ -151,18 +151,18 @@ export default function GlobalPreloader({ onComplete }: { onComplete?: () => voi
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#141516] cursor-wait text-cream select-none pointer-events-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#0B110E] cursor-wait text-cream select-none pointer-events-auto"
       style={{ willChange: 'transform' }}
     >
       <div
-        className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#f0ede6] z-10 transition-opacity duration-700 opacity-90"
+        className="flex items-center text-3xl sm:text-4xl md:text-5xl font-display font-medium text-cream z-10 transition-opacity duration-700 opacity-90"
       >
         <p className="tracking-wide">{preloaderWords[index]}</p>
       </div>
 
       <div className="absolute bottom-8 left-8 z-10 flex items-baseline gap-3 font-mono" aria-hidden="true">
         <span className="text-accent text-sm uppercase tracking-widest">loading</span>
-        <span className="text-[#f0ede6] text-lg tabular-nums">{Math.round(progress)}%</span>
+        <span className="text-cream text-lg tabular-nums">{Math.round(progress)}%</span>
       </div>
 
       <div

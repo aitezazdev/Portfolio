@@ -236,10 +236,10 @@ export async function runTier4Tests() {
       expect(robotsContent).toMatch(/sitemap:\s*`\$\{site\.url\}\/sitemap\.xml`/);
     });
 
-    it('manifest.ts specifies standalone display, editorial background #0F0E0C, and theme #C45D3E', () => {
+    it('manifest.ts specifies standalone display, editorial background #0A0F0D, and theme #34D399', () => {
       expect(manifestContent).toMatch(/display:\s*['"]standalone['"]/);
-      expect(manifestContent).toMatch(/background_color:\s*['"]#0F0E0C['"]/);
-      expect(manifestContent).toMatch(/theme_color:\s*['"]#C45D3E['"]/);
+      expect(manifestContent).toMatch(/background_color:\s*['"]#0A0F0D['"]/);
+      expect(manifestContent).toMatch(/theme_color:\s*['"]#34D399['"]/);
     });
 
     it('Contact API route implements rate limiting and email validation guards', () => {

@@ -43,27 +43,27 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     case 'primary':
       bgColor = 'bg-accent';
       textColor = 'text-white';
-      borderColor = 'border border-[#C45D3E]';
+      borderColor = 'border border-accent';
       rippleColor = 'rgba(255, 255, 255, 0.25)';
-      hoverBgColor = '#b85133';
-      originalBgColor = '#C45D3E';
+      hoverBgColor = '#059669';
+      originalBgColor = '#34D399';
       break;
     case 'outline':
       bgColor = 'bg-transparent';
-      textColor = 'text-[#4a4744]';
-      borderColor = 'border border-[#141516]/25';
-      rippleColor = 'rgba(20, 21, 22, 0.08)';
-      hoverBgColor = 'rgba(20, 21, 22, 0.04)';
+      textColor = 'text-[#45524B]';
+      borderColor = 'border border-[#111A16]/25';
+      rippleColor = 'rgba(17, 26, 22, 0.08)';
+      hoverBgColor = 'rgba(17, 26, 22, 0.04)';
       originalBgColor = 'transparent';
       break;
     case 'dark':
     default:
-      bgColor = 'bg-[#141516]';
-      textColor = 'text-[#f0ede6]';
-      borderColor = 'border border-[#141516]';
+      bgColor = 'bg-[#111A16]';
+      textColor = 'text-cream';
+      borderColor = 'border border-[#111A16]';
       rippleColor = 'rgba(255, 255, 255, 0.15)';
-      hoverBgColor = '#242422';
-      originalBgColor = '#141516';
+      hoverBgColor = '#1A2420';
+      originalBgColor = '#111A16';
       break;
   }
 

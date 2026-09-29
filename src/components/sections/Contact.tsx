@@ -332,8 +332,8 @@ const Contact = () => {
           copiedToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}
         style={{
-          background: '#C45D3E',
-          color: 'white',
+          background: '#34D399',
+          color: '#0A0F0D',
           fontFamily: 'monospace',
           fontSize: '0.75rem',
           letterSpacing: '0.1em',

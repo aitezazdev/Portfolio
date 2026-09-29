@@ -57,7 +57,7 @@ export default function AmbientGeometry() {
       const mouse = mouseRef.current;
 
       ctx.beginPath();
-      ctx.fillStyle = 'rgba(196, 93, 62, 0.18)';
+      ctx.fillStyle = 'rgba(52, 211, 153, 0.18)';
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         if (updatePhysics) {
@@ -115,7 +115,7 @@ export default function AmbientGeometry() {
       ctx.fill();
 
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(196, 93, 62, 0.08)';
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.08)';
       ctx.lineWidth = 0.5;
 
       for (let i = 0; i < nodes.length; i++) {

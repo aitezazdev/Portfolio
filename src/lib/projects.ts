@@ -44,7 +44,7 @@ const projects: Project[] = [
       { value: '7+', label: 'File formats converted' },
       { value: 'Dual-LLM', label: 'Groq & Gemini fallback' },
     ],
-    accent: '#C45D3E',
+    accent: '#34D399',
     myRole: [
       'Built the real-time presentation engine using Express and Socket.io with dedicated room hierarchies for page flips and live pen coordinates.',
       'Implemented the server-side document conversion pipeline using headless LibreOffice and in-memory pdf-lib for PPTX, DOCX, and PDF uploads.',
@@ -127,7 +127,7 @@ const projects: Project[] = [
       { value: 'SSR', label: 'Server-rendered catalog' },
       { value: 'Stripe', label: 'Hosted checkout sessions' },
     ],
-    accent: '#C45D3E',
+    accent: '#34D399',
     myRole: [
       'Built the server-side catalog and product detail pages using Next.js App Router with dynamic category routes and URL search params.',
       'Implemented optimistic cart mutations using React 19 useOptimistic and useTransition hooks backed by Redux Toolkit thunks.',

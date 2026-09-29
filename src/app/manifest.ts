@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: site.tagline,
     start_url: '/',
     display: 'standalone',
-    background_color: '#0F0E0C',
-    theme_color: '#C45D3E',
+    background_color: '#0A0F0D',
+    theme_color: '#34D399',
     icons: [
       {
         src: '/logo.webp',
