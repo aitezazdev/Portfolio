@@ -1,3 +1,5 @@
+// Made by Aitezaz Sikandar - https://aitezazdev.vercel.app
+
 export const site = {
   name: 'Aitezaz Sikandar',
   firstName: 'Aitezaz',
@@ -9,9 +11,9 @@ export const site = {
   timeZone: 'Asia/Karachi',
   timeZoneLabel: 'PKT',
   url: 'https://aitezazdev.vercel.app',
-  tagline: 'Full Stack Developer crafting fast, expressive web experiences.',
+  tagline: 'Full-stack engineer building fast, scalable, and reliable web applications.',
   roles: [
-    'Full Stack Developer',
+    'Full-Stack Engineer',
     'React & Next.js Engineer',
     'MERN Stack Developer',
     'Open to Work Worldwide',
@@ -22,7 +24,7 @@ export type SocialKey = 'github' | 'linkedin' | 'instagram' | 'source';
 
 export const socials: Record<SocialKey, { label: string; href: string }> = {
   github: { label: 'GitHub', href: 'https://github.com/aitezazdev' },
-  linkedin: { label: 'Linkedin', href: 'https://linkedin.com/in/aitezaz-sikandar' },
+  linkedin: { label: 'LinkedIn', href: 'https://linkedin.com/in/aitezaz-sikandar' },
   instagram: { label: 'Instagram', href: 'https://instagram.com/ur_zaz' },
   source: { label: 'Source Code', href: 'https://github.com/aitezazdev/Portfolio' },
 };

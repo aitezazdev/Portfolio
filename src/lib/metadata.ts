@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 
 export const siteMetadata: Metadata = {
   title: {
-    default: 'Aitezaz Sikandar - Full Stack Developer',
+    default: 'Aitezaz Sikandar | Full Stack Developer',
     template: '%s | Aitezaz Sikandar',
   },
   description:
-    'Web developer specializing in React, Next.js, and MERN Stack development. Building fast, scalable, and user-focused web applications.',
+    'Aitezaz Sikandar is a full-stack developer from Pakistan. He builds React, Next.js and MERN apps that keep working when a service fails.',
   keywords: [
     'Aitezaz Sikandar',
     'Web Developer',
@@ -28,13 +28,10 @@ export const siteMetadata: Metadata = {
   alternates: {
     canonical: './',
   },
-  icons: {
-    icon: '/logo.webp',
-  },
   openGraph: {
-    title: 'Aitezaz Sikandar - Full Stack Developer',
+    title: 'Aitezaz Sikandar | Full Stack Developer',
     description:
-      'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
+      'Full-stack developer from Pakistan. React, Next.js and MERN apps with real-time features, AI assistants and fallbacks built in.',
     url: 'https://aitezazdev.vercel.app',
     siteName: 'Aitezaz Sikandar Portfolio',
     images: [
@@ -42,16 +39,16 @@ export const siteMetadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Aitezaz Sikandar - Full Stack Developer',
+        alt: 'Aitezaz Sikandar | Full Stack Developer',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aitezaz Sikandar - Full Stack Developer',
+    title: 'Aitezaz Sikandar | Full Stack Developer',
     description:
-      'Portfolio of Aitezaz Sikandar, Full Stack Developer specializing in MERN stack, Next.js, and polished web experiences.',
+      'Full-stack developer from Pakistan. React, Next.js and MERN apps with real-time features, AI assistants and fallbacks built in.',
     images: ['/og-image.png'],
   },
   robots: {

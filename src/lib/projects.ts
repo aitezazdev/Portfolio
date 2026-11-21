@@ -15,7 +15,6 @@ export interface Project {
   architecture: string;
   implementation: string;
   stats: ProjectStat[];
-  accent: string;
   myRole: string[];
   images: string[];
   hoverImage: string;
@@ -32,7 +31,7 @@ const projects: Project[] = [
     role: 'Full Stack Developer',
     tech: ['React 19', 'Node.js', 'Express 5', 'Socket.io', 'MongoDB', 'LibreOffice', 'pdfjs-dist', 'Cloudinary', 'Firebase', 'Groq', 'Google Gemini'],
     description:
-      'A real-time collaborative learning platform featuring interactive slide presentations, live canvas annotations, AI study assistance with token streaming, automated quiz generation, and draggable video calls.',
+      'A virtual classroom where the teacher\'s slides, pen strokes and page turns show up on every student\'s screen almost instantly. It also has an AI study assistant that keeps answering even when one AI provider runs out of quota.',
     overview:
       'A virtual classroom platform where teachers and students share lecture materials and interact in real time. Instead of relying on static file downloads, classrooms load documents directly onto synchronized canvases with live pen strokes, instant page flips, audio transcription, and an embedded AI study assistant.',
     architecture:
@@ -44,7 +43,6 @@ const projects: Project[] = [
       { value: '7+', label: 'File formats converted' },
       { value: 'Dual-LLM', label: 'Groq & Gemini fallback' },
     ],
-    accent: '#34D399',
     myRole: [
       'Built the real-time presentation engine using Express and Socket.io with dedicated room hierarchies for page flips and live pen coordinates.',
       'Implemented the server-side document conversion pipeline using headless LibreOffice and in-memory pdf-lib for PPTX, DOCX, and PDF uploads.',
@@ -72,7 +70,7 @@ const projects: Project[] = [
     role: 'Full Stack Developer',
     tech: ['React 19', 'Vite', 'Node.js', 'Express 5', 'MongoDB', 'Mongoose', 'Google Gemini', 'Redux Toolkit', 'Tailwind CSS', 'Ant Design', 'Nodemailer'],
     description:
-      'A full stack clinical platform featuring dedicated portals for patients, doctors, and administrators with automated appointment booking, schedule management, email confirmations, and AI clinical summaries.',
+      'A clinic system with separate portals for patients, doctors and admins. Patients book appointments, doctors manage their schedules, and the system makes sure the same slot can never be booked twice.',
     overview:
       'A comprehensive medical workflow system called MediCore built to handle clinic administration, patient scheduling, and physician workflows. It separates responsibilities into three dedicated portals, giving patients an intuitive booking experience, doctors a structured appointment and schedule manager, and administrators complete oversight.',
     architecture:
@@ -84,7 +82,6 @@ const projects: Project[] = [
       { value: '5-Tier', label: 'Gemini model fallback' },
       { value: '0', label: 'Double-booking conflicts' },
     ],
-    accent: '#2E7D6B',
     myRole: [
       'Architected the three role-based portals for patients, doctors, and administrators using React 19, Tailwind CSS, and Ant Design.',
       'Built the dual-token JWT authentication system with httpOnly cookies and an Axios concurrency queue for silent token refreshing.',
@@ -115,7 +112,7 @@ const projects: Project[] = [
     role: 'Full Stack Developer',
     tech: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Redux Toolkit', 'Stripe', 'MongoDB', 'Mongoose', 'Zod'],
     description:
-      'A high performance online storefront built on the Next.js App Router and React 19 featuring server-side catalog rendering, optimistic shopping cart updates, Stripe checkout sessions, and connection resilience guards.',
+      'An online store where the cart reacts the moment you click, and the catalog keeps loading even when the database is down. It uses server-rendered Next.js and Stripe checkout, with prices always checked on the server.',
     overview:
       'A dark-themed modern retail storefront called Zaz Store engineered for fast catalog browsing and zero-delay shopping cart interactions. It pairs server-rendered category and product pages with client-side optimistic UI updates, ensuring the interface responds instantly to user clicks while maintaining strict database consistency.',
     architecture:
@@ -127,7 +124,6 @@ const projects: Project[] = [
       { value: 'SSR', label: 'Server-rendered catalog' },
       { value: 'Stripe', label: 'Hosted checkout sessions' },
     ],
-    accent: '#34D399',
     myRole: [
       'Built the server-side catalog and product detail pages using Next.js App Router with dynamic category routes and URL search params.',
       'Implemented optimistic cart mutations using React 19 useOptimistic and useTransition hooks backed by Redux Toolkit thunks.',
@@ -156,7 +152,7 @@ const projects: Project[] = [
     role: 'Full Stack Developer',
     tech: ['React 19', 'Vite', 'Tailwind CSS', 'Redux Toolkit', 'Recharts', 'Node.js', 'Express', 'MongoDB', 'Mongoose', 'JWT'],
     description:
-      'A personal finance tracking application featuring segregated income and expense management, inline transaction editing, duplicate entry prevention, and MongoDB aggregation pipelines powering Recharts visualizations.',
+      'A money tracker that shows where your money went. It turns your income and expenses into charts of monthly totals, spending by category and daily trends.',
     overview:
       'A personal finance manager designed to give users clear visibility into daily cash flow and spending patterns. It combines quick transaction entry with interactive data visualizations, helping individuals track where their money goes through automated category breakdowns, monthly comparisons, and daily spending trendlines.',
     architecture:
@@ -168,7 +164,6 @@ const projects: Project[] = [
       { value: 'Recharts', label: 'Interactive analytics' },
       { value: 'CRUD', label: 'Inline editable ledger' },
     ],
-    accent: '#B08968',
     myRole: [
       'Built the full stack ledger application using React 19, Tailwind CSS, Express, and MongoDB.',
       'Designed MongoDB aggregation pipelines using toDate and dateTrunc to group transaction records for analytics.',
@@ -197,7 +192,7 @@ const projects: Project[] = [
     role: 'Full Stack Developer',
     tech: ['React 19', 'Vite', 'Tailwind CSS', 'Redux Toolkit', 'React Router', 'Node.js', 'Express', 'MongoDB', 'Cloudinary', 'Docker', 'AWS EC2'],
     description:
-      'A modern content publishing platform called ZazBlog featuring article authoring, Cloudinary media lifecycle management, in-place comments, bookmark reading lists, debounced search, and Dockerized AWS EC2 deployment.',
+      'A blogging platform made for reading. Writers publish with images, readers comment, bookmark and search, and the whole thing runs in Docker and deploys to AWS.',
     overview:
       'A full-featured publishing web platform built for writers and readers. It offers a clean, typography-focused reading experience with article authoring, image uploads, categorized tag navigation, reader comments, personal bookmark reading lists, and a containerized deployment setup.',
     architecture:
@@ -209,7 +204,6 @@ const projects: Project[] = [
       { value: 'Docker', label: 'Multi-stage Nginx container' },
       { value: 'CDN', label: 'Cloudinary asset lifecycle' },
     ],
-    accent: '#5B7DB1',
     myRole: [
       'Built the full stack publishing application using React 19, Tailwind CSS, Express, and MongoDB.',
       'Implemented full asset lifecycle management with Multer and Cloudinary, including local file unlinking and remote asset destruction.',
