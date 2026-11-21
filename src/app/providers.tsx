@@ -16,6 +16,9 @@ declare global {
 
 let _isCurtainCovering = false;
 
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function restoreScroll(target: number, lenisInst: React.RefObject<Lenis | null> | null) {
   const lenisObj = lenisInst?.current || (typeof window !== 'undefined' ? window.__lenis : null);
   document.documentElement.scrollTop = target;
@@ -153,6 +156,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         if (isGoingToProject) safeSessionStorage.setItem('navigating-to-project', 'true');
         scrollTargetRef.current = isReturningHome ? parseInt(savedScroll, 10) : 0;
 
+        if (prefersReducedMotion()) {
+          next();
+          return () => {};
+        }
+
         const tl = gsap
           .timeline({ onComplete: next })
           .fromTo(
@@ -178,6 +186,18 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         };
       }}
       enter={(next: () => void) => {
+        if (prefersReducedMotion()) {
+          const navigatingToProject = safeSessionStorage.getItem('navigating-to-project') === 'true';
+          const saved = safeSessionStorage.getItem('projects-scroll');
+          const target = !navigatingToProject && saved ? parseInt(saved, 10) : 0;
+          if (!navigatingToProject && saved) safeSessionStorage.removeItem('projects-scroll');
+          safeSessionStorage.removeItem('navigating-to-project');
+          scrollTargetRef.current = target;
+          startTransition(next);
+          const t = window.setTimeout(() => restoreScroll(target, lenis), 60);
+          return () => window.clearTimeout(t);
+        }
+
         if (_isCurtainCovering) {
           _isCurtainCovering = false;
           startTransition(next);
@@ -246,7 +266,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         };
       }}
     >
-      <main id="main-content">{children}</main>
+      <main id="main-content" tabIndex={-1} className="outline-none">{children}</main>
 
       <div
         ref={firstLayer}

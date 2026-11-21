@@ -16,6 +16,7 @@ interface AnimatedHeadingProps {
   className?: string;
   containerClassName?: string;
   showLine?: boolean;
+  accentClassName?: string;
 }
 
 const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
@@ -24,6 +25,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
   className = '',
   containerClassName = 'mb-8',
   showLine = true,
+  accentClassName = 'text-accent',
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -91,7 +93,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
   return (
     <div ref={rootRef} className={containerClassName}>
       <h2
-        className={`font-display font-black uppercase tracking-tighter leading-none ${className}`}
+        className={`font-display font-semibold tracking-[-0.045em] leading-[0.95] ${className}`}
         aria-label={plainText}
       >
         <span aria-hidden="true" className="flex flex-wrap items-baseline gap-x-[0.24em]">
@@ -99,7 +101,7 @@ const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
             <span
               key={`${word.t}-${i}`}
               className={`ah-word relative inline-block overflow-visible ${
-                word.serif ? 'serif-accent normal-case font-normal text-[1.06em] text-accent' : ''
+                word.serif ? `serif-accent normal-case font-normal text-[1.04em] ${accentClassName}` : ''
               }`}
               style={{
                 paddingBottom: '0.14em',

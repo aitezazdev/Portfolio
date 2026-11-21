@@ -19,11 +19,12 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   const aliveRef = useRef<boolean>(false);
 
   useEffect(() => {
-    const isTouch =
-      typeof window !== 'undefined' &&
-      ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
+    const nativeScroll =
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.innerWidth < 768;
 
-    if (isTouch) {
+    if (nativeScroll) {
       aliveRef.current = true;
       const refreshTimer = setTimeout(() => {
         ScrollTrigger.refresh();

@@ -31,13 +31,13 @@ const AnimatedLink: React.FC<AnimatedLinkProps> = ({
         {...rest}
       >
         <span
-          className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full h-full flex items-center"
+          className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full h-full flex items-center"
         >
           {text}
         </span>
         <span
           aria-hidden="true"
-          className="block absolute top-full left-0 transition-transform duration-300 ease-in-out group-hover:-translate-y-full pointer-events-none h-full flex items-center"
+          className="block absolute top-full left-0 transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full pointer-events-none h-full flex items-center"
         >
           {text}
         </span>
@@ -63,13 +63,13 @@ const AnimatedLink: React.FC<AnimatedLinkProps> = ({
       onClick={onClick}
     >
       <span
-        className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full h-full flex items-center"
+        className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full h-full flex items-center"
       >
         {children}
       </span>
       <span
         aria-hidden="true"
-        className="block absolute top-full left-0 transition-transform duration-300 ease-in-out group-hover:-translate-y-full pointer-events-none h-full flex items-center"
+        className="block absolute top-full left-0 transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full pointer-events-none h-full flex items-center"
       >
         {children}
       </span>

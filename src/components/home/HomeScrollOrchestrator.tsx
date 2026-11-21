@@ -34,15 +34,14 @@ export default function HomeScrollOrchestrator({
         pointerEvents: 'auto',
       });
 
-      const updatePointerEvents = (self: ScrollTrigger) => {
-        if (self.progress >= 0.85) {
-          home.style.pointerEvents = 'none';
-          window.dispatchEvent(new CustomEvent('pause-ambient-geometry'));
-        } else {
-          home.style.pointerEvents = 'auto';
-          window.dispatchEvent(new CustomEvent('resume-ambient-geometry'));
-        }
+      let covered: boolean | null = null;
+      const setCovered = (next: boolean) => {
+        if (covered === next) return;
+        covered = next;
+        home.style.pointerEvents = next ? 'none' : 'auto';
+        window.dispatchEvent(new CustomEvent(next ? 'pause-ambient-geometry' : 'resume-ambient-geometry'));
       };
+      const updatePointerEvents = (self: ScrollTrigger) => setCovered(self.progress >= 0.85);
 
       gsap
         .timeline({
@@ -52,14 +51,8 @@ export default function HomeScrollOrchestrator({
             end: 'top 10%',
             scrub: 1.2,
             onUpdate: updatePointerEvents,
-            onLeave: () => {
-              home.style.pointerEvents = 'none';
-              window.dispatchEvent(new CustomEvent('pause-ambient-geometry'));
-            },
-            onEnterBack: () => {
-              home.style.pointerEvents = 'auto';
-              window.dispatchEvent(new CustomEvent('resume-ambient-geometry'));
-            },
+            onLeave: () => setCovered(true),
+            onEnterBack: () => setCovered(false),
             onRefresh: updatePointerEvents,
           },
         })
@@ -96,7 +89,7 @@ export default function HomeScrollOrchestrator({
       <div ref={homeRef} className="sticky top-0 left-0 w-full min-h-[100dvh] md:h-screen">
         {banner}
       </div>
-      <div id="about-section-wrapper" className="relative bg-black">
+      <div id="about-section-wrapper" className="relative bg-surface-base">
         <div ref={reuniteRef} className="relative z-10 bg-ink min-h-screen overflow-hidden">
           {about}
         </div>

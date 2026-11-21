@@ -30,21 +30,14 @@ const tokenize = (text: string): Token[] => {
   return tokens;
 };
 
-const hexToRgba = (hex: string, alpha: number): string => {
-  const h = hex.replace('#', '');
-  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
-  const num = parseInt(full, 16);
-  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
-};
-
 export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
   text,
   className = '',
-  dimOpacity = 0.22,
+  dimOpacity = 0.3,
   offset = ['start 0.99', 'end 0.85'],
-  highlightColor = '#E2E8E4',
-  dimColor = 'rgba(226, 232, 228, 0.22)',
-  accentColor = '#34D399',
+  highlightColor = '#F3EEE5',
+  dimColor = '#F3EEE5',
+  accentColor = '#FF4D2E',
 }) => {
   const containerRef = useRef<HTMLParagraphElement>(null);
   const reduced = useReducedMotion();
@@ -77,7 +70,7 @@ export const ScrollWordReveal: React.FC<ScrollWordRevealProps> = ({
         transformOrigin: '50% 100%',
         color: (i: number, target: Element) =>
           (target as HTMLElement).dataset.accent === 'true'
-            ? hexToRgba(accentColor, Math.max(dimOpacity, 0.3))
+            ? accentColor
             : dimColor,
       });
 
