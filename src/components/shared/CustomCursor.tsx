@@ -57,6 +57,8 @@ export default function CustomCursor() {
       xPercent: -50,
       yPercent: -50,
     });
+    gsap.set([cursorDot, cursorOutline], { autoAlpha: 0 });
+    let hasMoved = false;
 
     const tick = () => {
       const dt = gsap.ticker.deltaRatio(60);
@@ -74,6 +76,12 @@ export default function CustomCursor() {
 
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current = { x: e.clientX, y: e.clientY };
+      if (!hasMoved) {
+        hasMoved = true;
+        delayedMouse.current = { x: e.clientX, y: e.clientY };
+        gsap.set([cursorOutline, cursorTextEl], { x: e.clientX, y: e.clientY });
+        gsap.to([cursorDot, cursorOutline], { autoAlpha: 1, duration: 0.3 });
+      }
     };
     window.addEventListener('mousemove', handleMouseMove);
 
@@ -95,12 +103,12 @@ export default function CustomCursor() {
         setCursorText(type.toUpperCase());
         gsap.to(cursorOutline, {
           scale: type === 'drag' ? 4 : type === 'copy' ? 3 : 2,
-          backgroundColor: 'rgba(97,92,86,0.1)',
+          backgroundColor: 'rgba(255, 77, 46,0.12)',
           duration: 0.4,
         });
         gsap.to(cursorTextEl, { opacity: 1, duration: 0.2 });
       } else {
-        gsap.to(cursorOutline, { scale: 2, backgroundColor: 'rgba(97,92,86,0.15)', duration: 0.4 });
+        gsap.to(cursorOutline, { scale: 2, backgroundColor: 'rgba(255, 77, 46,0.18)', duration: 0.4 });
       }
 
       gsap.to(cursorDot, { scale: 0, duration: 0.3 });
@@ -154,7 +162,7 @@ export default function CustomCursor() {
     document.addEventListener('mouseleave', handleMouseLeavePage);
     window.addEventListener('scroll', scheduleCheckElementUnderCursor, { passive: true });
 
-    const lenis = (window as any).__lenis;
+    const lenis = window.__lenis;
     if (lenis) {
       lenis.on('scroll', scheduleCheckElementUnderCursor);
     }
