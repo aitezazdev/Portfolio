@@ -1,51 +1,44 @@
-/**
- * @license
- * Copyright (c) 2026 Aitezaz Sikandar. All rights reserved.
- * Licensed under the MIT License. See LICENSE in the project root for license information.
- * Project: Portfolio
- * Author: Aitezaz Sikandar (aitezazdev)
- * Website: https://aitezazdev.vercel.app
- */
+// Made by Aitezaz Sikandar - https://aitezazdev.vercel.app
 
-import { Geist, Geist_Mono, Space_Grotesk, Instrument_Serif } from 'next/font/google';
+
+import type { Viewport } from 'next';
 import './globals.css';
 import ClientLayout from './ClientLayout';
 import { siteMetadata } from '@/lib/metadata';
 import { Analytics } from '@vercel/analytics/react';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { site, socials } from '@/lib/site';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-  preload: true,
-  display: 'swap',
-});
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-  preload: true,
-  display: 'swap',
-});
-const spaceGrotesk = Space_Grotesk({
-  variable: '--font-space-grotesk',
-  subsets: ['latin'],
-  preload: true,
-  display: 'swap',
-});
-const instrumentSerif = Instrument_Serif({
-  variable: '--font-instrument-serif',
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  preload: true,
-  display: 'swap',
-});
 export const metadata = siteMetadata;
+
+export const viewport: Viewport = {
+  themeColor: '#11100E',
+};
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  jobTitle: 'Full Stack Developer',
+  email: `mailto:${site.email}`,
+  image: `${site.url}/icon-512.png`,
+  sameAs: [socials.github.href, socials.linkedin.href, socials.instagram.href],
+  knowsAbout: ['React', 'Next.js', 'Node.js', 'MongoDB', 'TypeScript', 'MERN Stack'],
+};
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html:
+              "(function(d){d.classList.add('js');try{var r=matchMedia('(prefers-reduced-motion: reduce)').matches;var a=+localStorage.getItem('preloader-seen-at')||0;if(!r&&!(a&&Date.now()-a<43200000))d.classList.add('pl')}catch(e){}})(document.documentElement)", }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} antialiased bg-cream`}
+        className="antialiased bg-cream"
       >
         <a href="#main-content" className="skip-link">
           Skip to content
