@@ -6,7 +6,7 @@ import { useTransitionState } from 'next-transition-router';
 import { useLenis } from '@/components/providers/SmoothScrollProvider';
 import AnimatedLink from '@/components/ui/AnimateLink';
 import { useHandleLinkClick } from '@/lib/navigation';
-import { site, socials } from '@/lib/site';
+import { site, socials, navLinks } from '@/lib/site';
 import Link from 'next/link';
 import Lenis from 'lenis';
 import { Copyright } from 'lucide-react';
@@ -83,7 +83,7 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleButtonMouseLeave}
-        className="relative w-12 h-12 md:w-15 md:h-15 rounded-full overflow-hidden bg-[#111A16] border border-white/15 outline-none flex items-center justify-center cursor-pointer shadow-xl group"
+        className="relative w-12 h-12 md:w-15 md:h-15 rounded-full overflow-hidden bg-elevated-dark border border-white/15 flex items-center justify-center cursor-pointer shadow-xl group"
         style={{ transformOrigin: 'center' }}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
@@ -97,13 +97,13 @@ const MagneticHamburgerButton: React.FC<MagneticHamburgerButtonProps> = ({ isOpe
 
         <div className="relative z-10 w-5 h-3 flex items-center justify-center pointer-events-none">
           <span
-            className={`absolute w-full h-[2px] rounded-full bg-[#E2E8E4] transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            className={`absolute w-full h-[2px] rounded-full bg-cream transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
               isOpen ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-0 rotate-0'
             }`}
             style={{ transformOrigin: 'center' }}
           />
           <span
-            className={`absolute w-full h-[2px] rounded-full bg-[#E2E8E4] transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            className={`absolute w-full h-[2px] rounded-full bg-cream transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
               isOpen ? 'bottom-1/2 translate-y-1/2 -rotate-45' : 'bottom-0 rotate-0'
             }`}
             style={{ transformOrigin: 'center' }}
@@ -193,7 +193,29 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) onClose();
+      if (!isOpen) return;
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key === 'Tab' && containerRef.current) {
+        const focusables = Array.from(
+          containerRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+        );
+        const hamburger = document.querySelector<HTMLElement>('[aria-controls="fullscreen-menu"]');
+        if (hamburger) focusables.push(hamburger);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -215,6 +237,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
       if (containerRef.current) {
         containerRef.current.style.visibility = 'visible';
         containerRef.current.style.pointerEvents = 'auto';
+        containerRef.current.querySelector<HTMLElement>('nav a[href]')?.focus({ preventScroll: true });
       }
 
       curveStateRef.current.cx = -100;
@@ -366,6 +389,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
   return (
     <div
       ref={containerRef}
+      id="fullscreen-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site menu"
       style={{ visibility: 'hidden', pointerEvents: 'none' }}
       className="fixed inset-0 z-[9980]"
       aria-hidden={!isOpen}
@@ -379,7 +406,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
 
       <div
         ref={menuRef}
-        className="fixed top-0 right-0 h-screen w-full md:w-[46%] lg:w-[45%] xl:w-[42%] z-[9981] bg-surface flex flex-col shadow-2xl"
+        className="fixed top-0 right-0 h-dvh w-full md:w-[46%] lg:w-[45%] xl:w-[42%] z-[9981] bg-surface flex flex-col shadow-2xl"
         style={{ willChange: 'transform' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -391,7 +418,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
           <path
             ref={curvePathRef}
             d="M100 0 L200 0 L200 100 L100 100 Q100 50 100 0"
-            fill="#0B110E"
+            className="fill-surface"
           />
         </svg>
 
@@ -406,10 +433,10 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
           />
 
           <div className="flex justify-between items-center px-8 sm:px-10 md:px-14 h-20 border-b border-elevated-dark">
-            <span className="text-gray-mid font-mono text-xs tracking-widest uppercase">Navigation</span>
+            <span className="text-gray-soft font-mono text-xs tracking-widest uppercase">Navigation</span>
           </div>
 
-          <nav className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-8 sm:px-10 md:px-14 gap-2 md:gap-3">
+          <nav aria-label="Main menu" className="absolute top-[80px] bottom-[170px] md:bottom-[100px] left-0 right-0 flex flex-col justify-center px-8 sm:px-10 md:px-14 gap-2 md:gap-3">
             {links.map((link, i) => (
               <div
                 key={link.href}
@@ -422,11 +449,15 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
                   onMouseLeave={() => handleMagneticMouseLeave(i)}
                   className="inline-block"
                 >
-                  <button
-                    onClick={() => handleLinkClick(link.href)}
-                    className="group flex items-center gap-4 md:gap-6 text-left animate-link-row"
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(link.href);
+                    }}
+                    className="group flex items-center gap-4 md:gap-6 text-left no-underline"
                   >
-                    <span className="text-gray-mid font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-accent">
+                    <span className="text-gray-soft font-mono text-xs md:text-sm transition-colors duration-300 group-hover:text-accent">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span className="font-display text-[2.8rem] sm:text-[3.4rem] md:text-[3.8rem] lg:text-[4.4rem] xl:text-[4.8rem] font-black uppercase leading-none tracking-tight text-cream group-hover:text-accent transition-colors duration-300 flex overflow-hidden">
@@ -435,7 +466,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
                     <span className="text-accent text-2xl md:text-3xl lg:text-4xl opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
                       →
                     </span>
-                  </button>
+                  </a>
                 </div>
               </div>
             ))}
@@ -446,7 +477,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
             className="absolute bottom-0 left-0 right-0 h-[170px] md:h-[100px] px-8 sm:px-10 md:px-14 pt-6 pb-6 md:pb-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start md:items-end"
           >
             <div className="space-y-1 text-left">
-              <p className="text-gray-mid font-mono text-xs uppercase tracking-widest mb-1.5">Get in Touch</p>
+              <p className="text-gray-soft font-mono text-xs uppercase tracking-widest mb-1.5">Get in Touch</p>
               <Magnetic strength={0.3}>
                 <a
                   href={`mailto:${site.email}`}
@@ -465,7 +496,7 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative inline-block text-gray-mid hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-300 py-1"
+                    className="group relative inline-block text-gray-soft hover:text-cream text-xs font-mono uppercase tracking-widest transition-colors duration-300 py-1"
                   >
                     <span>{s.label}</span>
                     <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out pointer-events-none block" />
@@ -480,8 +511,6 @@ const FullscreenMenu: React.FC<FullscreenMenuProps> = ({ isOpen, onClose, handle
   );
 };
 
-
-
 interface NavbarProps {
   hamburgerOnly?: boolean;
 }
@@ -495,7 +524,6 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const lenisRef = useLenis() as React.RefObject<Lenis | null> | null;
-  const lenis = lenisRef?.current;
   const { stage } = useTransitionState();
   const isTransitioning = stage === 'entering' || stage === 'leaving';
 
@@ -552,7 +580,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   useEffect(() => {
     if (hamburgerOnly) {
       if (hamburgerRef.current) {
-        gsap.set(hamburgerRef.current, { opacity: 1, scale: 1 });
+        gsap.set(hamburgerRef.current, { autoAlpha: 1, scale: 1 });
       }
       return;
     }
@@ -570,18 +598,18 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
 
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
-      gsap.set(hamburger, { opacity: 1, scale: 1 });
+      gsap.set(hamburger, { autoAlpha: 1, scale: 1 });
     } else {
       const aboutWrapper = document.getElementById('about-section-wrapper');
       if (aboutWrapper) {
         const aboutTop = aboutWrapper.getBoundingClientRect().top + scrollY;
         const shouldShowHamburger = scrollY >= aboutTop;
         gsap.set(hamburger, {
-          opacity: shouldShowHamburger ? 1 : 0,
+          autoAlpha: shouldShowHamburger ? 1 : 0,
           scale: shouldShowHamburger ? 1 : 0,
         });
       } else {
-        gsap.set(hamburger, { opacity: 0, scale: 0 });
+        gsap.set(hamburger, { autoAlpha: 0, scale: 0 });
       }
     }
   }, [hamburgerOnly]);
@@ -618,14 +646,14 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
         start: 'top top',
         end: 'top -200px',
         onEnter: () => {
-          gsap.to(hamburger, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' });
+          gsap.to(hamburger, { autoAlpha: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' });
         },
         onLeaveBack: () => {
-          gsap.to(hamburger, { opacity: 0, scale: 0, duration: 0.3, ease: 'power2.in' });
+          gsap.to(hamburger, { autoAlpha: 0, scale: 0, duration: 0.3, ease: 'power2.in' });
         },
       });
     } else if (isMobile) {
-      gsap.set(hamburger, { opacity: 1, scale: 1 });
+      gsap.set(hamburger, { autoAlpha: 1, scale: 1 });
     }
 
     return () => {
@@ -634,19 +662,25 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
     };
   }, [hasAnimated, hamburgerOnly, isTransitioning]);
 
+  const wasMenuOpenRef = useRef(false);
   useEffect(() => {
-    if (lenis) {
+    const activeLenis = lenisRef?.current ?? window.__lenis ?? null;
+    if (activeLenis) {
       if (isMenuOpen) {
-        lenis.stop();
+        activeLenis.stop();
       } else {
-        lenis.start();
+        activeLenis.start();
       }
     }
+    if (wasMenuOpenRef.current && !isMenuOpen) {
+      document.querySelector<HTMLButtonElement>('[aria-controls="fullscreen-menu"]')?.focus();
+    }
+    wasMenuOpenRef.current = isMenuOpen;
     requestAnimationFrame(() => {
       document.body.style.overflow = isMenuOpen ? 'hidden' : '';
       document.body.classList.toggle('menu-open', isMenuOpen);
     });
-  }, [isMenuOpen, lenis]);
+  }, [isMenuOpen, lenisRef]);
 
   useEffect(() => {
     if (isTransitioning && isMenuOpen) {
@@ -657,13 +691,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const handleLinkClick = useHandleLinkClick(setIsMenuOpen);
 
-  const links = [
-    { name: 'Home', href: '/#top', menuOnly: true },
-    { name: 'About', href: '/#about' },
-    { name: 'Services', href: '/#services' },
-    { name: 'Work', href: '/#projects' },
-    { name: 'Contact', href: '/#contact' },
-  ];
+  const links: LinkItem[] = [...navLinks];
 
   const navStyle: React.CSSProperties = {
     opacity: isTransitioning ? 0 : 1,
@@ -683,7 +711,7 @@ const Navbar: React.FC<NavbarProps> = ({ hamburgerOnly = false }) => {
             <NavbarBrand logoRef={logoRef} handleLinkClick={handleLinkClick} />
             <ul
               ref={linksContainerRef}
-              className="flex gap-6 text-warm text-base font-sans font-medium uppercase tracking-wider"
+              className="flex gap-6 text-charcoal text-[15px] font-sans font-medium tracking-tight rounded-full border border-black/[0.06] bg-cream/55 backdrop-blur-xl backdrop-saturate-150 px-7 py-2.5 shadow-[0_8px_30px_-12px_rgba(17,16,14,0.25)]"
             >
               {links.filter((l) => !l.menuOnly).map((link) => (
                 <AnimatedLink key={link.href}>

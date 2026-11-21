@@ -33,37 +33,37 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   let bgColor, textColor, borderColor, rippleColor, hoverBgColor, originalBgColor;
   switch (variant) {
     case 'light':
-      bgColor = 'bg-transparent';
-      textColor = 'text-[#141516]';
-      borderColor = 'border-2 border-[#141516]';
-      rippleColor = 'rgba(20, 21, 22, 0.1)';
-      hoverBgColor = 'rgba(20, 21, 22, 0.06)';
-      originalBgColor = 'transparent';
+      bgColor = 'bg-cream';
+      textColor = 'text-ink';
+      borderColor = 'border-2 border-ink';
+      rippleColor = 'rgba(17, 16, 14, 0.1)';
+      hoverBgColor = '#E9E3D7';
+      originalBgColor = '#F3EEE5';
       break;
     case 'primary':
       bgColor = 'bg-accent';
-      textColor = 'text-white';
+      textColor = 'text-on-accent';
       borderColor = 'border border-accent';
-      rippleColor = 'rgba(255, 255, 255, 0.25)';
-      hoverBgColor = '#059669';
-      originalBgColor = '#34D399';
+      rippleColor = 'rgba(17, 16, 14, 0.12)';
+      hoverBgColor = '#E8431F';
+      originalBgColor = '#FF4D2E';
       break;
     case 'outline':
-      bgColor = 'bg-transparent';
-      textColor = 'text-[#45524B]';
-      borderColor = 'border border-[#111A16]/25';
+      bgColor = 'bg-cream';
+      textColor = 'text-ink';
+      borderColor = 'border border-ink/40';
       rippleColor = 'rgba(17, 26, 22, 0.08)';
-      hoverBgColor = 'rgba(17, 26, 22, 0.04)';
-      originalBgColor = 'transparent';
+      hoverBgColor = '#E9E3D7';
+      originalBgColor = '#F3EEE5';
       break;
     case 'dark':
     default:
-      bgColor = 'bg-[#111A16]';
+      bgColor = 'bg-elevated-dark';
       textColor = 'text-cream';
-      borderColor = 'border border-[#111A16]';
+      borderColor = 'border border-elevated-dark';
       rippleColor = 'rgba(255, 255, 255, 0.15)';
-      hoverBgColor = '#1A2420';
-      originalBgColor = '#111A16';
+      hoverBgColor = '#24221F';
+      originalBgColor = '#181715';
       break;
   }
 
@@ -133,7 +133,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleButtonMouseLeave}
         disabled={disabled}
-        className={`relative text-xs md:text-sm outline-none overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-flex items-center justify-center ${className}`}
+        className={`relative text-xs md:text-sm overflow-hidden h-10 md:h-12 px-4 sm:px-6 md:px-8 rounded-full ${bgColor} ${textColor} ${borderColor} group cursor-pointer font-medium inline-flex items-center justify-center ${className}`}
         style={{ transformOrigin: 'center' }}
         {...props}
       >
@@ -143,11 +143,11 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
           style={{ backgroundColor: rippleColor, opacity: 0 }}
         />
 
-        <span className="flex items-center justify-center h-full transition-transform duration-300 ease-in-out group-hover:-translate-y-full relative z-10">
+        <span className="flex items-center justify-center h-full transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full relative z-10">
           {topText}
         </span>
 
-        <span aria-hidden="true" className="flex items-center justify-center h-full absolute inset-0 top-full transition-transform duration-300 ease-in-out group-hover:-translate-y-full z-10">
+        <span aria-hidden="true" className="flex items-center justify-center h-full absolute inset-0 top-full transition-transform duration-300 ease-in-out group-hover:-translate-y-full group-focus-visible:-translate-y-full z-10">
           {bottomText}
         </span>
       </Component>

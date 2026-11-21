@@ -12,24 +12,33 @@ declare global {
   }
 }
 
+const PRELOADER_TTL_MS = 12 * 60 * 60 * 1000;
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [instantDone, setInstantDone] = useState(false);
   const [showCursor, setShowCursor] = useState(false);
+  const [quick, setQuick] = useState(false);
 
   useEffect(() => {
     console.log(
-      '%c Creative Portfolio Blueprint %c by Aitezaz Sikandar (https://aitezazdev.vercel.app) ',
-      'background: #080807; color: #e8e8e3; padding: 4px 8px; border-radius: 4px 0 0 4px; font-family: monospace; font-weight: bold;',
-      'background: #e8e8e3; color: #080807; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #080807;'
+      '%c aitezaz.dev %c built by Aitezaz Sikandar - https://aitezazdev.vercel.app ',
+      'background: #11100E; color: #F3EEE5; padding: 4px 8px; border-radius: 4px 0 0 4px; font-family: monospace; font-weight: bold;',
+      'background: #FF4D2E; color: #11100E; padding: 4px 8px; border-radius: 0 4px 4px 0; font-family: monospace; font-weight: bold; border: 1px solid #FF4D2E;'
     );
 
-    let seen = false;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let seen = prefersReduced;
     try {
-      seen = sessionStorage.getItem('preloader-seen') === '1';
+      const at = Number(localStorage.getItem('preloader-seen-at') || 0);
+      if (at && Date.now() - at < PRELOADER_TTL_MS) seen = true;
+      else if (at) setQuick(true);
     } catch {}
 
+    if (!seen) document.body.classList.add('preloader-active');
+
     if (seen) {
+      document.documentElement.classList.remove('pl');
       window.__preloaderDone = true;
       document.body.classList.remove('preloader-active');
       setInstantDone(true);
@@ -41,13 +50,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  const handleExitComplete = useCallback(() => {
-    setIsLoading(false);
+  const handleReveal = useCallback(() => {
     document.body.classList.remove('preloader-active');
     window.scrollTo(0, 0);
     setShowCursor(true);
     window.__preloaderDone = true;
     window.dispatchEvent(new CustomEvent('preloaderComplete'));
+  }, []);
+
+  const handleExitComplete = useCallback(() => {
+    setIsLoading(false);
   }, []);
 
   return (
@@ -56,7 +68,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {showCursor && <CustomCursor />}
 
       {!instantDone && isLoading && (
-        <GlobalPreloader onComplete={handleExitComplete} />
+        <GlobalPreloader quick={quick} onReveal={handleReveal} onComplete={handleExitComplete} />
       )}
 
       <SmoothScrollProvider>

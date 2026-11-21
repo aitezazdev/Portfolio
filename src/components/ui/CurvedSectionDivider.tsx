@@ -12,8 +12,8 @@ interface CurvedSectionDividerProps {
 
 export default function CurvedSectionDivider({
   className = '',
-  curveColor = '#E2E8E4',
-  bottomColor = '#0A0F0D',
+  curveColor = 'var(--color-cream)',
+  bottomColor = 'var(--color-ink)',
 }: CurvedSectionDividerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const curveRef = useRef<HTMLDivElement>(null);
@@ -24,9 +24,9 @@ export default function CurvedSectionDivider({
       if (reduced || !curveRef.current || !containerRef.current) return;
       gsap.fromTo(
         curveRef.current,
-        { height: 150 },
+        { scaleY: 1 },
         {
-          height: 0,
+          scaleY: 0,
           ease: 'none',
           scrollTrigger: {
             trigger: containerRef.current,
@@ -49,9 +49,10 @@ export default function CurvedSectionDivider({
     >
       <div
         ref={curveRef}
-        className="w-[120%] -left-[10%] relative"
+        className="w-[120%] -left-[10%] relative will-change-transform"
         style={{
           height: reduced ? 64 : 150,
+          transformOrigin: 'top center',
           backgroundColor: curveColor,
           borderRadius: '0 0 50% 50%',
         }}

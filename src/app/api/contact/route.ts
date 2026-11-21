@@ -259,7 +259,7 @@ export async function POST(request: Request) {
       success: true,
       message: 'Thank you! Your message has been sent successfully.',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Contact form SMTP error:', error);
 
     if (process.env.NODE_ENV === 'development') {

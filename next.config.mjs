@@ -1,11 +1,5 @@
-/**
- * @license
- * Copyright (c) 2026 Aitezaz Sikandar. All rights reserved.
- * Licensed under the MIT License. See LICENSE in the project root for license information.
- * Project: Portfolio
- * Author: Aitezaz Sikandar (aitezazdev)
- * Website: https://aitezazdev.vercel.app
- */
+// Made by Aitezaz Sikandar - https://aitezazdev.vercel.app
+
 
 const nextConfig = {
   images: {
@@ -16,6 +10,19 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

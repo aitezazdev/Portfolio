@@ -9,7 +9,7 @@ export default function MarqueeStrip() {
   const track1Ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
-  const items = ['Available for Work', 'Open to Opportunities', "Let's Build", 'MERN Stack'];
+  const items = ['Full stack', 'React & Next.js', 'Fallbacks over error pages', 'Node & MongoDB', 'Real-time apps'];
 
   useEffect(() => {
     if (reduced) return;
@@ -31,15 +31,30 @@ export default function MarqueeStrip() {
 
     let x = 0;
     const baseSpeed = 0.85;
+    let pauseTarget = 1;
+    let pauseFactor = 1;
+    const onEnter = () => { pauseTarget = 0; };
+    const onLeave = () => { pauseTarget = 1; };
+    const host = track.parentElement?.parentElement;
+    host?.addEventListener('pointerenter', onEnter);
+    host?.addEventListener('pointerleave', onLeave);
     let currentVelocity = 0;
     let targetVelocity = 0;
     let currentSkew = 0;
 
+    let inView = true;
+    const io = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+    });
+    io.observe(track);
+
     const onTick = () => {
+      if (!inView) return;
       const dt = gsap.ticker.deltaRatio(60);
       currentVelocity += (targetVelocity - currentVelocity) * (1 - Math.pow(1 - 0.08, dt));
       targetVelocity *= Math.pow(0.93, dt);
-      x -= (baseSpeed + currentVelocity) * dt;
+      pauseFactor += (pauseTarget - pauseFactor) * (1 - Math.pow(1 - 0.12, dt));
+      x -= (baseSpeed + currentVelocity) * dt * pauseFactor;
 
       if (halfWidth > 0) {
         if (x <= -halfWidth) {
@@ -79,31 +94,10 @@ export default function MarqueeStrip() {
       },
     });
 
-    const attachLenis = () => {
-      const lenis = (window as any).__lenis;
-      if (lenis) {
-        const handleLenis = ({ velocity }: { velocity: number }) => {
-          if (Math.abs(velocity) > 0.02) {
-            onScrollUpdate(velocity * 80);
-          }
-        };
-        lenis.on('scroll', handleLenis);
-        return () => lenis.off('scroll', handleLenis);
-      }
-      return null;
-    };
-
-    let cleanupLenis = attachLenis();
-    const poll = setInterval(() => {
-      if (!cleanupLenis && (window as any).__lenis) {
-        cleanupLenis = attachLenis();
-        clearInterval(poll);
-      }
-    }, 100);
-
     return () => {
-      clearInterval(poll);
-      if (cleanupLenis) cleanupLenis();
+      io.disconnect();
+      host?.removeEventListener('pointerenter', onEnter);
+      host?.removeEventListener('pointerleave', onLeave);
       trigger.kill();
       gsap.ticker.remove(onTick);
       window.removeEventListener('resize', handleResize);

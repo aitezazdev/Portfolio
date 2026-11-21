@@ -2,10 +2,12 @@ import type { MetadataRoute } from 'next';
 import { getAllProjects } from '@/lib/projects';
 import { site } from '@/lib/site';
 
+const LAST_UPDATED = new Date('2026-11-13');
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const projects = getAllProjects().map((p) => ({
     url: `${site.url}/projects/${p.slug}`,
-    lastModified: new Date(),
+    lastModified: LAST_UPDATED,
     changeFrequency: 'monthly' as const,
     priority: 0.8,
   }));
@@ -13,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: site.url,
-      lastModified: new Date(),
+      lastModified: LAST_UPDATED,
       changeFrequency: 'weekly',
       priority: 1,
     },
