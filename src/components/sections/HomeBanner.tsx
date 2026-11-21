@@ -309,7 +309,7 @@ const HomeBanner = () => {
           <div className="max-w-2xl w-full text-center mx-auto">
             <p
               ref={paragraphRef}
-              className="hero-hide text-balance text-ink [text-shadow:0_0_16px_rgba(243,238,229,0.95)] font-sans text-lg sm:text-xl md:text-2xl leading-snug mb-8 md:mb-10 text-center mx-auto"
+              className="hero-hide text-balance text-ink [text-shadow:0_0_16px_rgba(243,238,229,0.95)] font-sans sm:text-xl md:text-2xl leading-snug mb-8 md:mb-10 text-center mx-auto"
             >
               Full-stack engineer building fast, scalable, and reliable web applications.
             </p>
