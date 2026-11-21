@@ -9,7 +9,7 @@ import FlowField from '@/components/canvas/FlowField';
 const CREDENTIALS = [
   {
     year: '2026',
-    title: 'Software Engineer Intern - MERN Stack',
+    title: 'MERN Stack Intern',
     organization: 'e-strats, Islamabad',
     type: 'Industry',
   },
@@ -17,7 +17,7 @@ const CREDENTIALS = [
     year: '2026',
     title: 'HEC National Skills Competency Test (NSCT)',
     organization: 'HEC, PSEB & P@SHA',
-    stat: '95th Percentile, Top 5% nationwide',
+    stat: '95th percentile',
     type: 'Recognition',
   },
   {
@@ -31,20 +31,21 @@ const CREDENTIALS = [
     year: '2022-26',
     title: 'BS Computer Science',
     organization: 'University of Peshawar',
-    stat: '3.60 / 4.00 GPA',
+    stat: '3.65 / 4.00 GPA',
     type: 'Education',
   },
 ];
 
 const About = () => {
   const headingWords = [
-    { t: 'WHO' },
-    { t: 'am', serif: true },
-    { t: 'i?' },
+    { t: "Who's" },
+    { t: 'behind', serif: true },
+    { t: 'the' },
+    { t: 'code' },
   ];
   const descriptionText =
-    'I am a software engineer driven by a passion for building clean, intuitive, and reliable digital experiences.';
-  const aboutMeText = `I build web applications that bridge thoughtful frontend interfaces with robust backend systems. To me, software is more than code on a screen; it is about making technology feel effortless and genuinely useful to real people.\n\nMy journey began with a simple curiosity for how things work under the hood. Over time, that curiosity evolved into a genuine passion for fluid interface animations, reliable backend architecture, and building user journeys that feel effortless and alive.\n\nWhether I am polishing micro-interactions or engineering full-stack systems, my core focus remains unchanged: creating software that brings people joy, solves real problems, and leaves a lasting positive impact.`;
+    "A developer from Pakistan who likes building things that real people use every day.";
+  const aboutMeText = `Hello, I am Aitezaz. I am a web developer from Pakistan. I studied computer science at the University of Peshawar, and alongside it I spent a year at SMIT learning the MERN stack by building things, mostly small at first and then not so small.\n\nMost of what I know came from watching my own projects break and then fixing them. A classroom where every student has to see the same slide at the same moment. A clinic where two patients can never book the same slot. A shop that keeps working even when its database does not. I like problems like these, where someone is waiting on the other side of the screen.\n\nLately I have been working as an intern at e-strats in Islamabad, writing MERN code alongside a team. I am open to work anywhere in the world, so if you have something to build or a team that needs another developer, I would love to hear about it.`;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -52,6 +53,8 @@ const About = () => {
 
   useGSAP(
     () => {
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
       gsap.fromTo(
         '.about-image-wrapper',
         { x: -60, opacity: 0 },
@@ -64,22 +67,6 @@ const About = () => {
           scrollTrigger: {
             trigger: '.about-image-wrapper',
             start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-        },
-      );
-
-      gsap.fromTo(
-        '.about-label',
-        { opacity: 0, letterSpacing: '0.45em' },
-        {
-          opacity: 1,
-          letterSpacing: '0.3em',
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.about-label',
-            start: 'top 88%',
             toggleActions: 'play none none reverse',
           },
         },
@@ -159,21 +146,6 @@ const About = () => {
         }
       });
 
-      gsap.fromTo(
-        '.cred-section-label',
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.7,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: tableRef.current,
-            start: 'top 92%',
-            once: true,
-          },
-        },
-      );
-
       const experienceWords = gsap.utils.toArray<HTMLElement>('.experience-word > span');
       if (experienceWords.length) {
         gsap.fromTo(
@@ -208,6 +180,8 @@ const About = () => {
           },
         });
       }
+      });
+      return () => mm.revert();
     },
     { scope: sectionRef },
   );
@@ -223,7 +197,7 @@ const About = () => {
           <div className="mb-10 md:mb-20">
             <AnimatedHeading
               words={headingWords}
-              className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
+              className="text-[clamp(2.5rem,7vw,6.5rem)] mb-4"
             />
             <ScrollWordReveal
               text={descriptionText}
@@ -240,9 +214,6 @@ const About = () => {
             </div>
 
             <div className="col-span-12 md:col-span-7 lg:col-span-6 md:col-start-6 lg:col-start-7 flex flex-col justify-center space-y-8">
-              <span className="about-label font-mono text-sm sm:text-base md:text-base text-warm uppercase tracking-[0.3em] font-medium text-center md:text-left inline-block">
-                (About Me)
-              </span>
               <div className="space-y-6">
                 {aboutMeText.split('\n\n').map((p, i) => (
                   <ScrollWordReveal
@@ -258,10 +229,7 @@ const About = () => {
 
           <div ref={tableRef} className="pt-12 md:pt-20 border-t border-white/10">
             <div className="mb-12 text-center md:mb-20">
-              <span className="cred-section-label font-mono text-sm sm:text-base md:text-base text-warm uppercase tracking-[0.3em] font-medium inline-block opacity-0">
-                (Experience)
-              </span>
-              <h3 className="mt-5 font-display text-[clamp(2.5rem,7vw,6.5rem)] font-black uppercase tracking-tight leading-none text-light">
+              <h3 className="font-display text-[clamp(2.5rem,7vw,6.5rem)] font-semibold tracking-[-0.045em] leading-[0.95] text-light">
                 <span className="experience-word inline-block overflow-hidden align-top"><span className="block">The</span></span>{' '}
                 <span className="experience-word inline-block overflow-hidden align-top"><span className="serif-accent block normal-case tracking-[-0.05em] text-accent">path</span></span>{' '}
                 <span className="experience-word inline-block overflow-hidden align-top"><span className="block">so far.</span></span>
@@ -275,7 +243,7 @@ const About = () => {
                   ref={pathRef}
                   d="M32 0 C25 84 39 164 32 250 C25 334 39 416 32 500 C25 584 39 666 32 750 C25 834 39 916 32 1000"
                   fill="none"
-                  stroke="rgba(232, 228, 222, 0.28)"
+                  stroke="rgba(243, 238, 229, 0.28)"
                   strokeWidth="1.5"
                 />
               </svg>
@@ -283,18 +251,18 @@ const About = () => {
                 {CREDENTIALS.map((item, idx) => {
                   const isLeft = idx % 2 === 0;
                   return (
-                    <article key={item.title} data-side={isLeft ? 'left' : 'right'} className="cred-row relative grid grid-cols-[32px_1fr] gap-x-5 opacity-0 md:grid-cols-[1fr_96px_1fr] md:gap-x-0">
+                    <article key={item.title} data-side={isLeft ? 'left' : 'right'} className="cred-row reveal-hide relative grid grid-cols-[32px_1fr] gap-x-5 md:grid-cols-[1fr_96px_1fr] md:gap-x-0">
                       <div className="relative order-1 md:col-start-2 md:row-start-1 md:justify-self-center">
                         <span className="timeline-dot relative z-10 block h-[15px] w-[15px] rounded-full border-[3px] border-ink bg-cream" />
                         <span aria-hidden="true" className={`timeline-connector absolute top-[7px] hidden h-px w-14 bg-white/25 md:block ${isLeft ? 'right-full origin-right' : 'left-full origin-left'}`} />
-                        <span className={`absolute top-7 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] text-warm-light ${isLeft ? 'left-0 md:right-7 md:left-auto md:text-right' : 'left-0 md:left-7'}`}>
+                        <span className={`absolute top-7 hidden md:block whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.2em] text-warm-light ${isLeft ? 'left-0 md:right-7 md:left-auto md:text-right' : 'left-0 md:left-7'}`}>
                           {item.year}
                         </span>
                       </div>
 
-                      <div className={`timeline-content order-2 pt-8 md:row-start-1 md:pt-0 ${isLeft ? 'md:col-start-1 md:pr-14 md:text-right' : 'md:col-start-3 md:pl-14'}`}>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent">{item.type}</span>
-                        <h4 className="mt-4 font-display text-[clamp(2.15rem,4.4vw,4.5rem)] font-bold uppercase tracking-[-0.065em] leading-[0.86] text-cream">
+                      <div className={`timeline-content order-2 pt-8 md:row-start-1 md:pt-8 md:p-8 md:rounded-[2rem] md:border md:border-white/[0.07] md:bg-surface-card/80 md:shadow-[0_24px_60px_-34px_rgba(0,0,0,0.9)] ${isLeft ? 'md:col-start-1 md:mr-12 md:text-right' : 'md:col-start-3 md:ml-12'}`}>
+                        <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-accent">{item.type}<span className="md:hidden text-warm-light"> · {item.year}</span></span>
+                        <h4 className="mt-4 font-display text-[clamp(1.6rem,3.2vw,3.1rem)] font-semibold tracking-[-0.035em] leading-[1] text-cream">
                           {item.title}
                         </h4>
                         <div className={`mt-6 border-t border-white/10 pt-4 ${isLeft ? 'md:ml-auto md:max-w-md' : 'md:max-w-md'}`}>

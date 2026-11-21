@@ -10,14 +10,14 @@ const Services = () => {
   const servicesRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (window.innerWidth < 768) return;
-    const ctx = gsap.context(() => {
-      const allSections = servicesRef.current.filter(Boolean);
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+      const allSections = servicesRef.current.filter(Boolean) as HTMLDivElement[];
       const pinOffset = 50;
       allSections.forEach((section, index) => {
         ScrollTrigger.create({
           trigger: section,
-          start: `top ${pinOffset + index * 100}px`,
+          start: `top ${pinOffset + index * 120}px`,
           endTrigger: allSections[allSections.length - 1],
           end: 'bottom bottom',
           pin: true,
@@ -25,49 +25,52 @@ const Services = () => {
         });
       });
     }, sectionRef);
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   const headingWords = [
-    { t: 'WHAT' },
-    { t: 'i', serif: true },
-    { t: 'DO' },
+    { t: 'How' },
+    { t: 'I' },
+    { t: 'work', serif: true },
   ];
   const descriptionText =
-    "I specialize in building full-stack web applications that are fast, reliable, and user-friendly. With a solid foundation in both frontend and backend technologies, I help bring ideas to life whether it's for a business, a startup, or a product team.";
+    "I can take a project from an empty folder to a live website, and look after the frontend, the backend, the database and the deployment along the way.";
 
   const services = [
     {
       id: '01',
       title: 'Full Stack Development',
+      aside: 'From an empty folder to a live site.',
       description:
-        'End-to-end development of modern web applications, covering everything from frontend interfaces to backend APIs. I build complete, maintainable, and scalable systems using the MERN stack and modern tooling.',
+        'I build the whole application myself. React or Next.js for what people see, Node and Express for the logic behind it, and MongoDB to hold the data. Logins and APIs are part of the job too.',
       items: [
-        'MERN Stack (MongoDB, Express.js, React, Node.js)',
-        'REST APIs & Integration',
-        'Authentication & Authorization',
+        'MERN apps, start to finish',
+        'REST APIs and real-time with Socket.io',
+        'Login with JWT, refresh tokens and role-based access',
       ],
     },
     {
       id: '02',
-      title: 'Frontend Development',
+      title: 'Frontend Engineering',
+      aside: 'Quick, and kind to small screens.',
       description:
-        'Crafting responsive, accessible, and elegant interfaces that deliver exceptional user experiences. I focus on clarity, performance, and seamless interaction across devices.',
+        'I make pages that feel quick and still work well on a small phone. I also think about the moments people forget, like an empty list, a slow connection, or someone using only a keyboard.',
       items: [
-        'React, Next.js, TailwindCSS, GSAP',
-        'Optimized Rendering & Animations',
-        'Figma to Code Implementation',
+        'React, Next.js, Tailwind and GSAP',
+        'Optimistic updates, so clicks feel instant',
+        'Figma designs turned into working code',
       ],
     },
     {
       id: '03',
-      title: 'Optimization & Performance',
+      title: 'Reliability & Performance',
+      aside: 'Built to keep going when something fails.',
       description:
-        'Optimizing codebases, APIs, and assets for speed, scalability, and maintainability. I ensure your applications run efficiently with best practices in caching, SEO, and deployment.',
+        "I care about apps staying up. If a service fails, there should be a backup plan. I add caching where it helps and set up deployment so it runs without me watching it.",
       items: [
-        'Performance Tuning & Code Refactoring',
-        'SEO & Accessibility Optimization',
-        'Deployment (Vercel, AWS, Docker)',
+        'Fallbacks and circuit breakers for flaky services',
+        'SEO and accessibility checks',
+        'Docker, GitHub Actions, Vercel and AWS EC2',
       ],
     },
   ];
@@ -76,20 +79,17 @@ const Services = () => {
     <section
       id="services"
       ref={sectionRef}
-      className="min-h-screen bg-ink text-light pt-24 pb-16 md:pt-32 md:pb-20 px-6 sm:px-8 md:px-12 lg:px-16 overflow-hidden"
+      className="min-h-screen bg-ink text-light pt-20 pb-10 md:pt-32 md:pb-20 px-6 sm:px-8 md:px-12 lg:px-16 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 md:mb-20">
           <AnimatedHeading
             words={headingWords}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] mb-4"
           />
 
           <div className="grid md:grid-cols-12 gap-4 md:gap-8">
             <div className="md:col-start-6 md:col-span-7 flex flex-col md:flex-row gap-3 md:gap-10">
-              <span className="font-mono text-sm sm:text-base md:text-base text-warm uppercase tracking-[0.3em] font-medium whitespace-nowrap inline-block">
-                (Services)
-              </span>
 
               <ScrollWordReveal
                 text={descriptionText}
@@ -100,26 +100,29 @@ const Services = () => {
           </div>
         </div>
 
-        <div className="relative pb-8 md:pb-24">
+        <div className="relative pb-0 md:pb-24">
           {services.map((service, index) => (
             <div
               key={service.id}
               ref={(el) => {
                 servicesRef.current[index] = el;
               }}
-              className="bg-ink pb-12 md:pb-20"
+              className="mb-6 md:mb-24 rounded-[2rem] md:rounded-[2.5rem] bg-surface-card border border-surface-border p-6 sm:p-8 md:px-12 md:pt-8 md:pb-12 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]"
               style={{ zIndex: index + 1 }}
             >
-              <div className="grid md:grid-cols-12 gap-4 items-center py-4 md:py-8 border-t border-border-subtle">
+              <div className="grid md:grid-cols-12 gap-4 items-center pb-4 md:pb-0 md:h-14">
                 <h3
-                  className="font-display md:col-span-9 md:col-start-2 text-light font-bold text-2xl sm:text-2xl md:text-4xl lg:text-5xl leading-none"
-                  style={{ transform: 'translateY(-0.1em)' }}
+                  className="font-display md:col-span-10 text-light font-semibold tracking-[-0.035em] text-2xl md:text-4xl lg:text-5xl leading-none"
+                  
                 >
                   {service.title}
                 </h3>
               </div>
 
-              <div className="grid md:grid-cols-12 gap-4 md:gap-8 pt-4 md:pt-6">
+              <div className="grid md:grid-cols-12 gap-4 md:gap-8 pt-4 md:pt-10">
+                <p aria-hidden="true" className="hidden md:block md:col-span-4 serif-accent text-accent text-3xl lg:text-[2.6rem] leading-[1.1] pr-6">
+                  {service.aside}
+                </p>
                 <div className="md:col-span-7 md:col-start-6 space-y-4 md:space-y-6">
                   <ScrollWordReveal
                     text={service.description}
@@ -130,10 +133,10 @@ const Services = () => {
                   <div className="divide-y divide-border-subtle">
                     {service.items.map((item, i) => (
                       <div key={i} className="py-3 flex items-center gap-3 md:gap-4">
-                        <span className="text-accent-light text-xs md:text-sm font-mono font-bold">
-                          0{i + 1}
+                        <span aria-hidden="true" className="text-accent text-[9px] shrink-0">
+                          ◆
                         </span>
-                        <span className="text-base sm:text-base md:text-lg font-bold font-sans text-light">
+                        <span className="text-base md:text-lg font-medium font-sans text-light">
                           {item}
                         </span>
                       </div>

@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { gsap, useGSAP } from '@/lib/gsap';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import ScrollWordReveal from '@/components/ui/ScrollWordReveal';
 
@@ -25,7 +26,7 @@ export interface StackCategory {
 export const STACK_SECTIONS: StackCategory[] = [
   {
     id: 'frontend',
-    title: 'FRONTEND',
+    title: 'Frontend',
     technologies: [
       { name: 'JavaScript', category: 'frontend', icon: '/Services/js.png' },
       { name: 'TypeScript', category: 'frontend', icon: '/Services/typescript.svg' },
@@ -39,7 +40,7 @@ export const STACK_SECTIONS: StackCategory[] = [
   },
   {
     id: 'backend',
-    title: 'BACKEND & REAL-TIME',
+    title: 'Backend & real-time',
     technologies: [
       { name: 'Node.js', category: 'backend', icon: '/Services/node.png' },
       { name: 'Express.js', category: 'backend', icon: '/Services/express.png' },
@@ -49,7 +50,7 @@ export const STACK_SECTIONS: StackCategory[] = [
   },
   {
     id: 'database',
-    title: 'DATABASE & ORM',
+    title: 'Database & ORM',
     technologies: [
       { name: 'MongoDB', category: 'database', icon: '/Services/mongodb.svg' },
       { name: 'Mongoose', category: 'database', icon: '/Services/mongoose.svg' },
@@ -58,7 +59,7 @@ export const STACK_SECTIONS: StackCategory[] = [
   },
   {
     id: 'devops',
-    title: 'DEVOPS & CLOUD',
+    title: 'DevOps & cloud',
     technologies: [
       { name: 'Docker', category: 'devops', icon: '/Services/docker.svg' },
       { name: 'GitHub Actions', category: 'devops', icon: '/Services/githubactions.svg' },
@@ -69,7 +70,7 @@ export const STACK_SECTIONS: StackCategory[] = [
   },
   {
     id: 'tools',
-    title: 'AI, TESTING & TOOLS',
+    title: 'AI, testing & tools',
     technologies: [
       { name: 'Gemini AI', category: 'tools', icon: '/Services/geminiai.svg' },
       { name: 'Jest', category: 'tools', icon: '/Services/jest.svg' },
@@ -83,19 +84,29 @@ export const STACK_SECTIONS: StackCategory[] = [
   },
 ];
 
+const BENTO_SPAN: Record<string, string> = {
+  frontend: 'md:col-span-12 lg:col-span-7',
+  backend: 'md:col-span-6 lg:col-span-5',
+  database: 'md:col-span-6 lg:col-span-5',
+  devops: 'md:col-span-12 lg:col-span-7',
+  tools: 'md:col-span-12',
+};
+
 const TechStack = () => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
+  const reduced = useReducedMotion();
 
   const headingWords = [
-    { t: 'MY' },
-    { t: 'TECH' },
-    { t: 'stack', serif: true },
+    { t: 'What' },
+    { t: 'I' },
+    { t: 'reach', serif: true },
+    { t: 'for' },
   ];
   const descriptionText =
-    'A selection of technologies I use to design, build, and deploy full-stack web applications.';
+    "These are the tools I use most often.";
 
   const filterOptions = [
     { id: 'all', label: 'All Categories' },
@@ -113,6 +124,7 @@ const TechStack = () => {
 
   useGSAP(
     () => {
+      if (reduced) return;
       sectionRefs.current.forEach((section, index) => {
         if (!section) return;
         const items = section.querySelectorAll('.tech-item');
@@ -158,8 +170,13 @@ const TechStack = () => {
         }
       });
     },
-    { scope: containerRef, dependencies: [activeFilter] },
+    { scope: containerRef, dependencies: [activeFilter, reduced] },
   );
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(id);
+  }, [activeFilter]);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     if (
@@ -171,7 +188,7 @@ const TechStack = () => {
     }
     const img = e.currentTarget.querySelector('img');
     if (!img) return;
-    gsap.to(img, { rotation: 360, scale: 1.1, duration: 0.6, ease: 'power2.out' });
+    gsap.to(img, { y: -3, scale: 1.12, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -184,20 +201,20 @@ const TechStack = () => {
     }
     const img = e.currentTarget.querySelector('img');
     if (!img) return;
-    gsap.to(img, { rotation: 0, scale: 1, duration: 0.5, ease: 'power2.inOut' });
+    gsap.to(img, { y: 0, scale: 1, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
   };
 
   return (
     <section
       ref={containerRef}
       id="tech-stack"
-      className="bg-ink text-light pt-24 pb-16 md:pt-32 md:pb-20 rounded-b-4xl overflow-hidden"
+      className="bg-ink text-light pt-12 pb-16 md:pt-32 md:pb-20 rounded-b-4xl overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16">
-        <div className="mb-10 md:mb-14 hidden md:block">
+        <div className="mb-10 md:mb-14">
           <AnimatedHeading
             words={headingWords}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] mb-4"
           />
           <ScrollWordReveal
             text={descriptionText}
@@ -206,22 +223,16 @@ const TechStack = () => {
           />
         </div>
 
-        <div className="mb-8 md:hidden">
-          <AnimatedHeading
-            words={[{ t: 'MY' }, { t: 'stack', serif: true }]}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-4"
-          />
-        </div>
-
-        <div className="mb-12 flex flex-wrap gap-2 sm:gap-3 items-center">
+        <div role="group" aria-label="Filter technologies by category" className="mb-12 flex flex-wrap gap-2 sm:gap-3 items-center">
           {filterOptions.map((option) => {
             const isActive = activeFilter === option.id;
             return (
               <button
                 key={option.id}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveFilter(option.id)}
-                className={`text-xs sm:text-sm font-mono tracking-wider px-3.5 py-1.5 rounded-full border transition-all duration-300 cursor-pointer ${
+                className={`text-xs sm:text-sm font-mono tracking-wider px-3.5 py-2.5 sm:py-2 rounded-full border transition-all duration-300 cursor-pointer ${
                   isActive
                     ? 'bg-cream text-ink border-cream font-semibold shadow-md'
                     : 'bg-elevated-dark/60 text-gray-soft border-white/10 hover:border-accent/40 hover:text-cream'
@@ -233,47 +244,50 @@ const TechStack = () => {
           })}
         </div>
 
-        <div className="space-y-16 md:space-y-24">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
           {visibleSections.map((stack, index) => (
             <div
               key={stack.id}
               ref={(el) => {
                 sectionRefs.current[index] = el;
               }}
-              className="flex flex-col md:flex-row md:items-start md:justify-between gap-6"
+              className={`relative overflow-hidden rounded-[1.75rem] md:rounded-[2rem] border border-surface-border bg-surface-card p-4 min-[400px]:p-5 sm:p-7 md:p-8 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.8)] ${
+                activeFilter === 'all' ? BENTO_SPAN[stack.id] ?? 'md:col-span-6' : 'md:col-span-12'
+              }`}
             >
-              <div className="md:w-1/3">
+              <div aria-hidden="true" className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-accent/10 blur-3xl" />
+              <div className="relative mb-6 flex items-end justify-between gap-4">
                 <h3
                   ref={(el) => {
                     titleRefs.current[index] = el;
                   }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-accent-light tracking-tight font-display uppercase"
+                  className="text-2xl sm:text-3xl font-semibold text-cream tracking-[-0.035em] font-display leading-none"
                 >
                   {stack.title}
                 </h3>
-                <span className="font-mono text-xs text-warm tracking-widest uppercase block mt-2">
-                  {stack.technologies.length} Technologies
+                <span className="font-mono text-[11px] text-warm-light tracking-widest whitespace-nowrap">
+                  {String(stack.technologies.length).padStart(2, '0')} tools
                 </span>
               </div>
 
-              <div className="md:w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className={`relative grid grid-cols-2 gap-2.5 ${activeFilter === 'all' && stack.id !== 'frontend' && stack.id !== 'devops' && stack.id !== 'tools' ? 'min-[540px]:grid-cols-3 md:grid-cols-2' : 'min-[540px]:grid-cols-3 xl:grid-cols-4'}`}>
                 {stack.technologies.map((tech, i) => (
                   <div
                     key={i}
-                    className="tech-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-elevated-dark/60 border border-white/[0.04] hover:border-accent/30 bg-surface/50"
+                    className="tech-item group flex items-center gap-2.5 p-2.5 sm:p-3 rounded-2xl transition-all duration-300 hover:bg-surface-float border border-white/[0.05] hover:border-accent/40 bg-surface/60"
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <div className="w-10 h-10 flex items-center justify-center relative flex-shrink-0">
+                    <div className="w-9 h-9 flex items-center justify-center relative flex-shrink-0">
                       <Image
                         src={tech.icon}
-                        alt={tech.name}
+                        alt=""
                         width={40}
                         height={40}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain grayscale-[0.55] opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
                       />
                     </div>
-                    <p className="text-xs sm:text-sm font-mono font-bold text-cream break-words">
+                    <p className="text-[13px] font-medium text-cream break-words leading-tight">
                       {tech.name}
                     </p>
                   </div>
