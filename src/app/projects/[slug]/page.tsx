@@ -17,26 +17,19 @@ export async function generateMetadata({ params }: PageProps) {
     title: project.title,
     description: project.description,
     openGraph: {
-      title: `${project.title} - Aitezaz Sikandar`,
+      title: `${project.title} | Aitezaz Sikandar`,
       description: project.description,
-      images: [
-        {
-          url: project.hoverImage || project.images[0],
-          width: 1200,
-          height: 630,
-          alt: project.title,
-        },
-      ],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${project.title} - Aitezaz Sikandar`,
+      title: `${project.title} | Aitezaz Sikandar`,
       description: project.description,
-      images: [project.hoverImage || project.images[0]],
     },
   };
 }
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const projects = getAllProjects();
   return projects.map((project) => ({

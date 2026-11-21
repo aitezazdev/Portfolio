@@ -7,6 +7,8 @@ import { gsap, useGSAP } from '@/lib/gsap';
 import { useRouter } from 'next/navigation';
 import AnimatedHeading from '@/components/ui/AnimateHeading';
 import { getAllProjects, Project } from '@/lib/projects';
+import { safeSessionStorage } from '@/utils/storage';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 const useHoverPreview = (containerRef?: React.RefObject<HTMLDivElement | null>) => {
   const floatingRef = useRef<HTMLDivElement | null>(null);
@@ -240,7 +242,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
       if (!sectionRef.current || !projects.length) return;
       const mm = gsap.matchMedia();
 
-      mm.add('(max-width: 767px)', () => {
+      mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
         const cards = cardRefs.current.filter((card): card is HTMLAnchorElement => card !== null);
         cards.forEach((card) => {
           const imgWrap = card.querySelector('.mc-img-wrap');
@@ -249,6 +251,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           const tags = card.querySelectorAll('.mc-tag');
           const title = card.querySelector('.mc-title');
           const cta = card.querySelector('.mc-cta');
+          const desc = card.querySelector('.mc-desc');
 
           gsap.set(card, { opacity: 0, y: 52 });
           if (imgWrap) gsap.set(imgWrap, { clipPath: 'inset(100% 0 0 0 round 14px)' });
@@ -257,6 +260,7 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           if (tags.length) gsap.set(tags, { opacity: 0, y: 12 });
           if (title) gsap.set(title, { opacity: 0, y: 22 });
           if (cta) gsap.set(cta, { opacity: 0, y: 14 });
+          if (desc) gsap.set(desc, { opacity: 0, y: 14 });
 
           const tl = gsap.timeline({
             scrollTrigger: { trigger: card, start: 'top 90%', once: true },
@@ -280,8 +284,11 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
           if (title) {
             tl.to(title, { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out' }, 0.62);
           }
+          if (desc) {
+            tl.to(desc, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 0.72);
+          }
           if (cta) {
-            tl.to(cta, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.82);
+            tl.to(cta, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.78);
           }
         });
       });
@@ -295,106 +302,107 @@ function MobileSnapProjects({ projects, router }: MobileSnapProjectsProps) {
     <div ref={sectionRef} className="md:hidden bg-cream pb-12">
       <div className="px-6 pt-16 pb-8">
         <AnimatedHeading
-          words={[{ t: 'SELECTED' }, { t: 'works', serif: true }]}
+          words={[{ t: 'Things' }, { t: "I've" }, { t: 'shipped', serif: true }]}
           className="text-[clamp(3rem,14vw,5rem)] leading-none text-charcoal"
+          accentClassName="text-accent-deep"
         />
       </div>
 
-      <div className="flex flex-col gap-4 px-4">
-        {projects.map((project, index) => (
-          <Link
-            key={project.id}
-            href={`/projects/${project.slug}`}
-            onTouchStart={() => router.prefetch(`/projects/${project.slug}`)}
-            onClick={() => {
-              const scrollY = (window as any).__lenis
-                ? Math.round((window as any).__lenis.scroll)
-                : Math.round(window.scrollY);
-              sessionStorage.setItem('projects-scroll', scrollY.toString());
-              sessionStorage.setItem('previous-project-url', window.location.pathname);
-            }}
-            ref={(el) => { cardRefs.current[index] = el; }}
-            className="overflow-hidden rounded-3xl block no-underline text-inherit"
-            style={{ background: '#111110', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
-          >
-            <div className="p-3 pb-0">
-              <div
-                className="mc-img-wrap relative overflow-hidden rounded-2xl"
-                style={{ aspectRatio: '16 / 10', clipPath: 'inset(100% 0 0 0 round 14px)' }}
-              >
-                <Image
-                  src={project.hoverImage || project.images[0]}
-                  alt={project.title}
-                  fill
-                  sizes="(max-width: 767px) calc(100vw - 32px)"
-                  priority={index < 2}
-                  className="mc-img object-cover object-top"
-                />
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.12) 100%)' }}
-                />
-              </div>
-            </div>
-
-            <div className="px-5 pt-4 pb-5 text-left">
-              <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-6 px-4 pb-6">
+        {projects.map((project, index) => {
+          const featured = true;
+          const num = String(index + 1).padStart(2, '0');
+          const tags = (
+            <div className="flex flex-wrap gap-1.5 overflow-hidden" style={{ height: 28 }}>
+              {project.tech.slice(0, featured ? 3 : 2).map((t) => (
                 <span
-                  className="mc-num font-mono font-black leading-none"
-                  style={{
-                    fontSize: 'clamp(2rem, 9vw, 2.6rem)',
-                    color: '#34D399',
-                    letterSpacing: '-0.03em',
-                  }}
+                  key={t}
+                  className="mc-tag shrink-0 font-mono uppercase tracking-widest px-2.5 py-1 rounded-full"
+                  style={{ fontSize: 11, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.15)' }}
                 >
-                  {String(index + 1).padStart(2, '0')}
+                  {t}
                 </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {project.tech.slice(0, 3).map((t) => (
-                  <span
-                    key={t}
-                    className="mc-tag font-mono uppercase tracking-widest px-2.5 py-1 rounded-full"
-                    style={{
-                      fontSize: 9,
-                      background: 'rgba(255,255,255,0.08)',
-                      color: 'rgba(255,255,255,0.85)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <h3
-                className="mc-title font-black uppercase leading-tight text-white mb-4"
-                style={{ fontSize: 'clamp(1.3rem, 5.5vw, 2rem)', letterSpacing: '-0.025em' }}
-              >
-                {project.title}
-              </h3>
-
-              <div className="mc-cta" style={{ opacity: 0 }}>
-                <div className="h-px w-full mb-4" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                <div className="flex items-center justify-between">
-                  <span
-                    className="font-mono text-[11px] uppercase tracking-widest"
-                    style={{ color: 'rgba(255,255,255,0.45)' }}
-                  >
-                    View Project
-                  </span>
-                  <span
-                    className="flex items-center justify-center w-9 h-9 rounded-full text-[#0A0F0D] text-sm"
-                    style={{ background: '#34D399', boxShadow: '0 0 16px rgba(52, 211, 153, 0.35)' }}
-                  >
-                    →
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
-          </Link>
-        ))}
+          );
+          const arrow = (
+            <span
+              className="mc-cta reveal-hide flex shrink-0 items-center justify-center w-9 h-9 rounded-full text-ink text-sm"
+              style={{ background: 'var(--color-accent)', boxShadow: '0 0 16px rgba(255, 77, 46, 0.3)' }}
+              aria-hidden="true"
+            >
+              →
+            </span>
+          );
+          return (
+            <Link
+              key={project.id}
+              href={`/projects/${project.slug}`}
+              onTouchStart={() => router.prefetch(`/projects/${project.slug}`)}
+              onClick={() => {
+                const scrollY = window.__lenis ? Math.round(window.__lenis.scroll) : Math.round(window.scrollY);
+                safeSessionStorage.setItem('projects-scroll', scrollY.toString());
+                safeSessionStorage.setItem('previous-project-url', window.location.pathname);
+              }}
+              ref={(el) => { cardRefs.current[index] = el; }}
+              className="sticky overflow-hidden rounded-3xl block no-underline text-inherit"
+              style={{ top: 84 + index * 12, background: 'var(--color-surface-card)', boxShadow: '0 -10px 30px rgba(0,0,0,0.28)' }}
+            >
+              {featured ? (
+                <>
+                  <div className="p-3 pb-0">
+                    <div className="mc-img-wrap reveal-clip relative overflow-hidden rounded-2xl" style={{ aspectRatio: '16 / 10' }}>
+                      <Image
+                        src={project.hoverImage || project.images[0]}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 767px) calc(100vw - 32px)"
+                        className="mc-img object-cover object-top"
+                        style={{ filter: 'brightness(0.94)' }}
+                      />
+                      <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)', borderRadius: 16 }} />
+                      <span className="mc-num absolute left-3 top-3 font-mono text-[11px] tracking-widest px-2.5 py-1 rounded-full bg-black/60 text-white/90 backdrop-blur-sm">
+                        {num}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="px-5 pt-4 pb-5 text-left">
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <h3 className="mc-title font-semibold leading-[1.05] text-white" style={{ fontSize: 'clamp(1.3rem, 5.5vw, 1.9rem)', letterSpacing: '-0.025em' }}>
+                        {project.title}
+                      </h3>
+                      {arrow}
+                    </div>
+                    <p className="mc-desc text-[13.5px] leading-relaxed text-white/65 line-clamp-3 mb-3">{project.description}</p>
+                    {tags}
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-3.5 p-3">
+                  <div className="mc-img-wrap reveal-clip relative shrink-0 overflow-hidden rounded-xl" style={{ width: 104, height: 78 }}>
+                    <Image
+                      src={project.hoverImage || project.images[0]}
+                      alt={project.title}
+                      fill
+                      sizes="104px"
+                      className="mc-img object-cover object-top"
+                      style={{ filter: 'brightness(0.94)' }}
+                    />
+                    <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)', borderRadius: 12 }} />
+                  </div>
+                  <div className="min-w-0 flex-1 text-left">
+                    <span className="mc-num block font-mono text-[11px] tracking-widest text-white/55 mb-1">{num}</span>
+                    <h3 className="mc-title font-semibold leading-[1.1] text-white mb-2" style={{ fontSize: 'clamp(1.05rem, 4.6vw, 1.3rem)', letterSpacing: '-0.02em' }}>
+                      {project.title}
+                    </h3>
+                    {tags}
+                  </div>
+                  {arrow}
+                </div>
+              )}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
@@ -406,6 +414,7 @@ export default function ProjectsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const sliderReelRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef<number>(-1);
+  const reduced = useReducedMotion();
 
   const {
     setFloatingRef,
@@ -419,7 +428,7 @@ export default function ProjectsPage() {
 
   useGSAP(
     () => {
-      if (projects.length === 0) return;
+      if (projects.length === 0 || reduced) return;
       const rows = containerRef.current?.querySelectorAll('.project-row-desktop');
       if (!rows?.length) return;
       rows.forEach((row, index) => {
@@ -432,7 +441,7 @@ export default function ProjectsPage() {
         }
       });
     },
-    { scope: containerRef, dependencies: [projects] },
+    { scope: containerRef, dependencies: [projects, reduced] },
   );
 
   const activateRow = useCallback(
@@ -549,7 +558,7 @@ export default function ProjectsPage() {
     window.addEventListener('scroll', handleCheckScroll, { passive: true });
     window.addEventListener('mouseleave', handleWindowLeave);
     window.addEventListener('blur', handleWindowLeave);
-    const lenis = (window as any).__lenis;
+    const lenis = window.__lenis;
     if (lenis) {
       lenis.on('scroll', handleCheckScroll);
     }
@@ -572,12 +581,12 @@ export default function ProjectsPage() {
     const row = e.currentTarget;
     const line = row.querySelector('.hover-line-ref');
     if (line) gsap.to(line, { width: '100%', duration: 0.15, ease: 'power2.out' });
-    gsap.to(row, { backgroundColor: 'rgba(196, 93, 62, 0.04)', duration: 0.15, ease: 'power2.out' });
-    const scrollY = (window as any).__lenis
-      ? Math.round((window as any).__lenis.scroll)
+    gsap.to(row, { backgroundColor: 'rgba(255, 77, 46, 0.08)', duration: 0.15, ease: 'power2.out' });
+    const scrollY = window.__lenis
+      ? Math.round(window.__lenis.scroll)
       : Math.round(window.scrollY);
-    sessionStorage.setItem('projects-scroll', scrollY.toString());
-    sessionStorage.setItem('previous-project-url', window.location.pathname);
+    safeSessionStorage.setItem('projects-scroll', scrollY.toString());
+    safeSessionStorage.setItem('previous-project-url', window.location.pathname);
   };
 
   return (
@@ -585,13 +594,14 @@ export default function ProjectsPage() {
       id="projects"
       ref={containerRef}
       onMouseLeave={handleTableMouseLeave}
-      className="relative w-full bg-cream text-charcoal overflow-hidden"
+      className="relative w-full bg-cream text-charcoal overflow-clip"
     >
       <div className="hidden md:block pt-16 pb-20 md:pt-20 md:pb-24 px-6 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
         <div className="mb-12">
           <AnimatedHeading
-            words={[{ t: 'SELECTED' }, { t: 'works', serif: true }]}
+            words={[{ t: 'Things' }, { t: "I've" }, { t: 'shipped', serif: true }]}
             className="text-[clamp(2.5rem,7vw,6.5rem)] leading-none text-charcoal"
+            accentClassName="text-accent-deep"
           />
         </div>
         <hr className="border-t border-border w-full mb-4" />
@@ -610,20 +620,21 @@ export default function ProjectsPage() {
               data-cursor="view"
               onClick={handleRowClick}
             >
-              <div className="flex-[0_0_80px] font-mono text-[13px] text-gray-soft pt-2 relative h-6 overflow-hidden">
+              <div className="flex-[0_0_80px] font-mono text-[13px] text-warm pt-2 relative h-6 overflow-hidden">
                 <span className="block absolute transition-all duration-300 ease-out group-hover:-translate-y-full group-hover:opacity-0">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className="block absolute translate-y-full opacity-0 text-accent transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="block absolute translate-y-full opacity-0 text-accent-deep transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
                   →
                 </span>
               </div>
 
               <div className="flex-1 pr-8">
-                <h3 className="relative text-[clamp(2rem,4vw,3.5rem)] font-extrabold uppercase leading-none tracking-tight overflow-hidden">
+                <h3 className="relative text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-none tracking-[-0.04em] overflow-hidden">
                   <span className="block text-charcoal select-none">{project.title}</span>
                   <span
-                    className="title-reveal-overlay block text-accent absolute inset-0 select-none"
+                    aria-hidden="true"
+                    className="title-reveal-overlay block text-accent-deep absolute inset-0 select-none"
                     style={{
                       clipPath: 'inset(0 100% 0 0)',
                       transition: 'clip-path 0.5s cubic-bezier(0.76,0,0.24,1)',
@@ -633,7 +644,7 @@ export default function ProjectsPage() {
                   </span>
                 </h3>
 
-                <div className="mt-3 flex flex-wrap gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
+                <div className="mt-3 flex flex-wrap gap-2 opacity-0 translate-y-2 [@media(hover:none)]:opacity-100 [@media(hover:none)]:translate-y-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
                   {project.tech.map((t) => (
                     <span key={t} className="px-3 py-1 rounded-full bg-transparent border border-gray-300 text-warm text-xs font-medium">
                       {t}
@@ -642,8 +653,8 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div className="flex-[0_0_200px] text-right flex flex-col justify-end items-end pb-2">
-                <span className="font-mono text-xs uppercase tracking-widest text-charcoal group-hover:text-accent transition-colors duration-250 flex items-center gap-1">
+              <div className="flex-[0_0_200px] text-right flex justify-end items-start pt-[clamp(0.5rem,1.4vw,1.25rem)]">
+                <span className="font-mono text-xs uppercase tracking-widest text-charcoal group-hover:text-accent-deep transition-colors duration-250 flex items-center gap-1">
                   <span>View Project</span>
                   <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5">
                     →
@@ -697,7 +708,6 @@ export default function ProjectsPage() {
                         alt={project.title}
                         fill
                         sizes="480px"
-                        priority={idx < 2}
                         className="object-cover object-top"
                       />
                     </div>
