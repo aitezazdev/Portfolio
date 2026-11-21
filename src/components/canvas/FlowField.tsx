@@ -76,7 +76,7 @@ export default function FlowField() {
         return p;
       });
 
-      ctx.fillStyle = '#0B110E';
+      ctx.fillStyle = '#151412';
       ctx.fillRect(0, 0, width, height);
       if (reduced) renderStatic();
     };
@@ -119,7 +119,7 @@ export default function FlowField() {
     };
 
     const drawFrame = () => {
-      ctx.fillStyle = 'rgba(11, 17, 14, 0.045)';
+      ctx.fillStyle = 'rgba(21, 20, 18, 0.045)';
       ctx.fillRect(0, 0, width, height);
 
       ctx.lineWidth = 1.15;
@@ -129,9 +129,9 @@ export default function FlowField() {
 
         const fadeEdge = Math.sin((p.life / p.maxLife) * Math.PI);
         if (p.hueMix === 0) {
-          ctx.strokeStyle = `rgba(52, 211, 153, ${0.34 + fadeEdge * 0.4})`;
+          ctx.strokeStyle = `rgba(255, 77, 46, ${0.34 + fadeEdge * 0.4})`;
         } else {
-          ctx.strokeStyle = `rgba(226, 232, 228, ${0.12 + fadeEdge * 0.2})`;
+          ctx.strokeStyle = `rgba(243, 238, 229, ${0.12 + fadeEdge * 0.2})`;
         }
         ctx.beginPath();
         ctx.moveTo(p.px, p.py);
@@ -212,7 +212,7 @@ export default function FlowField() {
   }, []);
 
   return (
-      <div ref={containerRef} className="absolute inset-0 overflow-hidden bg-[#0B110E]">
+      <div ref={containerRef} className="absolute inset-0 overflow-hidden bg-surface">
         <canvas ref={canvasRef} className="w-full h-full" aria-hidden="true" />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
       </div>
