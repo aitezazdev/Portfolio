@@ -17,7 +17,7 @@ const Contact = () => {
   const reduced = useReducedMotion();
 
   const headingWords = [
-    { t: "LET'S" },
+    { t: "Let's" },
     { t: 'talk', serif: true },
   ];
 
@@ -99,8 +99,8 @@ const Contact = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+    if (errors[name] || errors.server) {
+      setErrors((prev) => ({ ...prev, [name]: '', server: '' }));
     }
   };
 
@@ -115,23 +115,24 @@ const Contact = () => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.name.trim()) newErrors.name = 'Please enter your name';
 
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    if (!formData.email.trim()) newErrors.email = 'Please enter your email';
     else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) newErrors.email = 'Please enter a valid email address';
+      if (!emailRegex.test(formData.email)) newErrors.email = "That email does not look right";
     }
 
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    if (!formData.message.trim()) newErrors.message = 'Please write a message';
     else if (!validateMessage(formData.message))
-      newErrors.message = 'Please enter a meaningful message (at least 30 characters, 5 words)';
+      newErrors.message = 'Please add a little more detail, at least 30 characters and 5 words';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    setErrors({});
     setIsSubmitting(true);
     setSubmitStatus(null);
 
@@ -149,7 +150,7 @@ const Contact = () => {
       const data = await response.json();
       if (response.ok && data.success) {
         setSubmitStatus('success');
-        setSuccessMessage(data.message || 'Thank you! Your message has been sent successfully.');
+        setSuccessMessage(data.message || "Thanks, your message is in. I will get back to you soon.");
         setFormData({ name: '', email: '', message: '' });
       } else {
         setSubmitStatus('error');
@@ -172,15 +173,15 @@ const Contact = () => {
       <div ref={containerRef} className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 w-full">
         <div
           ref={cardRef}
-          className="rounded-3xl bg-surface text-light p-8 sm:p-12 md:p-16 lg:p-20 border border-elevated-dark"
+          className="rounded-3xl bg-surface text-light p-5 min-[400px]:p-7 sm:p-12 md:p-16 lg:p-20 border border-elevated-dark"
         >
           <AnimatedHeading
             words={headingWords}
-            className="text-[clamp(2.5rem,7vw,6.5rem)] tracking-tight mb-6 text-light"
+            className="text-[clamp(2.5rem,7vw,6.5rem)] mb-6 text-light"
           />
           <div className="max-w-2xl mb-12">
             <ScrollWordReveal
-              text="Have a project in mind or just want to say hello? Feel free to reach out."
+              text="Have a product idea, a freelance project, or an open engineering role? Send over the details and I will get back to you soon."
               offset={['start 0.95', 'end 0.7']}
               className="text-base sm:text-lg text-gray-soft font-sans leading-relaxed"
             />
@@ -188,11 +189,12 @@ const Contact = () => {
 
           <form
             onSubmit={handleSubmit}
-            className="max-w-2xl space-y-6 p-6 sm:p-8 rounded-2xl mx-auto bg-surface-mid border border-white/[0.04]"
+            className="max-w-2xl space-y-5 sm:space-y-6 p-4 min-[400px]:p-5 sm:p-8 rounded-2xl mx-auto bg-surface-mid border border-white/[0.04]"
+            noValidate
           >
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="font-medium text-sm sm:text-base text-muted">
-                Your Name <span className="text-red-400">*</span>
+                Name <span className="text-red-400">*</span>
               </label>
               <input
                 id="name"
@@ -200,21 +202,21 @@ const Contact = () => {
                 type="text"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Your Name"
+                placeholder="Your name"
                 autoComplete="name"
                 aria-invalid={!!errors.name}
                 aria-describedby={errors.name ? 'name-error' : undefined}
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder:text-gray-soft focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.name ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
               />
-              {errors.name && <p id="name-error" className="text-red-400 text-xs sm:text-sm">{errors.name}</p>}
+              {errors.name && <p id="name-error" className="text-red-400 text-xs sm:text-sm" role="alert">{errors.name}</p>}
             </div>
 
             <div className="flex flex-col gap-2">
               <label htmlFor="email" className="font-medium text-sm sm:text-base text-muted">
-                Your Email <span className="text-red-400">*</span>
+                Email <span className="text-red-400">*</span>
               </label>
               <input
                 id="email"
@@ -226,12 +228,12 @@ const Contact = () => {
                 placeholder="you@example.com"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder:text-gray-soft focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.email ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
               />
-              {errors.email && <p id="email-error" className="text-red-400 text-xs sm:text-sm">{errors.email}</p>}
+              {errors.email && <p id="email-error" className="text-red-400 text-xs sm:text-sm" role="alert">{errors.email}</p>}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -244,16 +246,16 @@ const Contact = () => {
                 rows={5}
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Write your message here..."
+                placeholder="Tell me about your project, timeline, or role..."
                 aria-invalid={!!errors.message}
                 aria-describedby={errors.message ? 'message-error' : undefined}
-                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder-[#6a6a68] resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
+                className={`w-full px-4 py-3 text-sm sm:text-base border rounded-xl bg-surface text-cream placeholder:text-gray-soft resize-none focus:outline-none transition-all duration-300 border-white/[0.08] focus:border-accent focus:ring-1 focus:ring-accent/30 ${
                   errors.message ? 'border-red-500 focus:border-red-500' : ''
                 }`}
                 disabled={isDisabled}
               />
-              {errors.message && <p id="message-error" className="text-red-400 text-xs sm:text-sm">{errors.message}</p>}
-              <p className="text-xs text-gray-soft">{formData.message.length} / 30 minimum characters</p>
+              {errors.message && <p id="message-error" className="text-red-400 text-xs sm:text-sm" role="alert">{errors.message}</p>}
+              <p className="text-xs text-gray-soft">{formData.message.length} characters (30 minimum, 5 words)</p>
             </div>
 
             <div role="status" aria-live="polite">
@@ -271,55 +273,60 @@ const Contact = () => {
 
               {submitStatus === 'error' && !errors.server && (
                 <div className="p-4 bg-red-900/20 border border-red-600/40 rounded-xl mb-4">
-                  <p className="text-red-400 text-sm">Something went wrong. Please try again later.</p>
+                  <p className="text-red-400 text-sm">Something went wrong on my end. Please try again in a bit, or email me directly.</p>
                 </div>
               )}
             </div>
 
             <div className="w-full flex justify-center md:justify-start">
-              <button
+              <AnimatedButton
                 type="submit"
                 disabled={isDisabled}
-                className="inline-block border-0 bg-transparent p-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <AnimatedButton
-                  topText={isDisabled ? 'PLEASE WAIT...' : 'SEND MESSAGE'}
-                  bottomText={isDisabled ? 'PROCESSING' : 'PROCEED →'}
-                  variant="primary"
-                  as="span"
-                  className={isDisabled ? 'pointer-events-none' : ''}
-                />
-              </button>
+                topText={isDisabled ? 'SENDING...' : 'SEND MESSAGE'}
+                bottomText={isDisabled ? 'ONE MOMENT' : 'SEND →'}
+                variant="primary"
+                className={isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+              />
             </div>
           </form>
 
           <div className="mt-16 pt-12 border-t border-elevated-dark flex flex-col items-center justify-center text-center w-full">
             <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
-              <p className="text-xs uppercase tracking-widest text-warm mb-3 font-mono text-center">
-                Direct Contact
+              <p className="text-xs uppercase tracking-widest text-warm-light mb-3 font-mono text-center">
+                Or email me directly
               </p>
 
               <div ref={ctaRef} className="inline-block">
                 <button
                   type="button"
                   aria-label={`Copy ${site.email} to clipboard`}
-                  onClick={() => {
-                    navigator.clipboard.writeText(site.email);
-                    setCopiedToast(true);
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(site.email);
+                      setCopiedToast(true);
+                    } catch {
+                      window.location.href = `mailto:${site.email}`;
+                    }
                   }}
-                  className="group relative inline-flex items-center justify-center cursor-pointer text-light font-display font-black uppercase leading-tight hover:text-accent transition-colors duration-300 max-w-full text-center"
+                  className="group relative inline-flex items-center justify-center py-2 cursor-pointer text-light font-display font-semibold tracking-[-0.03em] leading-tight hover:text-accent transition-colors duration-300 max-w-full text-center"
                   style={{
-                    fontSize: 'clamp(1.1rem, 4.2vw, 3rem)',
+                    fontSize: 'clamp(0.9rem, 5vw, 3rem)',
                   }}
                 >
-                  <span className="break-all sm:break-normal">{site.email}</span>
+                  <span className="break-words normal-case">{site.email}</span>
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out block" />
                 </button>
               </div>
 
-              <span className="font-mono text-[11px] text-warm/70 uppercase tracking-widest mt-2 block text-center">
-                Click to copy email address
+              <span className="font-mono text-[11px] text-warm-light uppercase tracking-widest mt-2 block text-center">
+                Click to copy
               </span>
+              <a
+                href={`mailto:${site.email}`}
+                className="font-mono text-[11px] text-warm-light hover:text-accent uppercase tracking-widest mt-1 py-2 min-h-11 inline-flex items-center underline underline-offset-4 transition-colors"
+              >
+                Open in your mail app
+              </a>
             </div>
           </div>
         </div>
@@ -328,19 +335,9 @@ const Contact = () => {
       <div
         role="status"
         aria-live="polite"
-        className={`fixed bottom-8 right-8 z-[9998] pointer-events-none transition-all duration-300 ${
+        className={`fixed bottom-8 right-8 z-[9998] pointer-events-none transition-all duration-300 bg-accent text-ink font-mono text-xs tracking-[0.1em] uppercase px-5 py-3 rounded-full ${
           copiedToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}
-        style={{
-          background: '#34D399',
-          color: '#0A0F0D',
-          fontFamily: 'monospace',
-          fontSize: '0.75rem',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          padding: '0.75rem 1.25rem',
-          borderRadius: '9999px',
-        }}
       >
         ✓ Copied to clipboard
       </div>
