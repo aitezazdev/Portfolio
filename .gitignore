@@ -46,3 +46,6 @@ next-env.d.ts
 .claude/
 messages.txt
 
+
+# private portrait photo (read on the server, never served)
+/portrait/photo.webp
