@@ -12,7 +12,7 @@ The personal portfolio of [**Aitezaz Sikandar**](https://github.com/aitezazdev),
 - **Smooth scroll and motion:** Lenis scrolling with GSAP ScrollTrigger reveals, pinned sections and a cursor-reactive hero name.
 - **Projects:** a numbered project list on desktop and a stacking card layout on mobile, with a case study page for every project at `/projects/[slug]`.
 - **Contact form:** emails delivered through Resend, with Gmail SMTP as a fallback, plus input validation and rate limiting. In development without credentials, messages are saved to `messages.txt`.
-- **Aitezaz portrait:** the About photo is drawn on canvas as a pixel-art image that builds itself with a vermilion scan line when it scrolls into view. All tone mapping, lighting and pixel mapping happen in code, so any photo works.
+- **Aitezaz portrait:** the About photo is drawn on canvas as a pixel-art image that builds itself with a vermilion scan line when it scrolls into view. The photo is turned into dots on the server, so the full image is never sent to visitors.
 - **Self-hosted fonts:** Geist, Geist Mono and Fraunces, with no third-party font requests.
 - **SEO and sharing:** structured metadata, Open Graph image, sitemap, robots file, web manifest and a full set of app icons.
 - **Accessible by default:** keyboard friendly navigation, readable contrast and `prefers-reduced-motion` support.
@@ -21,11 +21,12 @@ The personal portfolio of [**Aitezaz Sikandar**](https://github.com/aitezazdev),
 
 ## Using your own portrait
 
-The About section turns `public/portrait/photo.webp` into a pixel-art portrait at runtime.
+The About section shows a pixel-art portrait. The browser never receives a photo. A server route (`/portrait/map`) reads your photo, does the levels, lighting and pixel pattern on the server, and returns only a small 1-bit grid of dots.
 
-- Replace that file with your own photo. A cut-out with a transparent background (PNG or WebP) works best, roughly 4:5, with your face in the upper half.
-- Delete the file and the section falls back to the animated flow field, so the site never breaks.
-- Levels, side lighting, shadow fade and the pixel pattern are all in `src/components/canvas/AitezazPortrait.tsx`.
+- Local development: put a cut-out photo (PNG or WebP, transparent background, roughly 4:5) at `portrait/photo.webp` in the project root. The folder is git-ignored and is not served publicly.
+- Production without the photo in the repo: upload it to a private Vercel Blob store (Storage tab, access Private) as `photo.webp` and connect the store to the project. Set `PORTRAIT_BLOB_PATH` if you use another file name.
+- With no photo anywhere, the section falls back to the animated flow field, so the site never breaks.
+- The look (levels, side light, shadow fade, dot pattern) is in `src/lib/portraitMap.ts`. Drawing and the scan-line reveal are in `src/components/canvas/AitezazPortrait.tsx`.
 
 ---
 
@@ -73,6 +74,7 @@ All variables are optional, so the site runs locally without any of them.
 | `RESEND_API_KEY` | Resend API key (`re_...`). Main way contact messages are emailed. Works over HTTPS, so it also works on networks that block mail ports. |
 | `GMAIL_APP_PASSWORD` | Gmail App Password, used as the fallback sender. Needs 2-step verification on the Google account. |
 | `CONTACT_EMAIL` | Where messages are delivered. Defaults to the email in `src/lib/site.ts`. |
+| `PORTRAIT_BLOB_PATH` | File name of the portrait in your private Blob store. Defaults to `photo.webp`. |
 | `NEXT_PUBLIC_GA_ID` | Google Analytics ID (`G-XXXXXXXXXX`). Analytics is skipped when this is empty. |
 
 **Good to know**

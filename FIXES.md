@@ -155,6 +155,6 @@ Tested home and project pages at 320, 360, 375, 390, 412 and 430 wide phones, ph
 
 - The About section now shows the photo as a 1-bit pixel-art portrait (cream on warm black) with a vermilion scan line that builds it on first view.
 - No hover or touch interaction. Reduced motion shows the finished portrait instantly.
-- New component src/components/canvas/AitezazPortrait.tsx and assets in public/portrait. The portrait frame is 4:5 on mobile.
+- New component src/components/canvas/AitezazPortrait.tsx and the server route src/app/portrait/map/route.ts. The portrait frame is 4:5 on mobile.
 - Portrait retuned: tighter off-center crop, hard side light so half the face falls into shadow, and the shirt now fades into black.
-- The portrait is now fully code driven: it reads a plain cut-out photo (`public/portrait/photo.webp`) and applies levels, side light, fade and pixel pattern in the browser. If the file is missing, the About frame falls back to the flow field. README explains how to swap or remove the photo.
+- Privacy: the photo is git-ignored and never sent to browsers. The route /portrait/map reads it from a private Vercel Blob (or the local `portrait/photo.webp`), does the tone mapping and pixel pattern on the server and returns only a 150 column bitmap of dots. The client draws that bitmap.
