@@ -12,9 +12,20 @@ The personal portfolio of [**Aitezaz Sikandar**](https://github.com/aitezazdev),
 - **Smooth scroll and motion:** Lenis scrolling with GSAP ScrollTrigger reveals, pinned sections and a cursor-reactive hero name.
 - **Projects:** a numbered project list on desktop and a stacking card layout on mobile, with a case study page for every project at `/projects/[slug]`.
 - **Contact form:** emails delivered through Resend, with Gmail SMTP as a fallback, plus input validation and rate limiting. In development without credentials, messages are saved to `messages.txt`.
+- **Aitezaz portrait:** the About photo is drawn on canvas as a pixel-art image that builds itself with a vermilion scan line when it scrolls into view. All tone mapping, lighting and pixel mapping happen in code, so any photo works.
 - **Self-hosted fonts:** Geist, Geist Mono and Fraunces, with no third-party font requests.
 - **SEO and sharing:** structured metadata, Open Graph image, sitemap, robots file, web manifest and a full set of app icons.
 - **Accessible by default:** keyboard friendly navigation, readable contrast and `prefers-reduced-motion` support.
+
+---
+
+## Using your own portrait
+
+The About section turns `public/portrait/photo.webp` into a pixel-art portrait at runtime.
+
+- Replace that file with your own photo. A cut-out with a transparent background (PNG or WebP) works best, roughly 4:5, with your face in the upper half.
+- Delete the file and the section falls back to the animated flow field, so the site never breaks.
+- Levels, side lighting, shadow fade and the pixel pattern are all in `src/components/canvas/AitezazPortrait.tsx`.
 
 ---
 
@@ -98,7 +109,7 @@ src/
 │   ├── layout.tsx          # Root layout, fonts and analytics
 │   └── page.tsx            # Home page
 ├── components/
-│   ├── canvas/             # Hero aurora and flow field
+│   ├── canvas/             # Hero aurora, flow field and portrait
 │   ├── home/               # Scroll orchestration
 │   ├── project/            # Project detail page
 │   ├── providers/          # Smooth scroll provider
