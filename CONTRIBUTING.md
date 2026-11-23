@@ -7,7 +7,7 @@ Thanks for your interest in contributing. This guide covers the workflow for rep
 1. **Fork** the repository on GitHub.
 2. **Clone** your fork locally:
    ```bash
-   git clone https://github.com/<your-username>/Portfolio.git
+   git clone https://github.com/aitezazdev/Portfolio.git
    cd Portfolio
    ```
 3. **Install** dependencies:
